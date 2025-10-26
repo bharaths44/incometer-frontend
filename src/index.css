@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-primary: 34 197 94;
+    --color-secondary: 59 130 246;
+    --color-accent: 251 146 60;
+    --color-success: 34 197 94;
+    --color-warning: 251 146 60;
+    --color-error: 239 68 68;
+    --color-bg-primary: 255 255 255;
+    --color-bg-secondary: 249 250 251;
+    --color-text-primary: 17 24 39;
+    --color-text-secondary: 107 114 128;
+  }
+
+  * {
+    @apply border-gray-200;
+  }
+
+  body {
+    @apply bg-gray-50 text-gray-900 antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+    font-variation-settings: 'opsz' 32;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-3xl shadow-sm border border-gray-100 p-6 transition-all duration-300;
+  }
+
+  .card:hover {
+    @apply shadow-lg border-gray-200 -translate-y-0.5;
+  }
+
+  .btn-primary {
+    @apply bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-2xl font-medium transition-all duration-300 hover:shadow-lg hover:scale-105 active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-gray-700 px-6 py-3 rounded-2xl font-medium border border-gray-200 transition-all duration-300 hover:border-gray-300 hover:shadow-md active:scale-95;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 rounded-2xl border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none transition-all duration-200 bg-white;
+  }
+
+  .page-transition {
+    animation: fadeSlideIn 0.4s ease-out;
+  }
+
+  @keyframes fadeSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes pulse-subtle {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.8;
+    }
+  }
+
+  .animate-pulse-subtle {
+    animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+}
