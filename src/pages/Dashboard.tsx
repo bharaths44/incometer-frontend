@@ -1,5 +1,5 @@
-import {ArrowDownRight, ArrowUpRight, Calendar, DollarSign, TrendingDown, TrendingUp, Wallet,} from "lucide-react";
-import {useEffect, useState} from "react";
+import { ArrowDownRight, ArrowUpRight, Calendar, DollarSign, TrendingDown, TrendingUp, Wallet, } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function Dashboard() {
     const [animatedBalance, setAnimatedBalance] = useState(0);
@@ -98,29 +98,25 @@ export default function Dashboard() {
 
     const categoryBreakdown = [
         {
-            category: "Food & Dining",
-            amount: 850,
-            percentage: 32,
-            color: "bg-orange-500",
+            categoryName: "Food & Dining",
+            totalSpent: 850,
+            percentageOfTotal: 32,
         },
         {
-            category: "Transportation",
-            amount: 420,
-            percentage: 16,
-            color: "bg-blue-500",
+            categoryName: "Transportation",
+            totalSpent: 420,
+            percentageOfTotal: 16,
         },
         {
-            category: "Entertainment",
-            amount: 280,
-            percentage: 11,
-            color: "bg-green-500",
+            categoryName: "Entertainment",
+            totalSpent: 280,
+            percentageOfTotal: 11,
         },
-        {category: "Shopping", amount: 650, percentage: 24, color: "bg-pink-500"},
+        { categoryName: "Shopping", totalSpent: 650, percentageOfTotal: 24 },
         {
-            category: "Bills & Utilities",
-            amount: 450,
-            percentage: 17,
-            color: "bg-yellow-500",
+            categoryName: "Bills & Utilities",
+            totalSpent: 450,
+            percentageOfTotal: 17,
         },
     ];
 
@@ -130,7 +126,7 @@ export default function Dashboard() {
                 <div>
                     <h1 className="text-4xl font-bold mb-2">Dashboard</h1>
                     <p className="text-gray-600 flex items-center gap-2">
-                        <Calendar className="w-4 h-4"/>
+                        <Calendar className="w-4 h-4" />
                         {new Date().toLocaleDateString("en-US", {
                             weekday: "long",
                             year: "numeric",
@@ -146,24 +142,24 @@ export default function Dashboard() {
                     <div
                         key={index}
                         className="card group"
-                        style={{animationDelay: `${index * 100}ms`}}
+                        style={{ animationDelay: `${index * 100}ms` }}
                     >
                         <div className="flex items-start justify-between mb-4">
                             <div
                                 className={`w-12 h-12 ${stat.bgColor} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}
                             >
-                                <stat.icon className={`w-6 h-6 ${stat.color}`}/>
+                                <stat.icon className={`w-6 h-6 ${stat.color}`} />
                             </div>
                             <div
                                 className={`flex items-center gap-1 text-sm font-medium ${stat.trend === "up" ?
-                                                                                          "text-green-600" :
-                                                                                          "text-orange-600"}`}
+                                    "text-green-600" :
+                                    "text-orange-600"}`}
                             >
                                 {stat.trend === "up" ? (
-                                    <ArrowUpRight className="w-4 h-4"/>
+                                    <ArrowUpRight className="w-4 h-4" />
                                 ) : (
-                                     <ArrowDownRight className="w-4 h-4"/>
-                                 )}
+                                    <ArrowDownRight className="w-4 h-4" />
+                                )}
                                 {stat.change}
                             </div>
                         </div>
@@ -203,8 +199,8 @@ export default function Dashboard() {
                                 </div>
                                 <div
                                     className={`text-lg font-bold ${transaction.amount > 0 ?
-                                                                    "text-green-600" :
-                                                                    "text-gray-900"}`}
+                                        "text-green-600" :
+                                        "text-gray-900"}`}
                                 >
                                     {transaction.amount > 0 ? "+" : ""}
                                     {transaction.amount.toFixed(2)}
@@ -220,24 +216,24 @@ export default function Dashboard() {
                         {categoryBreakdown.map((item, index) => (
                             <div key={index}>
                                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-700">
-                    {item.category}
-                  </span>
+                                    <span className="text-sm font-medium text-gray-700">
+                                        {item.categoryName}
+                                    </span>
                                     <span className="text-sm font-bold text-gray-900">
-                    ${item.amount}
-                  </span>
+                                        ${item.totalSpent}
+                                    </span>
                                 </div>
                                 <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
                                     <div
-                                        className={`h-full ${item.color} rounded-full transition-all duration-1000 ease-out`}
+                                        className="h-full bg-green-500 rounded-full transition-all duration-1000 ease-out"
                                         style={{
-                                            width: `${item.percentage}%`,
+                                            width: `${item.percentageOfTotal}%`,
                                             animationDelay: `${index * 100}ms`,
                                         }}
                                     />
                                 </div>
                                 <div className="text-xs text-gray-500 mt-1">
-                                    {item.percentage}% of spending
+                                    {item.percentageOfTotal}% of spending
                                 </div>
                             </div>
                         ))}
@@ -276,7 +272,7 @@ export default function Dashboard() {
                             />
                         </svg>
                         <div className="absolute inset-0 flex items-center justify-center">
-                            <DollarSign className="w-12 h-12"/>
+                            <DollarSign className="w-12 h-12" />
                         </div>
                     </div>
                 </div>
