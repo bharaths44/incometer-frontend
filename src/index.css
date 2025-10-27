@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+@reference "tailwindcss";
 @layer base {
   :root {
     --color-primary: 34 197 94;
