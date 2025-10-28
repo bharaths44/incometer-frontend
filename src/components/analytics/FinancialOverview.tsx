@@ -1,4 +1,4 @@
-import { DollarSign, TrendingDown, TrendingUp } from 'lucide-react';
+import { IndianRupee, TrendingDown, TrendingUp } from 'lucide-react';
 import { ExpenseSummary } from '../../types/analytics';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -48,7 +48,7 @@ export default function FinancialOverview({ expenseSummary }: FinancialOverviewP
                             <span className="text-foreground font-medium">
                                 Net Savings
                             </span>
-                            <DollarSign className="w-5 h-5 text-orange-600" />
+                            <IndianRupee className="w-5 h-5 text-orange-600" />
                         </div>
                         <div className="text-3xl font-bold text-orange-600 mb-1">
                             ₹{expenseSummary.netSavings}

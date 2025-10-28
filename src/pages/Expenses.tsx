@@ -1,18 +1,27 @@
 import { useState, useEffect } from "react";
-import { Filter, Plus, Search } from "lucide-react";
+import { Filter, Plus, Search, CalendarIcon } from "lucide-react";
 import { getAllExpenses, createExpense, updateExpense, deleteExpense } from "../services/expenseService";
 import { getAllCategories } from "../services/categoryService";
 import { ExpenseResponseDTO, ExpenseRequestDTO, Category } from "../types/expense";
-import ExpenseForm from "../components/ExpenseForm";
-import ExpenseTable from "../components/ExpenseTable";
+import ExpenseForm from "../components/expense/ExpenseForm";
+import ExpenseTable from "../components/expense/ExpenseTable";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format } from "date-fns";
 
 export default function Expenses() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("all");
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("all");
-    const [dateFrom, setDateFrom] = useState("");
-    const [dateTo, setDateTo] = useState("");
+    const [dateFrom, setDateFrom] = useState<Date | undefined>();
+    const [dateTo, setDateTo] = useState<Date | undefined>();
+    const [isDateFromOpen, setIsDateFromOpen] = useState(false);
+    const [isDateToOpen, setIsDateToOpen] = useState(false);
     const [amountMin, setAmountMin] = useState("");
     const [amountMax, setAmountMax] = useState("");
     const [expenses, setExpenses] = useState<ExpenseResponseDTO[]>([]);
@@ -23,7 +32,7 @@ export default function Expenses() {
         description: "",
         amount: "",
         categoryId: "",
-        paymentMethod: "",
+        paymentMethodId: "",
         expenseDate: "",
         userId: 1, // Assuming userId is 1 for now
     });
@@ -37,8 +46,9 @@ export default function Expenses() {
                 ]);
                 setExpenses(expensesData);
                 // Filter categories to only show expense categories
-                const expenseCategories = categoriesData.filter(cat => cat.type === 'EXPENSE');
-                setCategories(expenseCategories);
+                // const expenseCategories = categoriesData.filter(cat => cat.type === 'EXPENSE');
+                // setCategories(expenseCategories);
+                setCategories(categoriesData);
             } catch (error) {
                 console.error('Failed to fetch data:', error);
             } finally {
@@ -54,7 +64,7 @@ export default function Expenses() {
             description: expense.description,
             amount: expense.amount.toString(),
             categoryId: expense.category.categoryId.toString(),
-            paymentMethod: expense.paymentMethod,
+            paymentMethodId: expense.paymentMethod.paymentMethodId.toString(),
             expenseDate: expense.expenseDate,
             userId: expense.userUserId,
         });
@@ -87,7 +97,7 @@ export default function Expenses() {
                 description: "",
                 amount: "",
                 categoryId: "",
-                paymentMethod: "",
+                paymentMethodId: "",
                 expenseDate: "",
                 userId: 1,
             });
@@ -102,7 +112,7 @@ export default function Expenses() {
             description: "",
             amount: "",
             categoryId: "",
-            paymentMethod: "",
+            paymentMethodId: "",
             expenseDate: "",
             userId: 1,
         });
@@ -116,9 +126,9 @@ export default function Expenses() {
         const matchesCategory =
             selectedCategory === "all" || expense.category.name === selectedCategory;
         const matchesPaymentMethod =
-            selectedPaymentMethod === "all" || expense.paymentMethod === selectedPaymentMethod;
-        const matchesDateFrom = !dateFrom || expense.expenseDate >= dateFrom;
-        const matchesDateTo = !dateTo || expense.expenseDate <= dateTo;
+            selectedPaymentMethod === "all" || expense.paymentMethod.paymentMethodId.toString() === selectedPaymentMethod;
+        const matchesDateFrom = !dateFrom || new Date(expense.expenseDate) >= dateFrom;
+        const matchesDateTo = !dateTo || new Date(expense.expenseDate) <= dateTo;
         const matchesAmountMin = !amountMin || expense.amount >= parseFloat(amountMin);
         const matchesAmountMax = !amountMax || expense.amount <= parseFloat(amountMax);
 
@@ -132,7 +142,14 @@ export default function Expenses() {
     );
 
     // Get unique payment methods from expenses
-    const paymentMethods = Array.from(new Set(expenses.map(expense => expense.paymentMethod))).sort();
+    const uniquePaymentMethods = Array.from(
+        new Map(
+            expenses
+                .map(expense => expense.paymentMethod)
+                .filter(method => method) // Filter out null/undefined
+                .map(method => [method.paymentMethodId, method])
+        ).values()
+    ).sort((a, b) => (a.displayName || '').localeCompare(b.displayName || ''));
 
     return (
         <div className="page-transition space-y-8">
@@ -141,13 +158,10 @@ export default function Expenses() {
                     <h1 className="text-4xl font-bold mb-2">Expenses</h1>
                     <p className="text-gray-600">Track and manage your spending</p>
                 </div>
-                <button
-                    onClick={openAddModal}
-                    className="btn-primary flex items-center gap-2"
-                >
-                    <Plus className="w-5 h-5" />
+                <Button onClick={openAddModal}>
+                    <Plus className="w-5 h-5 mr-2" />
                     Add Expense
-                </button>
+                </Button>
             </div>
 
             <div className="card bg-gradient-to-br from-orange-500 to-red-500 border-0 text-white">
@@ -169,105 +183,141 @@ export default function Expenses() {
 
             <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1 relative">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Input
                         type="text"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="Search expenses..."
-                        className="input-field pl-12 w-full"
+                        className="pl-12"
                     />
                 </div>
                 <div className="relative">
-                    <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <select
-                        value={selectedCategory}
-                        onChange={(e) => setSelectedCategory(e.target.value)}
-                        className="input-field pl-12 pr-8 appearance-none cursor-pointer"
-                    >
-                        <option value="all">All Categories</option>
-                        {categories.map((cat) => (
-                            <option key={cat.categoryId} value={cat.name}>
-                                {cat.name}
-                            </option>
-                        ))}
-                    </select>
+                    <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground z-10" />
+                    <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                        <SelectTrigger className="pl-12">
+                            <SelectValue placeholder="All Categories" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Categories</SelectItem>
+                            {categories.map((cat) => (
+                                <SelectItem key={`filter-category-${cat.categoryId}`} value={cat.name}>
+                                    {cat.name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                 </div>
                 <div className="relative">
-                    <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <select
-                        value={selectedPaymentMethod}
-                        onChange={(e) => setSelectedPaymentMethod(e.target.value)}
-                        className="input-field pl-12 pr-8 appearance-none cursor-pointer"
-                    >
-                        <option value="all">All Payment Methods</option>
-                        {paymentMethods.map((method) => (
-                            <option key={method} value={method}>
-                                {method}
-                            </option>
-                        ))}
-                    </select>
+                    <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground z-10" />
+                    <Select value={selectedPaymentMethod} onValueChange={setSelectedPaymentMethod}>
+                        <SelectTrigger className="pl-12">
+                            <SelectValue placeholder="All Payment Methods" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Payment Methods</SelectItem>
+                            {uniquePaymentMethods.map((method) => (
+                                <SelectItem key={`filter-payment-${method.paymentMethodId}`} value={method.paymentMethodId.toString()}>
+                                    {method.displayName}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                 </div>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Date From</label>
-                    <input
-                        type="date"
-                        value={dateFrom}
-                        onChange={(e) => setDateFrom(e.target.value)}
-                        className="input-field w-full"
-                    />
+                    <Label className="block text-sm font-medium mb-1">Date From</Label>
+                    <Popover open={isDateFromOpen} onOpenChange={setIsDateFromOpen}>
+                        <PopoverTrigger asChild>
+                            <Button
+                                variant="outline"
+                                className={`w-full justify-start text-left font-normal ${!dateFrom && "text-muted-foreground"
+                                    }`}
+                            >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {dateFrom ? format(dateFrom, "PPP") : "Pick a date"}
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                                mode="single"
+                                selected={dateFrom}
+                                onSelect={(date) => {
+                                    setDateFrom(date);
+                                    setIsDateFromOpen(false);
+                                }}
+                                autoFocus
+                            />
+                        </PopoverContent>
+                    </Popover>
                 </div>
                 <div className="flex-1">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Date To</label>
-                    <input
-                        type="date"
-                        value={dateTo}
-                        onChange={(e) => setDateTo(e.target.value)}
-                        className="input-field w-full"
-                    />
+                    <Label className="block text-sm font-medium mb-1">Date To</Label>
+                    <Popover open={isDateToOpen} onOpenChange={setIsDateToOpen}>
+                        <PopoverTrigger asChild>
+                            <Button
+                                variant="outline"
+                                className={`w-full justify-start text-left font-normal ${!dateTo && "text-muted-foreground"
+                                    }`}
+                            >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {dateTo ? format(dateTo, "PPP") : "Pick a date"}
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                                mode="single"
+                                selected={dateTo}
+                                onSelect={(date) => {
+                                    setDateTo(date);
+                                    setIsDateToOpen(false);
+                                }}
+                                autoFocus
+                            />
+                        </PopoverContent>
+                    </Popover>
                 </div>
                 <div className="flex-1">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Min Amount (₹)</label>
-                    <input
+                    <Label className="block text-sm font-medium mb-1">Min Amount (₹)</Label>
+                    <Input
                         type="number"
                         step="0.01"
                         value={amountMin}
                         onChange={(e) => setAmountMin(e.target.value)}
                         placeholder="0.00"
-                        className="input-field w-full"
                     />
                 </div>
                 <div className="flex-1">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Max Amount (₹)</label>
-                    <input
+                    <Label className="block text-sm font-medium mb-1">Max Amount (₹)</Label>
+                    <Input
                         type="number"
                         step="0.01"
                         value={amountMax}
                         onChange={(e) => setAmountMax(e.target.value)}
                         placeholder="0.00"
-                        className="input-field w-full"
                     />
                 </div>
             </div>
 
             <div className="flex justify-end">
-                <button
+                <Button
                     onClick={() => {
                         setSearchQuery("");
                         setSelectedCategory("all");
                         setSelectedPaymentMethod("all");
-                        setDateFrom("");
-                        setDateTo("");
+                        setDateFrom(undefined);
+                        setDateTo(undefined);
+                        setIsDateFromOpen(false);
+                        setIsDateToOpen(false);
                         setAmountMin("");
                         setAmountMax("");
                     }}
-                    className="btn-secondary text-sm"
+                    variant="secondary"
                 >
                     Clear All Filters
-                </button>
+                </Button>
             </div>
 
             <ExpenseTable

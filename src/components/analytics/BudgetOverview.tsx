@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle, DollarSign } from 'lucide-react';
+import { AlertTriangle, CheckCircle, IndianRupee } from 'lucide-react';
 import { BudgetAnalytics } from '../../types/analytics';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -11,7 +11,7 @@ export default function BudgetOverview({ budgetAnalytics }: BudgetOverviewProps)
         <Card>
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                    <DollarSign className="w-6 h-6 text-green-600" />
+                    <IndianRupee className="w-6 h-6 text-green-600" />
                     Budget Overview
                 </CardTitle>
             </CardHeader>

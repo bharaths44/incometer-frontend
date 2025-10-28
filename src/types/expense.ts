@@ -1,3 +1,6 @@
+import { PaymentMethodResponseDTO } from "./paymentMethod";
+
+
 export interface Category {
     categoryId: number;
     name: string;
@@ -12,12 +15,13 @@ export interface CategoryDto {
     icon: string;
 }
 
+
 export interface Expense {
     expenseId: number;
     category: Category;
     amount: number;
     description: string;
-    paymentMethod: string;
+    paymentMethod: PaymentMethodResponseDTO;
     expenseDate: string;
     createdAt: string;
 }
@@ -27,7 +31,7 @@ export interface ExpenseRequestDTO {
     categoryId: number;
     amount: number;
     description: string;
-    paymentMethod: string;
+    paymentMethodId: number;
     expenseDate: string;
 }
 
@@ -37,7 +41,7 @@ export interface ExpenseResponseDTO {
     category: CategoryDto;
     amount: number;
     description: string;
-    paymentMethod: string;
+    paymentMethod: PaymentMethodResponseDTO;
     expenseDate: string;
 }
 

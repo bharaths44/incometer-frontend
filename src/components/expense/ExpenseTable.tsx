@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Edit2, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
-import { ExpenseResponseDTO } from "../types/expense";
-import Icon from "../utils/iconUtils";
+import { ExpenseResponseDTO } from "../../types/expense";
+import Icon from "../../utils/iconUtils";
 import { Button } from "@/components/ui/button";
 import {
     Table,
@@ -62,7 +62,7 @@ export default function ExpenseTable({ expenses, onEdit, onDelete, loading }: Ex
                                 </TableCell>
                                 <TableCell>{expense.description}</TableCell>
                                 <TableCell className="font-semibold">₹{expense.amount.toFixed(2)}</TableCell>
-                                <TableCell>{expense.paymentMethod}</TableCell>
+                                <TableCell>{expense.paymentMethod.displayName}</TableCell>
                                 <TableCell>
                                     {new Date(expense.expenseDate).toLocaleDateString("en-US", {
                                         year: "numeric",
