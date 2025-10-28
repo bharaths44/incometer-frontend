@@ -2,6 +2,15 @@ import { useState } from "react";
 import { Edit2, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import { ExpenseResponseDTO } from "../types/expense";
 import Icon from "../utils/iconUtils";
+import { Button } from "@/components/ui/button";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
 
 interface ExpenseTableProps {
     expenses: ExpenseResponseDTO[];
@@ -28,93 +37,96 @@ export default function ExpenseTable({ expenses, onEdit, onDelete, loading }: Ex
 
     return (
         <div className="space-y-4">
-            <div className="overflow-x-auto">
-                <table className="w-full table-auto border-collapse">
-                    <thead>
-                        <tr className="border-b border-gray-200">
-                            <th className="text-left py-3 px-4 font-semibold text-gray-700">Category</th>
-                            <th className="text-left py-3 px-4 font-semibold text-gray-700">Description</th>
-                            <th className="text-left py-3 px-4 font-semibold text-gray-700">Amount</th>
-                            <th className="text-left py-3 px-4 font-semibold text-gray-700">Payment Method</th>
-                            <th className="text-left py-3 px-4 font-semibold text-gray-700">Date</th>
-                            <th className="text-center py-3 px-4 font-semibold text-gray-700">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+            <div className="rounded-md border">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Category</TableHead>
+                            <TableHead>Description</TableHead>
+                            <TableHead>Amount</TableHead>
+                            <TableHead>Payment Method</TableHead>
+                            <TableHead>Date</TableHead>
+                            <TableHead className="text-center">Actions</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
                         {paginatedExpenses.map((expense) => (
-                            <tr key={expense.expenseId} className="border-b border-gray-100 hover:bg-gray-50">
-                                <td className="py-3 px-4">
+                            <TableRow key={expense.expenseId}>
+                                <TableCell>
                                     <div className="flex items-center gap-3">
                                         <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
                                             <Icon name={expense.category.icon} size={16} className="text-gray-600" />
                                         </div>
                                         <span className="text-sm font-medium">{expense.category.name}</span>
                                     </div>
-                                </td>
-                                <td className="py-3 px-4 text-gray-900">{expense.description}</td>
-                                <td className="py-3 px-4 font-semibold text-gray-900">${expense.amount.toFixed(2)}</td>
-                                <td className="py-3 px-4 text-gray-600">{expense.paymentMethod}</td>
-                                <td className="py-3 px-4 text-gray-600">
+                                </TableCell>
+                                <TableCell>{expense.description}</TableCell>
+                                <TableCell className="font-semibold">₹{expense.amount.toFixed(2)}</TableCell>
+                                <TableCell>{expense.paymentMethod}</TableCell>
+                                <TableCell>
                                     {new Date(expense.expenseDate).toLocaleDateString("en-US", {
                                         year: "numeric",
                                         month: "short",
                                         day: "numeric",
                                     })}
-                                </td>
-                                <td className="py-3 px-4 text-center">
+                                </TableCell>
+                                <TableCell className="text-center">
                                     <div className="flex gap-2 justify-center">
-                                        <button
+                                        <Button
                                             onClick={() => onEdit(expense)}
-                                            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                                            variant="ghost"
+                                            size="icon"
                                         >
-                                            <Edit2 className="w-4 h-4 text-gray-600" />
-                                        </button>
-                                        <button
+                                            <Edit2 className="w-4 h-4" />
+                                        </Button>
+                                        <Button
                                             onClick={() => onDelete(expense)}
-                                            className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                                            variant="ghost"
+                                            size="icon"
+                                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
                                         >
-                                            <Trash2 className="w-4 h-4 text-red-600" />
-                                        </button>
+                                            <Trash2 className="w-4 h-4" />
+                                        </Button>
                                     </div>
-                                </td>
-                            </tr>
+                                </TableCell>
+                            </TableRow>
                         ))}
-                    </tbody>
-                </table>
+                    </TableBody>
+                </Table>
             </div>
 
             {totalPages > 1 && (
                 <div className="flex items-center justify-between">
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-muted-foreground">
                         Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, expenses.length)} of {expenses.length} expenses
                     </div>
                     <div className="flex items-center gap-2">
-                        <button
+                        <Button
                             onClick={() => handlePageChange(currentPage - 1)}
                             disabled={currentPage === 1}
-                            className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            variant="outline"
+                            size="icon"
                         >
                             <ChevronLeft className="w-4 h-4" />
-                        </button>
+                        </Button>
                         {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                            <button
+                            <Button
                                 key={page}
                                 onClick={() => handlePageChange(page)}
-                                className={`px-3 py-2 rounded-lg border ${currentPage === page
-                                    ? 'bg-blue-500 text-white border-blue-500'
-                                    : 'border-gray-200 hover:bg-gray-50'
-                                    }`}
+                                variant={currentPage === page ? "default" : "outline"}
+                                size="sm"
                             >
                                 {page}
-                            </button>
+                            </Button>
                         ))}
-                        <button
+                        <Button
                             onClick={() => handlePageChange(currentPage + 1)}
                             disabled={currentPage === totalPages}
-                            className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            variant="outline"
+                            size="icon"
                         >
                             <ChevronRight className="w-4 h-4" />
-                        </button>
+                        </Button>
                     </div>
                 </div>
             )}

@@ -1,4 +1,4 @@
-import { ArrowDownRight, ArrowUpRight, Calendar, DollarSign, TrendingDown, TrendingUp, Wallet, } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Calendar, DollarSign, TrendingDown, TrendingUp } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function Dashboard() {
@@ -26,7 +26,7 @@ export default function Dashboard() {
     const stats = [
         {
             label: "Total Income",
-            value: "$12,450.00",
+            value: "₹12,450.00",
             change: "+12.5%",
             icon: TrendingUp,
             color: "text-green-600",
@@ -35,18 +35,18 @@ export default function Dashboard() {
         },
         {
             label: "Total Expenses",
-            value: "$4,125.25",
+            value: "₹4,125.25",
             change: "-8.2%",
             icon: TrendingDown,
-            color: "text-orange-600",
-            bgColor: "bg-orange-100",
+            color: "text-red-600",
+            bgColor: "bg-red-100",
             trend: "down",
         },
         {
             label: "Net Balance",
-            value: `$${animatedBalance.toFixed(2)}`,
-            change: "+18.7%",
-            icon: Wallet,
+            value: `₹${animatedBalance.toFixed(2)}`,
+            change: "+4.3%",
+            icon: DollarSign,
             color: "text-blue-600",
             bgColor: "bg-blue-100",
             trend: "up",
@@ -220,7 +220,7 @@ export default function Dashboard() {
                                         {item.categoryName}
                                     </span>
                                     <span className="text-sm font-bold text-gray-900">
-                                        ${item.totalSpent}
+                                        ₹{item.totalSpent}
                                     </span>
                                 </div>
                                 <div className="h-3 bg-gray-100 rounded-full overflow-hidden">

@@ -1,5 +1,5 @@
-import {useState} from "react";
-import {Calendar, DollarSign, Edit2, Plus, Search, Trash2, TrendingUp,} from "lucide-react";
+import { useState } from "react";
+import { Calendar, DollarSign, Edit2, Plus, Search, Trash2, TrendingUp, } from "lucide-react";
 
 export default function Income() {
     const [showAddModal, setShowAddModal] = useState(false);
@@ -80,19 +80,19 @@ export default function Income() {
     const incomeStats = [
         {
             label: "Total Income",
-            value: `$${totalIncome.toFixed(2)}`,
+            value: `₹${totalIncome.toFixed(2)}`,
             color: "from-green-500 to-emerald-600",
             icon: DollarSign,
         },
         {
             label: "Recurring",
-            value: `$${recurringIncome.toFixed(2)}`,
+            value: `₹${recurringIncome.toFixed(2)}`,
             color: "from-blue-500 to-cyan-600",
             icon: TrendingUp,
         },
         {
             label: "One-time",
-            value: `$${oneTimeIncome.toFixed(2)}`,
+            value: `₹${oneTimeIncome.toFixed(2)}`,
             color: "from-emerald-500 to-teal-600",
             icon: Calendar,
         },
@@ -109,7 +109,7 @@ export default function Income() {
                     onClick={() => setShowAddModal(true)}
                     className="btn-primary flex items-center gap-2"
                 >
-                    <Plus className="w-5 h-5"/>
+                    <Plus className="w-5 h-5" />
                     Add Income
                 </button>
             </div>
@@ -119,7 +119,7 @@ export default function Income() {
                     <div
                         key={index}
                         className={`card bg-gradient-to-br ${stat.color} border-0 text-white`}
-                        style={{animationDelay: `${index * 100}ms`}}
+                        style={{ animationDelay: `${index * 100}ms` }}
                     >
                         <div className="flex items-center justify-between">
                             <div>
@@ -128,7 +128,7 @@ export default function Income() {
                             </div>
                             <div
                                 className="w-16 h-16 bg-white/20 rounded-3xl flex items-center justify-center backdrop-blur-sm">
-                                <stat.icon className="w-8 h-8"/>
+                                <stat.icon className="w-8 h-8" />
                             </div>
                         </div>
                     </div>
@@ -139,7 +139,7 @@ export default function Income() {
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl font-bold">Income History</h2>
                     <div className="relative flex-1 max-w-md ml-6">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"/>
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                         <input
                             type="text"
                             value={searchQuery}
@@ -155,7 +155,7 @@ export default function Income() {
                         <div
                             key={income.id}
                             className="flex items-center justify-between p-5 rounded-2xl hover:bg-gray-50 transition-all duration-200 group"
-                            style={{animationDelay: `${index * 50}ms`}}
+                            style={{ animationDelay: `${index * 50}ms` }}
                         >
                             <div className="flex items-center gap-4">
                                 <div
@@ -168,32 +168,32 @@ export default function Income() {
                                         {income.source}
                                     </h3>
                                     <div className="flex items-center gap-3 text-sm text-gray-600 mt-1">
-                    <span className="px-2 py-1 bg-gray-100 rounded-lg font-medium">
-                      {income.type}
-                    </span>
+                                        <span className="px-2 py-1 bg-gray-100 rounded-lg font-medium">
+                                            {income.type}
+                                        </span>
                                         <span className="flex items-center gap-1">
-                      <Calendar className="w-3.5 h-3.5"/>
+                                            <Calendar className="w-3.5 h-3.5" />
                                             {new Date(income.date).toLocaleDateString("en-US", {
                                                 month: "long",
                                                 day: "numeric",
                                                 year: "numeric",
                                             })}
-                    </span>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
                             <div className="flex items-center gap-4">
                                 <div className="text-right">
                                     <div className="text-2xl font-bold text-green-600">
-                                        +${income.amount.toFixed(2)}
+                                        +₹{income.amount.toFixed(2)}
                                     </div>
                                 </div>
                                 <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <button className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
-                                        <Edit2 className="w-4 h-4 text-gray-600"/>
+                                        <Edit2 className="w-4 h-4 text-gray-600" />
                                     </button>
                                     <button className="p-2 hover:bg-red-50 rounded-xl transition-colors">
-                                        <Trash2 className="w-4 h-4 text-red-600"/>
+                                        <Trash2 className="w-4 h-4 text-red-600" />
                                     </button>
                                 </div>
                             </div>
@@ -222,9 +222,9 @@ export default function Income() {
                                     Amount
                                 </label>
                                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
-                    $
-                  </span>
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
+                                        ₹
+                                    </span>
                                     <input
                                         type="number"
                                         step="0.01"
@@ -247,7 +247,7 @@ export default function Income() {
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                     Date
                                 </label>
-                                <input type="date" className="input-field"/>
+                                <input type="date" className="input-field" />
                             </div>
                             <div className="flex gap-3 pt-4">
                                 <button

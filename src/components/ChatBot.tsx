@@ -1,5 +1,7 @@
-import {useEffect, useRef, useState} from "react";
-import {MessageCircle, Send, Sparkles, X} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { MessageCircle, Send, Sparkles, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function ChatBot() {
     const [isOpen, setIsOpen] = useState(false);
@@ -14,7 +16,7 @@ export default function ChatBot() {
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({behavior: "smooth"});
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
     useEffect(() => {
@@ -31,7 +33,7 @@ export default function ChatBot() {
     const handleSend = () => {
         if (!input.trim()) return;
 
-        setMessages([...messages, {role: "user", content: input}]);
+        setMessages([...messages, { role: "user", content: input }]);
         setInput("");
 
         setTimeout(() => {
@@ -52,7 +54,7 @@ export default function ChatBot() {
     };
 
     const handleQuickQuestion = (question: string) => {
-        setMessages([...messages, {role: "user", content: question}]);
+        setMessages([...messages, { role: "user", content: question }]);
         setTimeout(() => {
             setMessages((prev) => [
                 ...prev,
@@ -67,43 +69,44 @@ export default function ChatBot() {
 
     return (
         <>
-            <button
+            <Button
                 onClick={() => setIsOpen(true)}
-                className={`fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center z-50 group ${
-                    isOpen ? "scale-0" : "scale-100"
-                }`}
+                size="icon"
+                className={`fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50 group ${isOpen ? "scale-0" : "scale-100"
+                    }`}
             >
-                <MessageCircle className="w-7 h-7 group-hover:scale-110 transition-transform"/>
+                <MessageCircle className="w-7 h-7 group-hover:scale-110 transition-transform" />
                 <div
                     className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
-                    <Sparkles className="w-3 h-3"/>
+                    <Sparkles className="w-3 h-3" />
                 </div>
-            </button>
+            </Button>
 
             <div
-                className={`fixed bottom-6 right-6 w-96 h-[600px] bg-white rounded-3xl shadow-2xl border border-gray-200 flex flex-col z-50 transition-all duration-300 ${
-                    isOpen ? "scale-100 opacity-100" : "scale-0 opacity-0"
-                }`}
-                style={{transformOrigin: "bottom right"}}
+                className={`fixed bottom-6 right-6 w-96 h-[600px] bg-white rounded-3xl shadow-2xl border border-gray-200 flex flex-col z-50 transition-all duration-300 ${isOpen ? "scale-100 opacity-100" : "scale-0 opacity-0"
+                    }`}
+                style={{ transformOrigin: "bottom right" }}
             >
                 <div
                     className="bg-gradient-to-br from-green-500 to-emerald-600 p-6 rounded-t-3xl text-white flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <div
                             className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                            <Sparkles className="w-6 h-6"/>
+                            <Sparkles className="w-6 h-6" />
                         </div>
                         <div>
                             <h3 className="font-bold text-lg">AI Assistant</h3>
                             <p className="text-xs text-green-100">Always here to help</p>
                         </div>
                     </div>
-                    <button
+                    <Button
                         onClick={() => setIsOpen(false)}
-                        className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center hover:bg-white/30 transition-colors"
+                        variant="ghost"
+                        size="icon"
+                        className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-xl hover:bg-white/30 text-white"
                     >
-                        <X className="w-5 h-5"/>
-                    </button>
+                        <X className="w-5 h-5" />
+                    </Button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-6 space-y-4">
@@ -113,18 +116,17 @@ export default function ChatBot() {
                             className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
                         >
                             <div
-                                className={`max-w-[80%] p-4 rounded-2xl ${
-                                    message.role === "user"
+                                className={`max-w-[80%] p-4 rounded-2xl ${message.role === "user"
                                     ? "bg-gradient-to-br from-green-500 to-emerald-600 text-white"
                                     : "bg-gray-100 text-gray-900"
-                                }`}
+                                    }`}
                             >
                                 {message.role === "assistant" && (
                                     <div className="flex items-center gap-2 mb-2">
-                                        <Sparkles className="w-4 h-4 text-green-600"/>
+                                        <Sparkles className="w-4 h-4 text-green-600" />
                                         <span className="text-xs font-semibold text-green-600">
-                      AI Assistant
-                    </span>
+                                            AI Assistant
+                                        </span>
                                     </div>
                                 )}
                                 <p className="text-sm leading-relaxed">{message.content}</p>
@@ -139,36 +141,39 @@ export default function ChatBot() {
                             </p>
                             <div className="grid grid-cols-2 gap-2">
                                 {quickQuestions.map((question, index) => (
-                                    <button
+                                    <Button
                                         key={index}
                                         onClick={() => handleQuickQuestion(question)}
-                                        className="p-3 bg-gray-50 hover:bg-gray-100 rounded-xl text-xs font-medium text-gray-700 transition-colors text-left"
+                                        variant="outline"
+                                        size="sm"
+                                        className="justify-start text-left h-auto p-3"
                                     >
                                         {question}
-                                    </button>
+                                    </Button>
                                 ))}
                             </div>
                         </div>
                     )}
-                    <div ref={messagesEndRef}/>
+                    <div ref={messagesEndRef} />
                 </div>
 
                 <div className="p-4 border-t border-gray-100">
                     <div className="flex gap-2">
-                        <input
+                        <Input
                             type="text"
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             onKeyDown={(e) => e.key === "Enter" && handleSend()}
                             placeholder="Ask me anything..."
-                            className="flex-1 px-4 py-3 rounded-2xl border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-100 outline-none transition-all text-sm"
+                            className="flex-1"
                         />
-                        <button
+                        <Button
                             onClick={handleSend}
-                            className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 text-white rounded-2xl flex items-center justify-center hover:shadow-lg transition-all hover:scale-105 active:scale-95"
+                            size="icon"
+                            className="bg-gradient-to-br from-green-500 to-emerald-600 hover:shadow-lg transition-all hover:scale-105 active:scale-95"
                         >
-                            <Send className="w-5 h-5"/>
-                        </button>
+                            <Send className="w-5 h-5" />
+                        </Button>
                     </div>
                 </div>
             </div>

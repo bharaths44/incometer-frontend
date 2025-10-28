@@ -2,6 +2,11 @@ import { useState, useEffect } from "react";
 import { ExpenseRequestDTO, ExpenseResponseDTO, Category } from "../types/expense";
 import { getAllCategories, createCategory } from "../services/categoryService";
 import { Icon } from "../utils/iconUtils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 interface ExpenseFormProps {
     isOpen: boolean;
@@ -121,11 +126,11 @@ export default function ExpenseForm({ isOpen, onClose, onSubmit, editingExpense,
         }
     };
 
-    const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        if (e.target.value === 'new') {
+    const handleCategoryChange = (value: string) => {
+        if (value === 'new') {
             setShowNewCategoryModal(true);
         } else {
-            setFormData({ ...formData, categoryId: e.target.value });
+            setFormData({ ...formData, categoryId: value });
         }
     };
 
@@ -152,182 +157,188 @@ export default function ExpenseForm({ isOpen, onClose, onSubmit, editingExpense,
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6 z-50">
-            <div className="card max-w-md w-full animate-in">
-                <h2 className="text-2xl font-bold mb-6">{editingExpense ? 'Edit Expense' : 'Add New Expense'}</h2>
+        <Dialog open={isOpen} onOpenChange={onClose}>
+            <DialogContent className="max-w-md">
+                <DialogHeader>
+                    <DialogTitle>{editingExpense ? 'Edit Expense' : 'Add New Expense'}</DialogTitle>
+                </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <Label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
                             Expense Name
-                        </label>
-                        <input
+                        </Label>
+                        <Input
+                            id="description"
                             type="text"
                             value={formData.description}
                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                            className="input-field"
                             placeholder="e.g., Grocery Shopping"
                             required
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <Label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-2">
                             Amount
-                        </label>
+                        </Label>
                         <div className="relative">
                             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
-                                $
+                                ₹
                             </span>
-                            <input
+                            <Input
+                                id="amount"
                                 type="number"
                                 step="0.01"
                                 value={formData.amount}
                                 onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                                className="input-field pl-8"
+                                className="pl-8"
                                 placeholder="0.00"
                                 required
                             />
                         </div>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <Label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
                             Category
-                        </label>
-                        <select
+                        </Label>
+                        <Select
                             value={formData.categoryId}
-                            onChange={handleCategoryChange}
-                            className="input-field"
-                            required
+                            onValueChange={handleCategoryChange}
                             disabled={loadingCategories}
                         >
-                            <option value="">Select Category</option>
-                            {categories.map((cat) => (
-                                <option key={cat.categoryId} value={cat.categoryId}>
-                                    {cat.name}
-                                </option>
-                            ))}
-                            <option value="new">+ Create New Category</option>
-                        </select>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select Category" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {categories.map((cat) => (
+                                    <SelectItem key={cat.categoryId} value={cat.categoryId.toString()}>
+                                        {cat.name}
+                                    </SelectItem>
+                                ))}
+                                <SelectItem value="new">+ Create New Category</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <Label htmlFor="paymentMethod" className="block text-sm font-medium text-gray-700 mb-2">
                             Payment Method
-                        </label>
-                        <input
+                        </Label>
+                        <Input
+                            id="paymentMethod"
                             type="text"
                             value={formData.paymentMethod}
                             onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}
-                            className="input-field"
                             placeholder="e.g., Credit Card"
                             required
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <Label htmlFor="expenseDate" className="block text-sm font-medium text-gray-700 mb-2">
                             Date
-                        </label>
-                        <input
+                        </Label>
+                        <Input
+                            id="expenseDate"
                             type="date"
                             value={formData.expenseDate}
                             onChange={(e) => setFormData({ ...formData, expenseDate: e.target.value })}
-                            className="input-field"
                             required
                         />
                     </div>
                     <div className="flex gap-3 pt-4">
-                        <button
+                        <Button
                             type="button"
                             onClick={onClose}
-                            className="btn-secondary flex-1"
+                            variant="secondary"
+                            className="flex-1"
                         >
                             Cancel
-                        </button>
-                        <button type="submit" className="btn-primary flex-1">
+                        </Button>
+                        <Button type="submit" className="flex-1">
                             {editingExpense ? 'Update' : 'Add'} Expense
-                        </button>
+                        </Button>
                     </div>
                 </form>
-            </div>
 
-            {/* New Category Modal */}
-            {showNewCategoryModal && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6 z-50">
-                    <div className="card max-w-md w-full animate-in">
-                        <h2 className="text-2xl font-bold mb-6">Create New Category</h2>
-                        <div className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Category Name
-                                </label>
-                                <input
-                                    type="text"
-                                    value={newCategoryName}
-                                    onChange={(e) => setNewCategoryName(e.target.value)}
-                                    className="input-field"
-                                    placeholder="e.g., Travel"
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Icon
-                                </label>
-                                <input
-                                    type="text"
-                                    value={iconSearchQuery}
-                                    onChange={(e) => setIconSearchQuery(e.target.value)}
-                                    className="input-field mb-3"
-                                    placeholder="Search all Lucide icons (e.g., gym, car, food)..."
-                                />
-                                {!iconSearchQuery && (
-                                    <p className="text-xs text-gray-500 mb-2">Popular icons shown below. Start typing to search all {allLucideIcons.length > 0 ? allLucideIcons.length : ''} Lucide icons.</p>
-                                )}
-                                <div className="grid grid-cols-6 gap-2 max-h-32 overflow-y-auto">
-                                    {filteredIcons.map((iconName) => (
-                                        <button
-                                            key={iconName}
-                                            type="button"
-                                            onClick={() => setNewCategoryIcon(iconName)}
-                                            className={`p-2 border rounded-lg hover:bg-gray-50 ${newCategoryIcon === iconName ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
-                                                }`}
-                                            title={iconName}
-                                        >
-                                            <Icon name={iconName} size={20} />
-                                        </button>
-                                    ))}
+                {/* New Category Modal */}
+                {showNewCategoryModal && (
+                    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6 z-50">
+                        <div className="card max-w-md w-full animate-in">
+                            <h2 className="text-2xl font-bold mb-6">Create New Category</h2>
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Category Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={newCategoryName}
+                                        onChange={(e) => setNewCategoryName(e.target.value)}
+                                        className="input-field"
+                                        placeholder="e.g., Travel"
+                                        required
+                                    />
                                 </div>
-                                {filteredIcons.length === 0 && iconSearchQuery && (
-                                    <p className="text-sm text-gray-500 mt-2">No icons found for "{iconSearchQuery}"</p>
-                                )}
-                                {filteredIcons.length > 0 && iconSearchQuery && (
-                                    <p className="text-xs text-gray-500 mt-2">{filteredIcons.length} icons found</p>
-                                )}
-                            </div>
-                            <div className="flex gap-3 pt-4">
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setShowNewCategoryModal(false);
-                                        setNewCategoryName("");
-                                        setNewCategoryIcon("");
-                                        setIconSearchQuery("");
-                                    }}
-                                    className="btn-secondary flex-1"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={handleCreateCategory}
-                                    className="btn-primary flex-1"
-                                    disabled={!newCategoryName.trim() || !newCategoryIcon}
-                                >
-                                    Create
-                                </button>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Icon
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={iconSearchQuery}
+                                        onChange={(e) => setIconSearchQuery(e.target.value)}
+                                        className="input-field mb-3"
+                                        placeholder="Search all Lucide icons (e.g., gym, car, food)..."
+                                    />
+                                    {!iconSearchQuery && (
+                                        <p className="text-xs text-gray-500 mb-2">Popular icons shown below. Start typing to search all {allLucideIcons.length > 0 ? allLucideIcons.length : ''} Lucide icons.</p>
+                                    )}
+                                    <div className="grid grid-cols-6 gap-2 max-h-32 overflow-y-auto">
+                                        {filteredIcons.map((iconName) => (
+                                            <button
+                                                key={iconName}
+                                                type="button"
+                                                onClick={() => setNewCategoryIcon(iconName)}
+                                                className={`p-2 border rounded-lg hover:bg-gray-50 ${newCategoryIcon === iconName ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
+                                                    }`}
+                                                title={iconName}
+                                            >
+                                                <Icon name={iconName} size={20} />
+                                            </button>
+                                        ))}
+                                    </div>
+                                    {filteredIcons.length === 0 && iconSearchQuery && (
+                                        <p className="text-sm text-gray-500 mt-2">No icons found for "{iconSearchQuery}"</p>
+                                    )}
+                                    {filteredIcons.length > 0 && iconSearchQuery && (
+                                        <p className="text-xs text-gray-500 mt-2">{filteredIcons.length} icons found</p>
+                                    )}
+                                </div>
+                                <div className="flex gap-3 pt-4">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setShowNewCategoryModal(false);
+                                            setNewCategoryName("");
+                                            setNewCategoryIcon("");
+                                            setIconSearchQuery("");
+                                        }}
+                                        className="btn-secondary flex-1"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={handleCreateCategory}
+                                        className="btn-primary flex-1"
+                                        disabled={!newCategoryName.trim() || !newCategoryIcon}
+                                    >
+                                        Create
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )}
+            </DialogContent>
+        </Dialog>
     );
 }

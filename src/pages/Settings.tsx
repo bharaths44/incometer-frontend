@@ -1,5 +1,5 @@
-import {Bell, Download, Globe, Lock, Moon, Shield, Sun, Trash2,} from "lucide-react";
-import {useState} from "react";
+import { Bell, Download, Globe, Lock, Moon, Shield, Sun, Trash2, } from "lucide-react";
+import { useState } from "react";
 
 export default function Settings() {
     const [darkMode, setDarkMode] = useState(false);
@@ -17,17 +17,17 @@ export default function Settings() {
                 <div className="space-y-6">
                     <div className="card">
                         <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-                            <Sun className="w-6 h-6 text-green-600"/>
+                            <Sun className="w-6 h-6 text-green-600" />
                             Appearance
                         </h3>
                         <div className="space-y-4">
                             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
                                 <div className="flex items-center gap-3">
                                     {darkMode ? (
-                                        <Moon className="w-5 h-5 text-gray-600"/>
+                                        <Moon className="w-5 h-5 text-gray-600" />
                                     ) : (
-                                         <Sun className="w-5 h-5 text-gray-600"/>
-                                     )}
+                                        <Sun className="w-5 h-5 text-gray-600" />
+                                    )}
                                     <div>
                                         <div className="font-medium">Dark Mode</div>
                                         <div className="text-sm text-gray-600">
@@ -37,21 +37,19 @@ export default function Settings() {
                                 </div>
                                 <button
                                     onClick={() => setDarkMode(!darkMode)}
-                                    className={`relative w-14 h-8 rounded-full transition-colors ${
-                                        darkMode ? "bg-green-500" : "bg-gray-300"
-                                    }`}
+                                    className={`relative w-14 h-8 rounded-full transition-colors ${darkMode ? "bg-green-500" : "bg-gray-300"
+                                        }`}
                                 >
                                     <div
-                                        className={`absolute top-1 w-6 h-6 bg-white rounded-full transition-transform ${
-                                            darkMode ? "translate-x-7" : "translate-x-1"
-                                        }`}
+                                        className={`absolute top-1 w-6 h-6 bg-white rounded-full transition-transform ${darkMode ? "translate-x-7" : "translate-x-1"
+                                            }`}
                                     />
                                 </button>
                             </div>
 
                             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
                                 <div className="flex items-center gap-3">
-                                    <Globe className="w-5 h-5 text-gray-600"/>
+                                    <Globe className="w-5 h-5 text-gray-600" />
                                     <div>
                                         <div className="font-medium">Language</div>
                                         <div className="text-sm text-gray-600">
@@ -70,7 +68,7 @@ export default function Settings() {
 
                             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
                                 <div className="flex items-center gap-3">
-                                    <Globe className="w-5 h-5 text-gray-600"/>
+                                    <Globe className="w-5 h-5 text-gray-600" />
                                     <div>
                                         <div className="font-medium">Currency</div>
                                         <div className="text-sm text-gray-600">
@@ -80,7 +78,7 @@ export default function Settings() {
                                 </div>
                                 <select
                                     className="px-4 py-2 rounded-xl border border-gray-200 font-medium focus:outline-none focus:ring-2 focus:ring-green-100">
-                                    <option>USD ($)</option>
+                                    <option>INR (₹)</option>
                                     <option>EUR (€)</option>
                                     <option>GBP (£)</option>
                                     <option>JPY (¥)</option>
@@ -91,7 +89,7 @@ export default function Settings() {
 
                     <div className="card">
                         <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-                            <Bell className="w-6 h-6 text-green-600"/>
+                            <Bell className="w-6 h-6 text-green-600" />
                             Notifications
                         </h3>
                         <div className="space-y-4">
@@ -104,14 +102,12 @@ export default function Settings() {
                                 </div>
                                 <button
                                     onClick={() => setNotifications(!notifications)}
-                                    className={`relative w-14 h-8 rounded-full transition-colors ${
-                                        notifications ? "bg-green-500" : "bg-gray-300"
-                                    }`}
+                                    className={`relative w-14 h-8 rounded-full transition-colors ${notifications ? "bg-green-500" : "bg-gray-300"
+                                        }`}
                                 >
                                     <div
-                                        className={`absolute top-1 w-6 h-6 bg-white rounded-full transition-transform ${
-                                            notifications ? "translate-x-7" : "translate-x-1"
-                                        }`}
+                                        className={`absolute top-1 w-6 h-6 bg-white rounded-full transition-transform ${notifications ? "translate-x-7" : "translate-x-1"
+                                            }`}
                                     />
                                 </button>
                             </div>
@@ -125,14 +121,12 @@ export default function Settings() {
                                 </div>
                                 <button
                                     onClick={() => setEmailNotifications(!emailNotifications)}
-                                    className={`relative w-14 h-8 rounded-full transition-colors ${
-                                        emailNotifications ? "bg-green-500" : "bg-gray-300"
-                                    }`}
+                                    className={`relative w-14 h-8 rounded-full transition-colors ${emailNotifications ? "bg-green-500" : "bg-gray-300"
+                                        }`}
                                 >
                                     <div
-                                        className={`absolute top-1 w-6 h-6 bg-white rounded-full transition-transform ${
-                                            emailNotifications ? "translate-x-7" : "translate-x-1"
-                                        }`}
+                                        className={`absolute top-1 w-6 h-6 bg-white rounded-full transition-transform ${emailNotifications ? "translate-x-7" : "translate-x-1"
+                                            }`}
                                     />
                                 </button>
                             </div>
@@ -143,14 +137,14 @@ export default function Settings() {
                 <div className="space-y-6">
                     <div className="card">
                         <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-                            <Shield className="w-6 h-6 text-green-600"/>
+                            <Shield className="w-6 h-6 text-green-600" />
                             Privacy & Security
                         </h3>
                         <div className="space-y-3">
                             <button
                                 className="w-full flex items-center justify-between p-4 rounded-2xl hover:bg-gray-50 transition-colors text-left">
                                 <div className="flex items-center gap-3">
-                                    <Lock className="w-5 h-5 text-gray-600"/>
+                                    <Lock className="w-5 h-5 text-gray-600" />
                                     <div>
                                         <div className="font-medium">Change Password</div>
                                         <div className="text-sm text-gray-600">
@@ -163,7 +157,7 @@ export default function Settings() {
                             <button
                                 className="w-full flex items-center justify-between p-4 rounded-2xl hover:bg-gray-50 transition-colors text-left">
                                 <div className="flex items-center gap-3">
-                                    <Shield className="w-5 h-5 text-gray-600"/>
+                                    <Shield className="w-5 h-5 text-gray-600" />
                                     <div>
                                         <div className="font-medium">Two-Factor Authentication</div>
                                         <div className="text-sm text-gray-600">
@@ -173,14 +167,14 @@ export default function Settings() {
                                 </div>
                                 <span
                                     className="text-xs bg-green-100 text-green-700 px-3 py-1 rounded-full font-semibold">
-                  Recommended
-                </span>
+                                    Recommended
+                                </span>
                             </button>
 
                             <button
                                 className="w-full flex items-center justify-between p-4 rounded-2xl hover:bg-gray-50 transition-colors text-left">
                                 <div className="flex items-center gap-3">
-                                    <Globe className="w-5 h-5 text-gray-600"/>
+                                    <Globe className="w-5 h-5 text-gray-600" />
                                     <div>
                                         <div className="font-medium">Privacy Settings</div>
                                         <div className="text-sm text-gray-600">
@@ -194,14 +188,14 @@ export default function Settings() {
 
                     <div className="card">
                         <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-                            <Download className="w-6 h-6 text-green-600"/>
+                            <Download className="w-6 h-6 text-green-600" />
                             Data Management
                         </h3>
                         <div className="space-y-3">
                             <button
                                 className="w-full p-4 rounded-2xl bg-blue-50 hover:bg-blue-100 transition-colors text-left border-2 border-blue-200">
                                 <div className="flex items-center gap-3">
-                                    <Download className="w-5 h-5 text-blue-600"/>
+                                    <Download className="w-5 h-5 text-blue-600" />
                                     <div>
                                         <div className="font-medium text-blue-900">Export Data</div>
                                         <div className="text-sm text-blue-700">
@@ -214,7 +208,7 @@ export default function Settings() {
                             <button
                                 className="w-full p-4 rounded-2xl bg-orange-50 hover:bg-orange-100 transition-colors text-left border-2 border-orange-200">
                                 <div className="flex items-center gap-3">
-                                    <Download className="w-5 h-5 text-orange-600"/>
+                                    <Download className="w-5 h-5 text-orange-600" />
                                     <div>
                                         <div className="font-medium text-orange-900">
                                             Backup Data
@@ -230,7 +224,7 @@ export default function Settings() {
 
                     <div className="card border-2 border-red-200 bg-red-50">
                         <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-red-900">
-                            <Trash2 className="w-6 h-6 text-red-600"/>
+                            <Trash2 className="w-6 h-6 text-red-600" />
                             Danger Zone
                         </h3>
                         <p className="text-sm text-red-700 mb-4">

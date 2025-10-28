@@ -10,6 +10,11 @@ export default function Expenses() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("all");
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("all");
+    const [dateFrom, setDateFrom] = useState("");
+    const [dateTo, setDateTo] = useState("");
+    const [amountMin, setAmountMin] = useState("");
+    const [amountMax, setAmountMax] = useState("");
     const [expenses, setExpenses] = useState<ExpenseResponseDTO[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
@@ -31,7 +36,9 @@ export default function Expenses() {
                     getAllCategories(1)
                 ]);
                 setExpenses(expensesData);
-                setCategories(categoriesData);
+                // Filter categories to only show expense categories
+                const expenseCategories = categoriesData.filter(cat => cat.type === 'EXPENSE');
+                setCategories(expenseCategories);
             } catch (error) {
                 console.error('Failed to fetch data:', error);
             } finally {
@@ -108,13 +115,24 @@ export default function Expenses() {
             .includes(searchQuery.toLowerCase());
         const matchesCategory =
             selectedCategory === "all" || expense.category.name === selectedCategory;
-        return matchesSearch && matchesCategory;
+        const matchesPaymentMethod =
+            selectedPaymentMethod === "all" || expense.paymentMethod === selectedPaymentMethod;
+        const matchesDateFrom = !dateFrom || expense.expenseDate >= dateFrom;
+        const matchesDateTo = !dateTo || expense.expenseDate <= dateTo;
+        const matchesAmountMin = !amountMin || expense.amount >= parseFloat(amountMin);
+        const matchesAmountMax = !amountMax || expense.amount <= parseFloat(amountMax);
+
+        return matchesSearch && matchesCategory && matchesPaymentMethod &&
+            matchesDateFrom && matchesDateTo && matchesAmountMin && matchesAmountMax;
     });
 
     const totalExpenses = filteredExpenses.reduce(
         (sum, expense) => sum + expense.amount,
         0,
     );
+
+    // Get unique payment methods from expenses
+    const paymentMethods = Array.from(new Set(expenses.map(expense => expense.paymentMethod))).sort();
 
     return (
         <div className="page-transition space-y-8">
@@ -139,7 +157,7 @@ export default function Expenses() {
                             Total Expenses This Month
                         </div>
                         <div className="text-5xl font-bold">
-                            ${totalExpenses.toFixed(2)}
+                            ₹{totalExpenses.toFixed(2)}
                         </div>
                     </div>
                     <div
@@ -175,6 +193,81 @@ export default function Expenses() {
                         ))}
                     </select>
                 </div>
+                <div className="relative">
+                    <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <select
+                        value={selectedPaymentMethod}
+                        onChange={(e) => setSelectedPaymentMethod(e.target.value)}
+                        className="input-field pl-12 pr-8 appearance-none cursor-pointer"
+                    >
+                        <option value="all">All Payment Methods</option>
+                        {paymentMethods.map((method) => (
+                            <option key={method} value={method}>
+                                {method}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Date From</label>
+                    <input
+                        type="date"
+                        value={dateFrom}
+                        onChange={(e) => setDateFrom(e.target.value)}
+                        className="input-field w-full"
+                    />
+                </div>
+                <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Date To</label>
+                    <input
+                        type="date"
+                        value={dateTo}
+                        onChange={(e) => setDateTo(e.target.value)}
+                        className="input-field w-full"
+                    />
+                </div>
+                <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Min Amount (₹)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        value={amountMin}
+                        onChange={(e) => setAmountMin(e.target.value)}
+                        placeholder="0.00"
+                        className="input-field w-full"
+                    />
+                </div>
+                <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Max Amount (₹)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        value={amountMax}
+                        onChange={(e) => setAmountMax(e.target.value)}
+                        placeholder="0.00"
+                        className="input-field w-full"
+                    />
+                </div>
+            </div>
+
+            <div className="flex justify-end">
+                <button
+                    onClick={() => {
+                        setSearchQuery("");
+                        setSelectedCategory("all");
+                        setSelectedPaymentMethod("all");
+                        setDateFrom("");
+                        setDateTo("");
+                        setAmountMin("");
+                        setAmountMax("");
+                    }}
+                    className="btn-secondary text-sm"
+                >
+                    Clear All Filters
+                </button>
             </div>
 
             <ExpenseTable
