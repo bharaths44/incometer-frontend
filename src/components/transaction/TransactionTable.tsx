@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Edit2, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
-import { TransactionResponseDTO } from "../../types/transaction";
+import { TransactionResponseDTO, TransactionConfig } from "../../types/transaction";
 import Icon from "../../utils/iconUtils";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,27 +12,28 @@ import {
     TableRow,
 } from "@/components/ui/table";
 
-interface ExpenseTableProps {
-    expenses: TransactionResponseDTO[];
-    onEdit: (expense: TransactionResponseDTO) => void;
-    onDelete: (expense: TransactionResponseDTO) => void;
+interface TransactionTableProps {
+    transactions: TransactionResponseDTO[];
+    onEdit: (transaction: TransactionResponseDTO) => void;
+    onDelete: (transaction: TransactionResponseDTO) => void;
     loading: boolean;
+    config: TransactionConfig;
 }
 
-export default function ExpenseTable({ expenses, onEdit, onDelete, loading }: ExpenseTableProps) {
+export default function TransactionTable({ transactions, onEdit, onDelete, loading, config }: TransactionTableProps) {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
-    const totalPages = Math.ceil(expenses.length / itemsPerPage);
+    const totalPages = Math.ceil(transactions.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const paginatedExpenses = expenses.slice(startIndex, startIndex + itemsPerPage);
+    const paginatedTransactions = transactions.slice(startIndex, startIndex + itemsPerPage);
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
     };
 
     if (loading) {
-        return <div className="text-center py-8">Loading expenses...</div>;
+        return <div className="text-center py-8">Loading {config.type}s...</div>;
     }
 
     return (
@@ -41,30 +42,32 @@ export default function ExpenseTable({ expenses, onEdit, onDelete, loading }: Ex
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Category</TableHead>
-                            <TableHead>Description</TableHead>
-                            <TableHead>Amount</TableHead>
-                            <TableHead>Payment Method</TableHead>
-                            <TableHead>Date</TableHead>
-                            <TableHead className="text-center">Actions</TableHead>
+                            <TableHead>{config.tableHeaders.category}</TableHead>
+                            <TableHead>{config.tableHeaders.description}</TableHead>
+                            <TableHead>{config.tableHeaders.amount}</TableHead>
+                            <TableHead>{config.tableHeaders.paymentMethod}</TableHead>
+                            <TableHead>{config.tableHeaders.date}</TableHead>
+                            <TableHead className="text-center">{config.tableHeaders.actions}</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {paginatedExpenses.map((expense) => (
-                            <TableRow key={expense.transactionId}>
+                        {paginatedTransactions.map((transaction) => (
+                            <TableRow key={transaction.transactionId}>
                                 <TableCell>
                                     <div className="flex items-center gap-3">
                                         <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                                            <Icon name={expense.category.icon} size={16} className="text-gray-600" />
+                                            <Icon name={transaction.category.icon} size={16} className="text-gray-600" />
                                         </div>
-                                        <span className="text-sm font-medium">{expense.category.name}</span>
+                                        <span className="text-sm font-medium">{transaction.category.name}</span>
                                     </div>
                                 </TableCell>
-                                <TableCell>{expense.description}</TableCell>
-                                <TableCell className="font-semibold">₹{expense.amount.toFixed(2)}</TableCell>
-                                <TableCell>{expense.paymentMethod.displayName}</TableCell>
+                                <TableCell>{transaction.description}</TableCell>
+                                <TableCell className="font-semibold">
+                                    {config.type === 'income' ? '+' : ''}₹{transaction.amount.toFixed(2)}
+                                </TableCell>
+                                <TableCell>{transaction.paymentMethod.displayName}</TableCell>
                                 <TableCell>
-                                    {new Date(expense.transactionDate).toLocaleDateString("en-US", {
+                                    {new Date(transaction.transactionDate).toLocaleDateString("en-US", {
                                         year: "numeric",
                                         month: "short",
                                         day: "numeric",
@@ -73,14 +76,14 @@ export default function ExpenseTable({ expenses, onEdit, onDelete, loading }: Ex
                                 <TableCell className="text-center">
                                     <div className="flex gap-2 justify-center">
                                         <Button
-                                            onClick={() => onEdit(expense)}
+                                            onClick={() => onEdit(transaction)}
                                             variant="ghost"
                                             size="icon"
                                         >
                                             <Edit2 className="w-4 h-4" />
                                         </Button>
                                         <Button
-                                            onClick={() => onDelete(expense)}
+                                            onClick={() => onDelete(transaction)}
                                             variant="ghost"
                                             size="icon"
                                             className="text-red-600 hover:text-red-700 hover:bg-red-50"
@@ -98,7 +101,7 @@ export default function ExpenseTable({ expenses, onEdit, onDelete, loading }: Ex
             {totalPages > 1 && (
                 <div className="flex items-center justify-between">
                     <div className="text-sm text-muted-foreground">
-                        Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, expenses.length)} of {expenses.length} expenses
+                        Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, transactions.length)} of {transactions.length} {config.type}s
                     </div>
                     <div className="flex items-center gap-2">
                         <Button

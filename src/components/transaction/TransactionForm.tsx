@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { TransactionRequestDTO, TransactionResponseDTO } from "../../types/transaction";
+import { TransactionRequestDTO, TransactionResponseDTO, TransactionConfig } from "../../types/transaction";
 import { getAllCategories } from "../../services/categoryService";
 import { getAllPaymentMethods } from "../../services/paymentMethodService";
 import { Button } from "@/components/ui/button";
@@ -16,19 +16,20 @@ import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { Category } from "@/types/category";
 
-interface ExpenseFormProps {
+interface TransactionFormProps {
     isOpen: boolean;
     onClose: () => void;
     onSubmit: (dto: TransactionRequestDTO) => Promise<void>;
-    editingExpense: TransactionResponseDTO | null;
+    editingTransaction: TransactionResponseDTO | null;
     initialData: {
         description: string;
         amount: string;
         categoryId: string;
         paymentMethodId: string;
-        transactionDate: string;
+        date: string;
         userId: number;
     };
+    config: TransactionConfig;
 }
 
 const predefinedIcons = [
@@ -43,7 +44,7 @@ const pascalToKebab = (str: string): string => {
         .toLowerCase();
 };
 
-export default function ExpenseForm({ isOpen, onClose, onSubmit, editingExpense, initialData }: ExpenseFormProps) {
+export default function TransactionForm({ isOpen, onClose, onSubmit, editingTransaction, initialData, config }: TransactionFormProps) {
     const [formData, setFormData] = useState(initialData);
     const [categories, setCategories] = useState<Category[]>([]);
     const [paymentMethods, setPaymentMethods] = useState<PaymentMethodResponseDTO[]>([]);
@@ -62,7 +63,7 @@ export default function ExpenseForm({ isOpen, onClose, onSubmit, editingExpense,
         const fetchCategories = async () => {
             try {
                 const data = await getAllCategories(initialData.userId);
-                setCategories(data);
+                setCategories(data.filter(cat => cat.type === (config.type === 'expense' ? 'EXPENSE' : 'INCOME')));
             } catch (error) {
                 console.error('Failed to fetch categories:', error);
             } finally {
@@ -158,8 +159,8 @@ export default function ExpenseForm({ isOpen, onClose, onSubmit, editingExpense,
             alert('Please select a payment method');
             return;
         }
-        if (!formData.transactionDate) {
-            alert('Please select an expense date');
+        if (!formData.date) {
+            alert(`Please select a ${config.formLabels.date.toLowerCase()}`);
             return;
         }
 
@@ -169,8 +170,8 @@ export default function ExpenseForm({ isOpen, onClose, onSubmit, editingExpense,
             amount: parseFloat(formData.amount),
             description: formData.description.trim(),
             paymentMethodId: parseInt(formData.paymentMethodId),
-            transactionDate: formData.transactionDate,
-            transactionType: 'EXPENSE',
+            transactionDate: formData.date,
+            transactionType: config.type === 'expense' ? 'EXPENSE' : 'INCOME',
         };
         await onSubmit(dto);
         onClose();
@@ -183,24 +184,24 @@ export default function ExpenseForm({ isOpen, onClose, onSubmit, editingExpense,
             <Dialog open={isOpen} onOpenChange={onClose}>
                 <DialogContent className="max-w-md">
                     <DialogHeader>
-                        <DialogTitle>{editingExpense ? 'Edit Expense' : 'Add New Expense'}</DialogTitle>
+                        <DialogTitle>{editingTransaction ? `Edit ${config.formTitle}` : `Add New ${config.formTitle}`}</DialogTitle>
                     </DialogHeader>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
                             <Label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-                                Expense Name
+                                {config.formLabels.description}
                             </Label>
                             <Input
                                 id="description"
                                 type="text"
                                 value={formData.description}
                                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                placeholder="e.g., Grocery Shopping"
+                                placeholder={`e.g., ${config.type === 'expense' ? 'Grocery Shopping' : 'Freelance Project'}`}
                             />
                         </div>
                         <div>
                             <Label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-2">
-                                Amount
+                                {config.formLabels.amount}
                             </Label>
                             <div className="relative">
                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
@@ -220,7 +221,7 @@ export default function ExpenseForm({ isOpen, onClose, onSubmit, editingExpense,
                         </div>
                         <div>
                             <Label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
-                                Category
+                                {config.formLabels.category}
                             </Label>
                             <Select
                                 value={formData.categoryId}
@@ -242,7 +243,7 @@ export default function ExpenseForm({ isOpen, onClose, onSubmit, editingExpense,
                         </div>
                         <div>
                             <Label htmlFor="paymentMethodId" className="block text-sm font-medium text-gray-700 mb-2">
-                                Payment Method
+                                {config.formLabels.paymentMethod}
                             </Label>
                             <Select
                                 value={formData.paymentMethodId}
@@ -263,33 +264,33 @@ export default function ExpenseForm({ isOpen, onClose, onSubmit, editingExpense,
                             </Select>
                         </div>
                         <div>
-                            <Label htmlFor="expenseDate" className="block text-sm font-medium text-gray-700 mb-2">
-                                Date
+                            <Label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-2">
+                                {config.formLabels.date}
                             </Label>
                             <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                                 <PopoverTrigger asChild>
                                     <Button
                                         variant="outline"
-                                        className={`w-full justify-start text-left font-normal ${!formData.transactionDate && "text-muted-foreground"
+                                        className={`w-full justify-start text-left font-normal ${!formData.date && "text-muted-foreground"
                                             }`}
                                     >
                                         <CalendarIcon className="mr-2 h-4 w-4" />
-                                        {formData.transactionDate ? format(new Date(formData.transactionDate), "PPP") : "Pick a date"}
+                                        {formData.date ? format(new Date(formData.date), "PPP") : "Pick a date"}
                                     </Button>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-auto p-0" align="start">
                                     <Calendar
                                         mode="single"
-                                        selected={formData.transactionDate ? new Date(formData.transactionDate) : undefined}
+                                        selected={formData.date ? new Date(formData.date) : undefined}
                                         onSelect={(date) => {
                                             if (date) {
                                                 const year = date.getFullYear();
                                                 const month = String(date.getMonth() + 1).padStart(2, '0');
                                                 const day = String(date.getDate()).padStart(2, '0');
                                                 const dateString = `${year}-${month}-${day}`;
-                                                setFormData({ ...formData, transactionDate: dateString });
+                                                setFormData({ ...formData, date: dateString });
                                             } else {
-                                                setFormData({ ...formData, transactionDate: "" });
+                                                setFormData({ ...formData, date: "" });
                                             }
                                             setIsCalendarOpen(false);
                                         }}
@@ -308,7 +309,7 @@ export default function ExpenseForm({ isOpen, onClose, onSubmit, editingExpense,
                                 Cancel
                             </Button>
                             <Button type="submit" className="flex-1">
-                                {editingExpense ? 'Update' : 'Add'} Expense
+                                {editingTransaction ? `Update ${config.formTitle}` : `Add ${config.formTitle}`}
                             </Button>
                         </div>
                     </form>
