@@ -3,5 +3,5 @@ import { createIncomeService } from "../services/transactionService";
 
 export default function Income() {
     const service = createIncomeService();
-    return <TransactionPage config={service.config} service={service} />;
+    return <TransactionPage config={service.config} />;
 }

@@ -63,7 +63,7 @@ export default function TransactionTable({ transactions, onEdit, onDelete, loadi
                                 </TableCell>
                                 <TableCell>{transaction.description}</TableCell>
                                 <TableCell className="font-semibold">
-                                    {config.type === 'income' ? '+' : ''}₹{transaction.amount.toFixed(2)}
+                                    ₹{transaction.amount.toFixed(2)}
                                 </TableCell>
                                 <TableCell>{transaction.paymentMethod.displayName}</TableCell>
                                 <TableCell>

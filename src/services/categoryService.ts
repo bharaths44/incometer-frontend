@@ -2,20 +2,15 @@ import { Category, CategoryRequestDTO } from "@/types/category";
 
 
 const API_BASE_URL = 'http://localhost:8080/api/categories';
-const cache: { [key: string]: Category[] } = {};
 
 export const getAllCategories = async (userId: number): Promise<Category[]> => {
-    const cacheKey = `categories_${userId}`;
-    if (!cache[cacheKey]) {
-        console.log('Fetching categories for user:', userId);
-        const response = await fetch(`${API_BASE_URL}/user/${userId}`);
-        console.log('Response status:', response.status);
-        if (!response.ok) {
-            throw new Error('Failed to fetch categories');
-        }
-        cache[cacheKey] = await response.json();
+    console.log('Fetching categories for user:', userId);
+    const response = await fetch(`${API_BASE_URL}/user/${userId}`);
+    console.log('Response status:', response.status);
+    if (!response.ok) {
+        throw new Error('Failed to fetch categories');
     }
-    return cache[cacheKey];
+    return response.json();
 };
 
 export const createCategory = async (category: CategoryRequestDTO): Promise<Category> => {
@@ -34,8 +29,6 @@ export const createCategory = async (category: CategoryRequestDTO): Promise<Cate
         throw new Error('Failed to create category');
     }
     const newCategory = await response.json();
-    // Invalidate cache
-    delete cache[`categories_${category.userId}`];
     return newCategory;
 };
 

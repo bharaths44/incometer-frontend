@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Filter, Plus, Search, CalendarIcon } from "lucide-react";
-import { getAllCategories } from "../../services/categoryService";
 import { TransactionResponseDTO, TransactionRequestDTO, TransactionConfig } from "../../types/transaction";
 import TransactionForm from "./TransactionForm";
 import TransactionTable from "./TransactionTable";
@@ -11,15 +10,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
-import { Category } from "@/types/category";
-import { TransactionService } from "../../services/transactionService";
+import { useExpenseTransactions, useIncomeTransactions, useCreateExpense, useCreateIncome, useUpdateExpense, useUpdateIncome, useDeleteExpense, useDeleteIncome } from "../../hooks/useTransactions";
+import { useCategories } from "../../hooks/useCategories";
 
 interface TransactionPageProps {
     config: TransactionConfig;
-    service: TransactionService;
 }
 
-export default function TransactionPage({ config, service }: TransactionPageProps) {
+export default function TransactionPage({ config }: TransactionPageProps) {
     const [showAddModal, setShowAddModal] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("all");
@@ -30,9 +28,28 @@ export default function TransactionPage({ config, service }: TransactionPageProp
     const [isDateToOpen, setIsDateToOpen] = useState(false);
     const [amountMin, setAmountMin] = useState("");
     const [amountMax, setAmountMax] = useState("");
-    const [transactions, setTransactions] = useState<TransactionResponseDTO[]>([]);
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [loading, setLoading] = useState(true);
+    const userId = 1; // Assuming userId is 1 for now
+
+    // Use React Query hooks
+    const { data: expenseTransactions = [], isLoading: expenseLoading } = useExpenseTransactions(userId);
+    const { data: incomeTransactions = [], isLoading: incomeLoading } = useIncomeTransactions(userId);
+    const { data: allCategories = [] } = useCategories(userId);
+
+    // Choose data based on config type
+    const transactions = config.type === 'expense' ? expenseTransactions : incomeTransactions;
+    const loading = config.type === 'expense' ? expenseLoading : incomeLoading;
+
+    // Filter categories based on transaction type
+    const categories = allCategories.filter(cat => cat.type === (config.type === 'expense' ? 'EXPENSE' : 'INCOME'));
+
+    // Mutation hooks
+    const createExpenseMutation = useCreateExpense();
+    const createIncomeMutation = useCreateIncome();
+    const updateExpenseMutation = useUpdateExpense();
+    const updateIncomeMutation = useUpdateIncome();
+    const deleteExpenseMutation = useDeleteExpense();
+    const deleteIncomeMutation = useDeleteIncome();
+
     const [editingTransaction, setEditingTransaction] = useState<TransactionResponseDTO | null>(null);
     const [formData, setFormData] = useState({
         description: "",
@@ -42,24 +59,6 @@ export default function TransactionPage({ config, service }: TransactionPageProp
         date: "",
         userId: 1, // Assuming userId is 1 for now
     });
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [transactionsData, categoriesData] = await Promise.all([
-                    service.getAll(1), // Assuming userId is 1
-                    getAllCategories(1)
-                ]);
-                setTransactions(transactionsData);
-                setCategories(categoriesData.filter(cat => cat.type === (config.type === 'expense' ? 'EXPENSE' : 'INCOME')));
-            } catch (error) {
-                console.error(`Failed to fetch ${config.type} data:`, error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
-    }, [service, config.type]);
 
     const handleEdit = (transaction: TransactionResponseDTO) => {
         setEditingTransaction(transaction);
@@ -77,8 +76,11 @@ export default function TransactionPage({ config, service }: TransactionPageProp
     const handleDelete = async (transaction: TransactionResponseDTO) => {
         if (confirm(`Are you sure you want to delete this ${config.type}?`)) {
             try {
-                await service.delete(transaction.transactionId, transaction.userUserId);
-                setTransactions(transactions.filter(t => t.transactionId !== transaction.transactionId));
+                if (config.type === 'expense') {
+                    await deleteExpenseMutation.mutateAsync({ id: transaction.transactionId, userId: transaction.userUserId });
+                } else {
+                    await deleteIncomeMutation.mutateAsync({ id: transaction.transactionId, userId: transaction.userUserId });
+                }
             } catch (error) {
                 console.error(`Failed to delete ${config.type}:`, error);
             }
@@ -88,11 +90,17 @@ export default function TransactionPage({ config, service }: TransactionPageProp
     const handleSubmit = async (dto: TransactionRequestDTO) => {
         try {
             if (editingTransaction) {
-                const updated = await service.update(editingTransaction.transactionId, dto);
-                setTransactions(transactions.map(t => t.transactionId === editingTransaction.transactionId ? updated : t));
+                if (config.type === 'expense') {
+                    await updateExpenseMutation.mutateAsync({ id: editingTransaction.transactionId, dto });
+                } else {
+                    await updateIncomeMutation.mutateAsync({ id: editingTransaction.transactionId, dto });
+                }
             } else {
-                const newTransaction = await service.create(dto);
-                setTransactions([...transactions, newTransaction]);
+                if (config.type === 'expense') {
+                    await createExpenseMutation.mutateAsync(dto);
+                } else {
+                    await createIncomeMutation.mutateAsync(dto);
+                }
             }
             setShowAddModal(false);
             setEditingTransaction(null);
@@ -174,7 +182,7 @@ export default function TransactionPage({ config, service }: TransactionPageProp
                             Total {config.title} This Month
                         </div>
                         <div className="text-5xl font-bold">
-                            {config.type === 'income' ? '+' : ''}₹{totalAmount.toFixed(2)}
+                            ₹{totalAmount.toFixed(2)}
                         </div>
                     </div>
                     <div
@@ -215,10 +223,10 @@ export default function TransactionPage({ config, service }: TransactionPageProp
                     <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground z-10" />
                     <Select value={selectedPaymentMethod} onValueChange={setSelectedPaymentMethod}>
                         <SelectTrigger className="pl-12">
-                            <SelectValue placeholder="All Payment Methods" />
+                            <SelectValue placeholder={config.type === 'income' ? "All Received Methods" : "All Payment Methods"} />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">All Payment Methods</SelectItem>
+                            <SelectItem value="all">{config.type === 'income' ? "All Received Methods" : "All Payment Methods"}</SelectItem>
                             {uniquePaymentMethods.map((method) => (
                                 <SelectItem key={`filter-payment-${method.paymentMethodId}`} value={method.paymentMethodId.toString()}>
                                     {method.displayName}

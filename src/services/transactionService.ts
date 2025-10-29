@@ -2,13 +2,12 @@ import { TransactionRequestDTO, TransactionResponseDTO, TransactionConfig } from
 
 export class TransactionService {
     public config: TransactionConfig;
-    static cache: { [key: string]: TransactionResponseDTO[] } = {};
 
     constructor(config: TransactionConfig) {
         this.config = config;
     }
 
-    private mapApiResponseToGeneric(apiResponse: any): TransactionResponseDTO {
+    private mapApiResponseToGeneric(apiResponse: TransactionResponseDTO): TransactionResponseDTO {
         return {
             transactionId: apiResponse.transactionId,
             userUserId: apiResponse.userUserId,
@@ -22,7 +21,15 @@ export class TransactionService {
         };
     }
 
-    private mapGenericDtoToApi(dto: TransactionRequestDTO): any {
+    private mapGenericDtoToApi(dto: TransactionRequestDTO): {
+        userId: number;
+        categoryId: number;
+        amount: number;
+        description: string;
+        paymentMethodId: number;
+        transactionDate: string;
+        transactionType: string;
+    } {
         return {
             userId: dto.userId,
             categoryId: dto.categoryId,
@@ -51,22 +58,16 @@ export class TransactionService {
             throw new Error(`Failed to create ${this.config.type}`);
         }
         const data = await response.json();
-        // Invalidate cache
-        delete TransactionService.cache[`transactions_${dto.userId}`];
         return this.mapApiResponseToGeneric(data);
     }
 
     async getAll(userId: number): Promise<TransactionResponseDTO[]> {
-        const cacheKey = `transactions_${userId}`;
-        if (!TransactionService.cache[cacheKey]) {
-            const response = await fetch(`${this.config.api.baseUrl}?userId=${userId}`);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch transactions`);
-            }
-            const data = await response.json();
-            TransactionService.cache[cacheKey] = data;
+        const response = await fetch(`${this.config.api.baseUrl}?userId=${userId}&type=${this.config.type === 'expense' ? 'EXPENSE' : 'INCOME'}`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch ${this.config.type}s`);
         }
-        return TransactionService.cache[cacheKey].filter(t => t.transactionType === (this.config.type === 'expense' ? 'EXPENSE' : 'INCOME'));
+        const data = await response.json();
+        return data.map((item: TransactionResponseDTO) => this.mapApiResponseToGeneric(item));
     }
 
     async update(id: number, dto: TransactionRequestDTO): Promise<TransactionResponseDTO> {
@@ -82,8 +83,6 @@ export class TransactionService {
             throw new Error(`Failed to update ${this.config.type}`);
         }
         const data = await response.json();
-        // Invalidate cache
-        delete TransactionService.cache[`transactions_${dto.userId}`];
         return this.mapApiResponseToGeneric(data);
     }
 
@@ -94,8 +93,6 @@ export class TransactionService {
         if (!response.ok) {
             throw new Error(`Failed to delete ${this.config.type}`);
         }
-        // Invalidate cache
-        delete TransactionService.cache[`transactions_${userId}`];
     }
 
     async getById(userId: number, id: number): Promise<TransactionResponseDTO> {
@@ -117,7 +114,7 @@ export class TransactionService {
             throw new Error(`Failed to fetch ${this.config.type}s by date range`);
         }
         const data = await response.json();
-        return data.map((item: any) => this.mapApiResponseToGeneric(item));
+        return data.map((item: TransactionResponseDTO) => this.mapApiResponseToGeneric(item));
     }
 }
 
@@ -164,7 +161,7 @@ export const createIncomeService = () => new TransactionService({
         category: 'Category',
         description: 'Description',
         amount: 'Amount',
-        paymentMethod: 'Payment Method',
+        paymentMethod: 'Received Method',
         date: 'Date',
         actions: 'Actions'
     },
@@ -172,7 +169,7 @@ export const createIncomeService = () => new TransactionService({
         description: 'Income Source',
         amount: 'Amount',
         category: 'Category',
-        paymentMethod: 'Payment Method',
+        paymentMethod: 'Received Method',
         date: 'Date'
     },
     api: {

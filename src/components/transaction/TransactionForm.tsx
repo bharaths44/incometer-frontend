@@ -156,7 +156,7 @@ export default function TransactionForm({ isOpen, onClose, onSubmit, editingTran
             return;
         }
         if (!formData.paymentMethodId) {
-            alert('Please select a payment method');
+            alert(`Please select a ${config.type === 'income' ? 'received method' : 'payment method'}`);
             return;
         }
         if (!formData.date) {
@@ -251,7 +251,7 @@ export default function TransactionForm({ isOpen, onClose, onSubmit, editingTran
                                 disabled={loadingPaymentMethods}
                             >
                                 <SelectTrigger>
-                                    <SelectValue placeholder="Select Payment Method" />
+                                    <SelectValue placeholder={config.type === 'income' ? "Select Received Method" : "Select Payment Method"} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {paymentMethods.map((pm) => (

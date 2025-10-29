@@ -2,8 +2,6 @@ import { CategoryAnalytics, BudgetAnalytics, ExpenseSummary } from '../types/ana
 
 const API_BASE_URL = 'http://localhost:8080/api/analytics';
 
-
-
 export const fetchCategoryBreakdown = async (userId: number): Promise<CategoryAnalytics[]> => {
     const response = await fetch(`${API_BASE_URL}/user/${userId}/categories`);
     if (!response.ok) {
