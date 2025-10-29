@@ -1,4 +1,48 @@
 import { TransactionRequestDTO, TransactionResponseDTO, TransactionConfig } from '../types/transaction';
+import { API_BASE_URL } from '../lib/constants';
+
+// Helper function to build API URLs
+const buildApiUrls = (type: 'EXPENSE' | 'INCOME') => ({
+    baseUrl: `${API_BASE_URL}/transactions`,
+    create: `${API_BASE_URL}/transactions`,
+    getAll: `${API_BASE_URL}/transactions?userId=:userId&type=${type}`,
+    update: `${API_BASE_URL}/transactions/:id`,
+    delete: `${API_BASE_URL}/transactions/:userId/:id`,
+    getById: `${API_BASE_URL}/transactions/:userId/:id`,
+    getByDateRange: `${API_BASE_URL}/transactions/:userId/date-range?startDate=:startDate&endDate=:endDate&type=${type}`
+});
+
+// Base configuration for transaction services
+const createTransactionConfig = (type: 'expense' | 'income'): TransactionConfig => {
+    const isExpense = type === 'expense';
+    const typeLabel = isExpense ? 'Expense' : 'Income';
+    const paymentMethodLabel = isExpense ? 'Payment Method' : 'Received Method';
+    const descriptionLabel = isExpense ? 'Expense Name' : 'Income Source';
+
+    return {
+        type,
+        title: isExpense ? 'Expenses' : 'Income',
+        description: isExpense ? 'Track and manage your spending' : 'Track all your income sources',
+        addButtonText: `Add ${typeLabel}`,
+        formTitle: typeLabel,
+        tableHeaders: {
+            category: 'Category',
+            description: 'Description',
+            amount: 'Amount',
+            paymentMethod: paymentMethodLabel,
+            date: 'Date',
+            actions: 'Actions'
+        },
+        formLabels: {
+            description: descriptionLabel,
+            amount: 'Amount',
+            category: 'Category',
+            paymentMethod: paymentMethodLabel,
+            date: 'Date'
+        },
+        api: buildApiUrls(isExpense ? 'EXPENSE' : 'INCOME')
+    };
+};
 
 export class TransactionService {
     public config: TransactionConfig;
@@ -119,66 +163,6 @@ export class TransactionService {
 }
 
 // Factory functions to create configured services
-export const createExpenseService = () => new TransactionService({
-    type: 'expense',
-    title: 'Expenses',
-    description: 'Track and manage your spending',
-    addButtonText: 'Add Expense',
-    formTitle: 'Expense',
-    tableHeaders: {
-        category: 'Category',
-        description: 'Description',
-        amount: 'Amount',
-        paymentMethod: 'Payment Method',
-        date: 'Date',
-        actions: 'Actions'
-    },
-    formLabels: {
-        description: 'Expense Name',
-        amount: 'Amount',
-        category: 'Category',
-        paymentMethod: 'Payment Method',
-        date: 'Date'
-    },
-    api: {
-        baseUrl: 'http://localhost:8080/api/transactions',
-        create: 'http://localhost:8080/api/transactions',
-        getAll: 'http://localhost:8080/api/transactions?userId=:userId&type=EXPENSE',
-        update: 'http://localhost:8080/api/transactions/:id',
-        delete: 'http://localhost:8080/api/transactions/:userId/:id',
-        getById: 'http://localhost:8080/api/transactions/:userId/:id',
-        getByDateRange: 'http://localhost:8080/api/transactions/:userId/date-range?startDate=:startDate&endDate=:endDate&type=EXPENSE'
-    }
-});
+export const createExpenseService = () => new TransactionService(createTransactionConfig('expense'));
 
-export const createIncomeService = () => new TransactionService({
-    type: 'income',
-    title: 'Income',
-    description: 'Track all your income sources',
-    addButtonText: 'Add Income',
-    formTitle: 'Income',
-    tableHeaders: {
-        category: 'Category',
-        description: 'Description',
-        amount: 'Amount',
-        paymentMethod: 'Received Method',
-        date: 'Date',
-        actions: 'Actions'
-    },
-    formLabels: {
-        description: 'Income Source',
-        amount: 'Amount',
-        category: 'Category',
-        paymentMethod: 'Received Method',
-        date: 'Date'
-    },
-    api: {
-        baseUrl: 'http://localhost:8080/api/transactions',
-        create: 'http://localhost:8080/api/transactions',
-        getAll: 'http://localhost:8080/api/transactions?userId=:userId&type=INCOME',
-        update: 'http://localhost:8080/api/transactions/:id',
-        delete: 'http://localhost:8080/api/transactions/:userId/:id',
-        getById: 'http://localhost:8080/api/transactions/:userId/:id',
-        getByDateRange: 'http://localhost:8080/api/transactions/:userId/date-range?startDate=:startDate&endDate=:endDate&type=INCOME'
-    }
-});
+export const createIncomeService = () => new TransactionService(createTransactionConfig('income'));

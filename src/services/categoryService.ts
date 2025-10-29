@@ -1,11 +1,12 @@
 import { Category, CategoryRequestDTO } from "@/types/category";
+import { API_BASE_URL } from "@/lib/constants";
 
 
-const API_BASE_URL = 'http://localhost:8080/api/categories';
+const API_BASE_URL_CATEGORIES = `${API_BASE_URL}/categories`;
 
 export const getAllCategories = async (userId: number): Promise<Category[]> => {
     console.log('Fetching categories for user:', userId);
-    const response = await fetch(`${API_BASE_URL}/user/${userId}`);
+    const response = await fetch(`${API_BASE_URL_CATEGORIES}/user/${userId}`);
     console.log('Response status:', response.status);
     if (!response.ok) {
         throw new Error('Failed to fetch categories');
@@ -15,7 +16,7 @@ export const getAllCategories = async (userId: number): Promise<Category[]> => {
 
 export const createCategory = async (category: CategoryRequestDTO): Promise<Category> => {
     console.log('Creating category:', category);
-    const response = await fetch(`${API_BASE_URL}`, {
+    const response = await fetch(`${API_BASE_URL_CATEGORIES}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -33,7 +34,7 @@ export const createCategory = async (category: CategoryRequestDTO): Promise<Cate
 };
 
 export const getCategoryById = async (id: number): Promise<Category> => {
-    const response = await fetch(`${API_BASE_URL}/${id}`);
+    const response = await fetch(`${API_BASE_URL_CATEGORIES}/${id}`);
     if (!response.ok) {
         throw new Error('Failed to fetch category');
     }

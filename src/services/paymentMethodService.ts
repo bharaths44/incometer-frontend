@@ -1,11 +1,12 @@
 import { PaymentMethodRequestDTO, PaymentMethodResponseDTO } from "@/types/paymentMethod";
+import { API_BASE_URL } from "@/lib/constants";
 
 
-const API_BASE_URL = 'http://localhost:8080/api/payment-methods';
+const API_BASE_URL_PAYMENT_METHODS = `${API_BASE_URL}/payment-methods`;
 
 export const getAllPaymentMethods = async (userId: number): Promise<PaymentMethodResponseDTO[]> => {
     console.log('Fetching payment methods for user:', userId);
-    const response = await fetch(`${API_BASE_URL}/user/${userId}`);
+    const response = await fetch(`${API_BASE_URL_PAYMENT_METHODS}/user/${userId}`);
     console.log('Response status:', response.status);
     if (!response.ok) {
         throw new Error('Failed to fetch payment methods');
@@ -15,7 +16,7 @@ export const getAllPaymentMethods = async (userId: number): Promise<PaymentMetho
 
 export const createPaymentMethod = async (paymentMethod: PaymentMethodRequestDTO, userId?: number): Promise<PaymentMethodResponseDTO> => {
     console.log('Creating payment method:', paymentMethod);
-    const url = userId ? `${API_BASE_URL}?userId=${userId}` : API_BASE_URL;
+    const url = userId ? `${API_BASE_URL_PAYMENT_METHODS}?userId=${userId}` : API_BASE_URL_PAYMENT_METHODS;
     const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -33,7 +34,7 @@ export const createPaymentMethod = async (paymentMethod: PaymentMethodRequestDTO
 };
 
 export const getPaymentMethodById = async (id: number): Promise<PaymentMethodResponseDTO> => {
-    const response = await fetch(`${API_BASE_URL}/${id}`);
+    const response = await fetch(`${API_BASE_URL_PAYMENT_METHODS}/${id}`);
     if (!response.ok) {
         throw new Error('Failed to fetch payment method');
     }

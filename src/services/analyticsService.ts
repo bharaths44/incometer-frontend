@@ -1,9 +1,10 @@
 import { CategoryAnalytics, BudgetAnalytics, ExpenseSummary } from '../types/analytics';
+import { API_BASE_URL } from '@/lib/constants';
 
-const API_BASE_URL = 'http://localhost:8080/api/analytics';
+const API_BASE_URL_ANALYTICS = `${API_BASE_URL}/analytics`;
 
 export const fetchCategoryBreakdown = async (userId: number): Promise<CategoryAnalytics[]> => {
-    const response = await fetch(`${API_BASE_URL}/user/${userId}/categories`);
+    const response = await fetch(`${API_BASE_URL_ANALYTICS}/user/${userId}/categories`);
     if (!response.ok) {
         throw new Error('Failed to fetch category analytics');
     }
@@ -11,7 +12,7 @@ export const fetchCategoryBreakdown = async (userId: number): Promise<CategoryAn
 };
 
 export const fetchExpenseSummary = async (userId: number): Promise<ExpenseSummary> => {
-    const response = await fetch(`${API_BASE_URL}/user/${userId}/expense-summary`);
+    const response = await fetch(`${API_BASE_URL_ANALYTICS}/user/${userId}/expense-summary`);
     if (!response.ok) {
         throw new Error('Failed to fetch expense summary');
     }
@@ -19,7 +20,7 @@ export const fetchExpenseSummary = async (userId: number): Promise<ExpenseSummar
 };
 
 export const fetchBudgetAnalytics = async (userId: number): Promise<BudgetAnalytics[]> => {
-    const response = await fetch(`${API_BASE_URL}/user/${userId}/budgets`);
+    const response = await fetch(`${API_BASE_URL_ANALYTICS}/user/${userId}/budgets`);
     if (!response.ok) {
         throw new Error('Failed to fetch budget analytics');
     }
