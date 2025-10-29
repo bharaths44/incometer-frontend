@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ExpenseRequestDTO, ExpenseResponseDTO, Category } from "../../types/expense";
+import { ExpenseRequestDTO, ExpenseResponseDTO } from "../../types/expense";
 import { getAllCategories } from "../../services/categoryService";
 import { getAllPaymentMethods } from "../../services/paymentMethodService";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
+import { Category } from "@/types/category";
 
 interface ExpenseFormProps {
     isOpen: boolean;

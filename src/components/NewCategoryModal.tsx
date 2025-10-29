@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Category } from "../types/expense";
+
 import { createCategory } from "../services/categoryService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import IconSelector from "./IconSelector";
+import { Category } from "@/types/category";
 
 interface NewCategoryModalProps {
     isOpen: boolean;

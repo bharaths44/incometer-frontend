@@ -1,4 +1,5 @@
-import { Category, CategoryRequestDTO } from '../types/expense';
+import { Category, CategoryRequestDTO } from "@/types/category";
+
 
 const API_BASE_URL = 'http://localhost:8080/api/categories';
 
