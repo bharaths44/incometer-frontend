@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { getAllCategories } from "../../services/categoryService";
-import { getAllPaymentMethods } from "../../services/paymentMethodService";
+import { getAllCategories } from "@/services/categoryService";
+import { getAllPaymentMethods } from "@/services/paymentMethodService";
 import { PaymentMethodResponseDTO } from "@/types/paymentMethod";
 import { Category } from "@/types/category";
 

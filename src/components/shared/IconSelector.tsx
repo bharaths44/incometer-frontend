@@ -1,4 +1,5 @@
-import { Icon } from "../lib/iconUtils";
+
+import Icon from "@/lib/iconUtils";
 import { useEffect } from "react";
 
 interface IconSelectorProps {

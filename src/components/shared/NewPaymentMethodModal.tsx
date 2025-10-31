@@ -1,13 +1,13 @@
 import { useState } from "react";
 
-import { createPaymentMethod } from "../services/paymentMethodService";
+import { createPaymentMethod } from "@/services/paymentMethodService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import IconSelector from "./IconSelector";
+import IconSelector from "@/components/shared/IconSelector";
 import { PAYMENT_METHOD_TYPE_LABELS, PaymentMethodResponseDTO } from "@/types/paymentMethod";
 import { PREDEFINED_ICONS } from "@/lib/constants";
 

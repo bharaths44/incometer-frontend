@@ -1,4 +1,4 @@
-import { TransactionResponseDTO } from "../../types/transaction";
+import { TransactionResponseDTO } from "@/types/transaction";
 
 interface TransactionStatsProps {
     transactions: TransactionResponseDTO[];

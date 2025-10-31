@@ -3,8 +3,8 @@ import { TransactionRequestDTO, TransactionResponseDTO, TransactionConfig } from
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import NewCategoryModal from "../NewCategoryModal";
-import NewPaymentMethodModal from "../NewPaymentMethodModal";
+import NewCategoryModal from "@/components/shared/NewCategoryModal";
+import NewPaymentMethodModal from "@/components/shared/NewPaymentMethodModal";
 import { Category } from "@/types/category";
 import { PaymentMethodResponseDTO } from "@/types/paymentMethod";
 import TransactionFormFields from "./TransactionFormFields";

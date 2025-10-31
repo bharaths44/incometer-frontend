@@ -1,10 +1,10 @@
-import { TransactionConfig } from "../../types/transaction";
-import TransactionForm from "./TransactionForm";
-import TransactionTable from "./TransactionTable";
-import TransactionStats from "./TransactionStats";
-import TransactionPageHeader from "./TransactionPageHeader";
-import TransactionFilters from "./TransactionFilters";
-import { useTransactionPageLogic } from "./TransactionPageLogic";
+import { TransactionConfig } from "@/types/transaction";
+import TransactionForm from "@/components/transaction/TransactionForm";
+import TransactionTable from "@/components/transaction/TransactionTable";
+import TransactionStats from "@/components/transaction/TransactionStats";
+import TransactionPageHeader from "@/components/transaction/TransactionPageHeader";
+import TransactionFilters from "@/components/transaction/TransactionFilters";
+import { useTransactionPageLogic } from "@/components/transaction/TransactionPageLogic";
 
 interface TransactionPageProps {
     config: TransactionConfig;

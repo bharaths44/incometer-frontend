@@ -1,14 +1,14 @@
 import { useState } from "react";
-import Landing from "./pages/Landing";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import Dashboard from "./pages/Dashboard";
-import Expenses from "./pages/Expenses";
-import Income from "./pages/Income";
-import Analytics from "./pages/Analytics";
-import Profile from "./pages/Profile";
-import Settings from "./pages/Settings";
-import Layout from "./components/Layout";
+import Landing from "@/pages/Landing";
+import Login from "@/pages/Login";
+import Signup from "@/pages/Signup";
+import Dashboard from "@/pages/Dashboard";
+import Expenses from "@/pages/Expenses";
+import Income from "@/pages/Income";
+import Analytics from "@/pages/Analytics";
+import Profile from "@/pages/Profile";
+import Settings from "@/pages/Settings";
+import Layout from "@/components/layout/Layout";
 
 type Page =
   | "landing"

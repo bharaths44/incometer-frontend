@@ -1,7 +1,7 @@
 import { ReactNode, useState } from "react";
-import Sidebar from "./Sidebar";
-import TopBar from "./TopBar";
-import ChatBot from "./ChatBot";
+import Sidebar from "@/components/layout/Sidebar";
+import TopBar from "@/components/layout/TopBar";
+import ChatBot from "@/components/shared/ChatBot";
 
 interface LayoutProps {
     children: ReactNode;

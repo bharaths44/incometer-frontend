@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { usePaymentMethods, useDeletePaymentMethod } from "../../hooks/usePaymentMethods";
-import ItemManagement from "./ItemManagement";
-import NewPaymentMethodModal from "../NewPaymentMethodModal";
-import UpdatePaymentMethodModal from "../UpdatePaymentMethodModal";
-import { PaymentMethodResponseDTO, PAYMENT_METHOD_TYPE_LABELS } from "../../types/paymentMethod";
-import { PREDEFINED_ICONS } from "../../lib/constants";
-import { Icon } from "../../lib/iconUtils";
+import { usePaymentMethods, useDeletePaymentMethod } from "@/hooks/usePaymentMethods";
+import ItemManagement from "@/components/profile/ItemManagement";
+import NewPaymentMethodModal from "@/components/shared/NewPaymentMethodModal";
+import UpdatePaymentMethodModal from "@/components/shared/UpdatePaymentMethodModal";
+import { PaymentMethodResponseDTO, PAYMENT_METHOD_TYPE_LABELS } from "@/types/paymentMethod";
+import { PREDEFINED_ICONS } from "@/lib/constants";
+import { Icon } from "@/lib/iconUtils";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Edit2, Trash2, AlertTriangle } from "lucide-react";

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { TransactionResponseDTO, TransactionRequestDTO } from "../../types/transaction";
-import { useExpenseTransactions, useIncomeTransactions, useCreateExpense, useCreateIncome, useUpdateExpense, useUpdateIncome, useDeleteExpense, useDeleteIncome } from "../../hooks/useTransactions";
-import { useCategories } from "../../hooks/useCategories";
+import { TransactionResponseDTO, TransactionRequestDTO } from "@/types/transaction";
+import { useExpenseTransactions, useIncomeTransactions, useCreateExpense, useCreateIncome, useUpdateExpense, useUpdateIncome, useDeleteExpense, useDeleteIncome } from "@/hooks/useTransactions";
+import { useCategories } from "@/hooks/useCategories";
 
 export const useTransactionPageLogic = (config: { type: 'expense' | 'income' }) => {
     const [showAddModal, setShowAddModal] = useState(false);

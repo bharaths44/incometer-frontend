@@ -9,7 +9,7 @@ import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { Category } from "@/types/category";
 import { PaymentMethodResponseDTO } from "@/types/paymentMethod";
-import { TransactionConfig } from "../../types/transaction";
+import { TransactionConfig } from "@/types/transaction";
 
 type FormData = {
     description: string;
