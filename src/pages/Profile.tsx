@@ -2,7 +2,7 @@ import { Bell, Calendar, CreditCard, Edit2, MapPin, Shield, User, } from "lucide
 import { useState, useEffect } from "react";
 import CategoryManagement from "../components/profile/CategoryManagement";
 import PaymentMethodManagement from "../components/profile/PaymentMethodManagement";
-import { getAllLucideIconNames } from "../utils/iconUtils";
+import { getAllLucideIconNames } from "../lib/iconUtils";
 
 export default function Profile() {
     const [activeTab, setActiveTab] = useState<'profile' | 'categories' | 'payment-methods'>('profile');

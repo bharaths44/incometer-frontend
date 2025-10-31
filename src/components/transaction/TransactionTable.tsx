@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Edit2, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import { TransactionResponseDTO, TransactionConfig } from "../../types/transaction";
-import Icon from "../../utils/iconUtils";
+import Icon from "../../lib/iconUtils";
 import { Button } from "@/components/ui/button";
 import {
     Table,

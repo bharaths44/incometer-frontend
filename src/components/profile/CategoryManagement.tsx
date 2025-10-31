@@ -4,7 +4,7 @@ import NewCategoryModal from "../NewCategoryModal";
 import UpdateCategoryModal from "../UpdateCategoryModal";
 import { Category } from "../../types/category";
 import { PREDEFINED_ICONS } from "../../lib/constants";
-import { Icon } from "../../utils/iconUtils";
+import { Icon } from "../../lib/iconUtils";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Edit2, Trash2, AlertTriangle } from "lucide-react";
