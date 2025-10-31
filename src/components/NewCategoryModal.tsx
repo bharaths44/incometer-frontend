@@ -4,9 +4,11 @@ import { createCategory } from "../services/categoryService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import IconSelector from "./IconSelector";
 import { Category } from "@/types/category";
+import { PREDEFINED_ICONS } from "@/lib/constants";
 
 interface NewCategoryModalProps {
     isOpen: boolean;
@@ -16,12 +18,8 @@ interface NewCategoryModalProps {
     userId: number;
     allLucideIcons: string[];
     predefinedIcons: string[];
+    defaultType?: 'EXPENSE' | 'INCOME';
 }
-
-const predefinedIcons = [
-    "shopping-bag", "car", "film", "zap", "heart", "home", "credit-card", "plane",
-    "scissors", "utensils", "shopping-cart", "briefcase", "gift", "book", "users",
-];
 
 export default function NewCategoryModal({
     isOpen,
@@ -30,10 +28,15 @@ export default function NewCategoryModal({
     categories,
     userId,
     allLucideIcons,
-    predefinedIcons: propPredefinedIcons
+    predefinedIcons: propPredefinedIcons,
+    defaultType = 'EXPENSE'
 }: NewCategoryModalProps) {
+    console.log('NewCategoryModal received allLucideIcons:', allLucideIcons.length, 'icons');
+    console.log('NewCategoryModal first 5 icons:', allLucideIcons.slice(0, 5));
+
     const [newCategoryName, setNewCategoryName] = useState("");
     const [newCategoryIcon, setNewCategoryIcon] = useState("");
+    const [newCategoryType, setNewCategoryType] = useState<'EXPENSE' | 'INCOME'>(defaultType);
     const [iconSearchQuery, setIconSearchQuery] = useState("");
 
     const handleCreateCategory = async () => {
@@ -54,7 +57,7 @@ export default function NewCategoryModal({
                 userId,
                 name: newCategoryName.trim(),
                 icon: newCategoryIcon,
-                type: 'EXPENSE',
+                type: newCategoryType,
             });
             onCreate(newCategory);
             handleClose();
@@ -66,6 +69,7 @@ export default function NewCategoryModal({
     const handleClose = () => {
         setNewCategoryName("");
         setNewCategoryIcon("");
+        setNewCategoryType(defaultType);
         setIconSearchQuery("");
         onClose();
     };
@@ -90,13 +94,27 @@ export default function NewCategoryModal({
                             required
                         />
                     </div>
+                    <div>
+                        <Label htmlFor="newCategoryType" className="block text-sm font-medium text-gray-700 mb-2">
+                            Category Type
+                        </Label>
+                        <Select value={newCategoryType} onValueChange={(value: 'EXPENSE' | 'INCOME') => setNewCategoryType(value)}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select Type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="EXPENSE">Expense</SelectItem>
+                                <SelectItem value="INCOME">Income</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
                     <IconSelector
                         selectedIcon={newCategoryIcon}
                         onSelect={setNewCategoryIcon}
                         searchQuery={iconSearchQuery}
                         setSearchQuery={setIconSearchQuery}
                         allIcons={allLucideIcons}
-                        predefinedIcons={propPredefinedIcons || predefinedIcons}
+                        predefinedIcons={propPredefinedIcons || PREDEFINED_ICONS}
                     />
                     <div className="flex gap-3 pt-4">
                         <Button

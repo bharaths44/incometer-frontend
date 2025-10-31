@@ -1,17 +1,56 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { useState, useEffect } from "react";
+import * as changeCase from "change-case";
 
-interface IconProps {
-  name: string; // from backend, e.g. "shopping-bag" or "car"
+interface LucideIconProps {
   size?: number;
   color?: string;
   className?: string;
 }
 
-const toPascalCase = (name: string): string =>
-  name
-    .split("-")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join("");
+type LucideIconComponent = React.ComponentType<LucideIconProps>;
+
+interface IconProps {
+  name: string;
+  size?: number;
+  color?: string;
+  className?: string;
+}
+
+// Get all Lucide icon names
+export const getAllLucideIconNames = async (): Promise<string[]> => {
+  try {
+    console.log('getAllLucideIconNames: Starting to load icons...');
+    const icons = await import("lucide-react");
+    console.log('getAllLucideIconNames: Imported icons module, total keys:', Object.keys(icons).length);
+
+    const iconNames = Object.keys(icons).filter(key =>
+      key !== "default" &&
+      key !== "createLucideIcon" &&
+      key !== "LucideIcon" &&
+      key !== "icons" &&
+      !key.startsWith("Lucid") &&
+      !key.endsWith("Icon") &&
+      key.charAt(0) === key.charAt(0).toUpperCase()
+    );
+
+    console.log('getAllLucideIconNames: Filtered icon names:', iconNames.length);
+    console.log('getAllLucideIconNames: First 10 icon names:', iconNames.slice(0, 10));
+
+    // Convert PascalCase names to kebab-case for Icon component
+    const kebabCaseIcons: string[] = iconNames.map(name => changeCase.kebabCase(name));
+    console.log('getAllLucideIconNames: Converted to kebab case, first 10:', kebabCaseIcons.slice(0, 10));
+
+    // Remove duplicates and sort
+    const uniqueIcons = [...new Set(kebabCaseIcons)].sort();
+    console.log('getAllLucideIconNames: Final unique icons:', uniqueIcons.length);
+
+    return uniqueIcons;
+  } catch (error) {
+    console.warn('getAllLucideIconNames: Failed to load Lucide icons:', error);
+    return [];
+  }
+};
 
 export const Icon: React.FC<IconProps> = ({
   name,
@@ -19,7 +58,7 @@ export const Icon: React.FC<IconProps> = ({
   color = "currentColor",
   className,
 }) => {
-  const [IconComponent, setIconComponent] = useState<React.ComponentType<any> | null>(null);
+  const [IconComponent, setIconComponent] = useState<LucideIconComponent | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,19 +67,23 @@ export const Icon: React.FC<IconProps> = ({
       return;
     }
 
+    console.log('Icon component: Loading icon with name:', name);
     const loadIcon = async () => {
       try {
         const icons = await import("lucide-react"); // import all icons once
-        const pascalName = toPascalCase(name);
-        const LucideIcon = (icons as any)[pascalName];
+        const pascalName = changeCase.pascalCase(name);
+        console.log('Icon component: Converted to PascalCase:', pascalName);
+
+        const LucideIcon = (icons as unknown as Record<string, LucideIconComponent>)[pascalName];
+        console.log('Icon component: Found LucideIcon:', !!LucideIcon);
 
         if (LucideIcon) {
           setIconComponent(() => LucideIcon);
         } else {
-          console.warn(`⚠️ Unknown icon name: ${name}`);
+          console.warn(`⚠️ Icon component: Unknown icon name: ${name} (PascalCase: ${pascalName})`);
         }
       } catch (error) {
-        console.warn(`⚠️ Failed to load icon: ${name}`, error);
+        console.warn(`⚠️ Icon component: Failed to load icon: ${name}`, error);
       } finally {
         setLoading(false);
       }

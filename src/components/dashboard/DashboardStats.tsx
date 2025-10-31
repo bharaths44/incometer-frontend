@@ -35,6 +35,16 @@ export default function DashboardStats({ userId }: DashboardStatsProps) {
         return () => clearInterval(timer);
     };
 
+    const formatPercentageChange = (change: number | null): string => {
+        if (change === null) return "";
+        return `${change >= 0 ? '+' : ''}${change.toFixed(1)}%`;
+    };
+
+    const getTrendFromChange = (change: number | null): "up" | "down" => {
+        if (change === null) return "up";
+        return change >= 0 ? "up" : "down";
+    };
+
     if (loading) {
         return (
             <div className="grid md:grid-cols-3 gap-6">
@@ -60,29 +70,29 @@ export default function DashboardStats({ userId }: DashboardStatsProps) {
         {
             label: "Total Income",
             value: `₹${summary.totalIncome.toFixed(2)}`,
-            change: "+12.5%", // This would need to be calculated from previous period
+            change: formatPercentageChange(summary.incomePercentageChange),
             icon: TrendingUp,
             color: "text-green-600",
             bgColor: "bg-green-100",
-            trend: "up",
+            trend: getTrendFromChange(summary.incomePercentageChange),
         },
         {
             label: "Total Expenses",
             value: `₹${summary.totalExpense.toFixed(2)}`,
-            change: "-8.2%", // This would need to be calculated from previous period
+            change: formatPercentageChange(summary.expensePercentageChange),
             icon: TrendingDown,
             color: "text-red-600",
             bgColor: "bg-red-100",
-            trend: "down",
+            trend: getTrendFromChange(summary.expensePercentageChange),
         },
         {
             label: "Net Balance",
             value: `₹${animatedBalance.toFixed(2)}`,
-            change: "+4.3%", // This would need to be calculated from previous period
+            change: formatPercentageChange(summary.savingsPercentageChange),
             icon: DollarSign,
             color: "text-blue-600",
             bgColor: "bg-blue-100",
-            trend: summary.netSavings >= 0 ? "up" : "down",
+            trend: getTrendFromChange(summary.savingsPercentageChange),
         },
     ];
 
@@ -100,18 +110,21 @@ export default function DashboardStats({ userId }: DashboardStatsProps) {
                         >
                             <stat.icon className={`w-6 h-6 ${stat.color}`} />
                         </div>
-                        <div
-                            className={`flex items-center gap-1 text-sm font-medium ${stat.trend === "up" ?
-                                "text-green-600" :
-                                "text-orange-600"}`}
-                        >
-                            {stat.trend === "up" ? (
-                                <ArrowUpRight className="w-4 h-4" />
-                            ) : (
-                                <ArrowDownRight className="w-4 h-4" />
-                            )}
-                            {stat.change}
-                        </div>
+                        {stat.change && (
+                            <div
+                                className={`flex items-center gap-1 text-sm font-medium ${stat.trend === "up"
+                                    ? "text-green-600"
+                                    : "text-orange-600"
+                                    }`}
+                            >
+                                {stat.trend === "up" ? (
+                                    <ArrowUpRight className="w-4 h-4" />
+                                ) : (
+                                    <ArrowDownRight className="w-4 h-4" />
+                                )}
+                                {stat.change}
+                            </div>
+                        )}
                     </div>
                     <div className="text-3xl font-bold mb-1">{stat.value}</div>
                     <div className="text-gray-600 text-sm">{stat.label}</div>

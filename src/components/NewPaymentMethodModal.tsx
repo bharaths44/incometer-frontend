@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import IconSelector from "./IconSelector";
 import { PAYMENT_METHOD_TYPE_LABELS, PaymentMethodResponseDTO } from "@/types/paymentMethod";
+import { PREDEFINED_ICONS } from "@/lib/constants";
 
 interface NewPaymentMethodModalProps {
     isOpen: boolean;
@@ -18,11 +19,6 @@ interface NewPaymentMethodModalProps {
     allLucideIcons: string[];
     predefinedIcons: string[];
 }
-
-const predefinedIcons = [
-    "shopping-bag", "car", "film", "zap", "heart", "home", "credit-card", "plane",
-    "scissors", "utensils", "shopping-cart", "briefcase", "gift", "book", "users",
-];
 
 export default function NewPaymentMethodModal({
     isOpen,
@@ -147,7 +143,7 @@ export default function NewPaymentMethodModal({
                         searchQuery={iconSearchQuery}
                         setSearchQuery={setIconSearchQuery}
                         allIcons={allLucideIcons}
-                        predefinedIcons={propPredefinedIcons || predefinedIcons}
+                        predefinedIcons={propPredefinedIcons || PREDEFINED_ICONS}
                     />
                     <div className="flex gap-3 pt-4">
                         <Button

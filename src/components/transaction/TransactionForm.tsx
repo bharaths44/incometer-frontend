@@ -87,7 +87,7 @@ export default function TransactionForm({ isOpen, onClose, onSubmit, editingTran
             fetchCategories();
             fetchPaymentMethods();
         }
-    }, [isOpen, initialData.userId]);
+    }, [isOpen, initialData.userId, config.type]);
 
     useEffect(() => {
         const loadAllIcons = async () => {
@@ -324,6 +324,7 @@ export default function TransactionForm({ isOpen, onClose, onSubmit, editingTran
                 userId={initialData.userId}
                 allLucideIcons={allLucideIcons}
                 predefinedIcons={predefinedIcons}
+                defaultType={config.type === 'expense' ? 'EXPENSE' : 'INCOME'}
             />
 
             <NewPaymentMethodModal

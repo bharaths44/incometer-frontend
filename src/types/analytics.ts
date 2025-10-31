@@ -31,4 +31,7 @@ export interface ExpenseSummary {
     netSavings: number;
     currentMonthExpense: number;
     currentMonthIncome: number;
+    incomePercentageChange: number | null;
+    expensePercentageChange: number | null;
+    savingsPercentageChange: number | null;
 }

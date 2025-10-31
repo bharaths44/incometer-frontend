@@ -1,4 +1,5 @@
 import { Icon } from "../utils/iconUtils";
+import { useEffect } from "react";
 
 interface IconSelectorProps {
     selectedIcon: string;
@@ -17,11 +18,22 @@ export default function IconSelector({
     allIcons,
     predefinedIcons
 }: IconSelectorProps) {
+    console.log('IconSelector received allIcons:', allIcons.length, 'icons');
+    console.log('IconSelector received predefinedIcons:', predefinedIcons.length, 'icons');
+    console.log('IconSelector searchQuery:', searchQuery);
+
+    useEffect(() => {
+        console.log('IconSelector: allIcons changed to', allIcons.length, 'icons');
+    }, [allIcons]);
+
     const filteredIcons = searchQuery.trim() && allIcons.length > 0
         ? allIcons.filter((iconName) =>
             iconName.toLowerCase().includes(searchQuery.toLowerCase())
         )
         : predefinedIcons;
+
+    console.log('IconSelector filteredIcons:', filteredIcons.length, 'icons');
+    console.log('IconSelector first 5 filtered icons:', filteredIcons.slice(0, 5));
 
     return (
         <div>
