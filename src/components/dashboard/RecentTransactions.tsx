@@ -63,9 +63,6 @@ export default function RecentTransactions({ userId, limit = 5 }: RecentTransact
         <div className="lg:col-span-2 card">
             <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold">Recent Transactions</h2>
-                <button className="text-green-600 hover:text-green-700 font-medium text-sm">
-                    View All
-                </button>
             </div>
             <div className="space-y-4">
                 {transactions.length === 0 ? (

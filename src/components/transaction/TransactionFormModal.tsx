@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { TransactionRequestDTO, TransactionResponseDTO, TransactionConfig } from "../../types/transaction";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import NewCategoryModal from "../NewCategoryModal";
 import NewPaymentMethodModal from "../NewPaymentMethodModal";
 import { Category } from "@/types/category";
@@ -38,6 +39,7 @@ export default function TransactionFormModal({
     const [formData, setFormData] = useState<FormData>(initialData);
     const [showNewCategoryModal, setShowNewCategoryModal] = useState(false);
     const [showNewPaymentMethodModal, setShowNewPaymentMethodModal] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const {
         categories,
@@ -85,19 +87,19 @@ export default function TransactionFormModal({
 
         // Validation
         if (!formData.amount.trim() || parseFloat(formData.amount) <= 0) {
-            alert('Please enter a valid amount greater than 0');
+            setErrorMessage('Please enter a valid amount greater than 0');
             return;
         }
         if (!formData.categoryId) {
-            alert('Please select a category');
+            setErrorMessage('Please select a category');
             return;
         }
         if (!formData.paymentMethodId) {
-            alert(`Please select a ${config.type === 'income' ? 'received method' : 'payment method'}`);
+            setErrorMessage(`Please select a ${config.type === 'income' ? 'received method' : 'payment method'}`);
             return;
         }
         if (!formData.date) {
-            alert(`Please select a ${config.formLabels.date.toLowerCase()}`);
+            setErrorMessage(`Please select a ${config.formLabels.date.toLowerCase()}`);
             return;
         }
 
@@ -172,6 +174,18 @@ export default function TransactionFormModal({
                 allLucideIcons={allLucideIcons}
                 predefinedIcons={predefinedIcons}
             />
+
+            <AlertDialog open={!!errorMessage} onOpenChange={() => setErrorMessage(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Error</AlertDialogTitle>
+                        <AlertDialogDescription>{errorMessage}</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogAction>OK</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </>
     );
 }
