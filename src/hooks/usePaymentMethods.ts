@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getAllPaymentMethods, createPaymentMethod } from "../services/paymentMethodService";
+import { getAllPaymentMethods, createPaymentMethod, updatePaymentMethod, deletePaymentMethod } from "../services/paymentMethodService";
 import { PaymentMethodRequestDTO } from "../types/paymentMethod";
 
 // Query keys
@@ -24,6 +24,28 @@ export const useCreatePaymentMethod = () => {
     return useMutation({
         mutationFn: ({ paymentMethod, userId }: { paymentMethod: PaymentMethodRequestDTO; userId: number }) =>
             createPaymentMethod(paymentMethod, userId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: paymentMethodKeys.lists() });
+        },
+    });
+};
+
+export const useUpdatePaymentMethod = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({ id, paymentMethod }: { id: number; paymentMethod: PaymentMethodRequestDTO }) => updatePaymentMethod(id, paymentMethod),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: paymentMethodKeys.lists() });
+        },
+    });
+};
+
+export const useDeletePaymentMethod = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({ id, userId }: { id: number; userId: number }) => deletePaymentMethod(id, userId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: paymentMethodKeys.lists() });
         },

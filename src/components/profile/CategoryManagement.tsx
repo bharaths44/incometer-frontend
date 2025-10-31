@@ -1,10 +1,13 @@
 import { useState } from "react";
-import { useCategories } from "../../hooks/useCategories";
+import { useCategories, useDeleteCategory } from "../../hooks/useCategories";
 import NewCategoryModal from "../NewCategoryModal";
+import UpdateCategoryModal from "../UpdateCategoryModal";
 import { Category } from "../../types/category";
 import { PREDEFINED_ICONS } from "../../lib/constants";
 import { Icon } from "../../utils/iconUtils";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Edit2, Trash2, AlertTriangle } from "lucide-react";
 
 interface CategoryManagementProps {
     userId: number;
@@ -14,17 +17,67 @@ interface CategoryManagementProps {
 type CategoryType = 'ALL' | 'EXPENSE' | 'INCOME';
 
 export default function CategoryManagement({ userId, allLucideIcons }: CategoryManagementProps) {
-    console.log('CategoryManagement received allLucideIcons:', allLucideIcons.length, 'icons');
-    console.log('First 5 icons:', allLucideIcons.slice(0, 5));
+
 
     const { data: categories = [], isLoading } = useCategories(userId);
+    const deleteCategoryMutation = useDeleteCategory();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
+    const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
     const [selectedType, setSelectedType] = useState<CategoryType>('ALL');
     const [searchQuery, setSearchQuery] = useState("");
 
     const handleCreateCategory = (category: Category) => {
         // The mutation will handle cache invalidation
         console.log("Category created:", category);
+    };
+
+    const handleUpdateCategory = (category: Category) => {
+        // The mutation will handle cache invalidation
+        console.log("Category updated:", category);
+        setIsUpdateModalOpen(false);
+        setSelectedCategory(null);
+    };
+
+    const handleCategoryClick = (category: Category) => {
+        setSelectedCategory(category);
+        setIsUpdateModalOpen(true);
+    };
+
+    const handleDeleteCategory = (category: Category) => {
+        setCategoryToDelete(category);
+        setIsDeleteDialogOpen(true);
+    };
+
+    const confirmDeleteCategory = () => {
+        if (categoryToDelete) {
+            deleteCategoryMutation.mutate(
+                { id: categoryToDelete.categoryId, userId },
+                {
+                    onSuccess: () => {
+                        console.log("Category deleted:", categoryToDelete);
+                        setIsDeleteDialogOpen(false);
+                        setCategoryToDelete(null);
+                    },
+                    onError: (error) => {
+                        console.error("Failed to delete category:", error);
+                        setErrorMessage("Failed to delete category. Please try again.");
+                        setIsErrorDialogOpen(true);
+                        setIsDeleteDialogOpen(false);
+                        setCategoryToDelete(null);
+                    }
+                }
+            );
+        }
+    };
+
+    const cancelDeleteCategory = () => {
+        setIsDeleteDialogOpen(false);
+        setCategoryToDelete(null);
     };
 
     const filteredCategories = categories.filter(category => {
@@ -47,8 +100,23 @@ export default function CategoryManagement({ userId, allLucideIcons }: CategoryM
                     <div className="text-sm text-gray-500 capitalize">{category.type.toLowerCase()}</div>
                 </div>
             </div>
-            <div className="text-sm text-gray-400">
-                ID: {category.categoryId}
+            <div className="flex items-center gap-2">
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleCategoryClick(category)}
+                    className="h-8 w-8 p-0 hover:bg-blue-50"
+                >
+                    <Edit2 className="h-4 w-4" />
+                </Button>
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDeleteCategory(category)}
+                    className="h-8 w-8 p-0 hover:bg-red-50"
+                >
+                    <Trash2 className="h-4 w-4 text-red-600" />
+                </Button>
             </div>
         </div>
     );
@@ -130,6 +198,72 @@ export default function CategoryManagement({ userId, allLucideIcons }: CategoryM
                 predefinedIcons={PREDEFINED_ICONS}
                 defaultType={selectedType === 'ALL' ? 'EXPENSE' : selectedType}
             />
+
+            <UpdateCategoryModal
+                isOpen={isUpdateModalOpen}
+                onClose={() => {
+                    setIsUpdateModalOpen(false);
+                    setSelectedCategory(null);
+                }}
+                onUpdate={handleUpdateCategory}
+                categories={categories}
+                category={selectedCategory}
+                userId={userId}
+                allLucideIcons={allLucideIcons}
+                predefinedIcons={PREDEFINED_ICONS}
+            />
+
+            <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <AlertTriangle className="h-5 w-5" />
+                            Delete Category
+                        </DialogTitle>
+                        <DialogDescription className="text-left">
+                            Are you sure you want to delete the category <strong>"{categoryToDelete?.name}"</strong>?
+                            <br /><br />
+                            <span className="text-red-600 font-medium">
+                                ⚠️ Warning: This will also delete all associated budgets and transactions for this category. This action cannot be undone.
+                            </span>
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button
+                            variant="outline"
+                            onClick={cancelDeleteCategory}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            variant="destructive"
+                            onClick={confirmDeleteCategory}
+                            disabled={deleteCategoryMutation.isPending}
+                        >
+                            {deleteCategoryMutation.isPending ? "Deleting..." : "Delete Category"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={isErrorDialogOpen} onOpenChange={setIsErrorDialogOpen}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <AlertTriangle className="h-5 w-5 text-red-600" />
+                            Error
+                        </DialogTitle>
+                        <DialogDescription>
+                            {errorMessage}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button onClick={() => setIsErrorDialogOpen(false)}>
+                            OK
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </>
     );
 }

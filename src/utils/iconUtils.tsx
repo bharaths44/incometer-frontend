@@ -20,10 +20,8 @@ interface IconProps {
 // Get all Lucide icon names
 export const getAllLucideIconNames = async (): Promise<string[]> => {
   try {
-    console.log('getAllLucideIconNames: Starting to load icons...');
-    const icons = await import("lucide-react");
-    console.log('getAllLucideIconNames: Imported icons module, total keys:', Object.keys(icons).length);
 
+    const icons = await import("lucide-react");
     const iconNames = Object.keys(icons).filter(key =>
       key !== "default" &&
       key !== "createLucideIcon" &&
@@ -34,16 +32,12 @@ export const getAllLucideIconNames = async (): Promise<string[]> => {
       key.charAt(0) === key.charAt(0).toUpperCase()
     );
 
-    console.log('getAllLucideIconNames: Filtered icon names:', iconNames.length);
-    console.log('getAllLucideIconNames: First 10 icon names:', iconNames.slice(0, 10));
-
     // Convert PascalCase names to kebab-case for Icon component
     const kebabCaseIcons: string[] = iconNames.map(name => changeCase.kebabCase(name));
-    console.log('getAllLucideIconNames: Converted to kebab case, first 10:', kebabCaseIcons.slice(0, 10));
 
     // Remove duplicates and sort
     const uniqueIcons = [...new Set(kebabCaseIcons)].sort();
-    console.log('getAllLucideIconNames: Final unique icons:', uniqueIcons.length);
+
 
     return uniqueIcons;
   } catch (error) {
@@ -67,15 +61,14 @@ export const Icon: React.FC<IconProps> = ({
       return;
     }
 
-    console.log('Icon component: Loading icon with name:', name);
     const loadIcon = async () => {
       try {
         const icons = await import("lucide-react"); // import all icons once
         const pascalName = changeCase.pascalCase(name);
-        console.log('Icon component: Converted to PascalCase:', pascalName);
+
 
         const LucideIcon = (icons as unknown as Record<string, LucideIconComponent>)[pascalName];
-        console.log('Icon component: Found LucideIcon:', !!LucideIcon);
+
 
         if (LucideIcon) {
           setIconComponent(() => LucideIcon);

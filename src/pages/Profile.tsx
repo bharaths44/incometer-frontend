@@ -10,10 +10,7 @@ export default function Profile() {
 
     useEffect(() => {
         const loadIcons = async () => {
-            console.log('Loading Lucide icons...');
             const icons = await getAllLucideIconNames();
-            console.log('Loaded icons:', icons.length, 'icons');
-            console.log('First 10 icons:', icons.slice(0, 10));
             setAllLucideIcons(icons);
         };
         loadIcons();

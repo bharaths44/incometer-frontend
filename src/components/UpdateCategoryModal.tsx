@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-import { createCategory } from "../services/categoryService";
+import { updateCategory } from "../services/categoryService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,93 +10,107 @@ import IconSelector from "./IconSelector";
 import { Category } from "@/types/category";
 import { PREDEFINED_ICONS } from "@/lib/constants";
 
-interface NewCategoryModalProps {
+interface UpdateCategoryModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onCreate: (category: Category) => void;
+    onUpdate: (category: Category) => void;
     categories: Category[];
+    category: Category | null;
     userId: number;
     allLucideIcons: string[];
     predefinedIcons: string[];
-    defaultType?: 'EXPENSE' | 'INCOME';
 }
 
-export default function NewCategoryModal({
+export default function UpdateCategoryModal({
     isOpen,
     onClose,
-    onCreate,
+    onUpdate,
     categories,
+    category,
     userId,
     allLucideIcons,
-    predefinedIcons: propPredefinedIcons,
-    defaultType = 'EXPENSE'
-}: NewCategoryModalProps) {
-
-    const [newCategoryName, setNewCategoryName] = useState("");
-    const [newCategoryIcon, setNewCategoryIcon] = useState("");
-    const [newCategoryType, setNewCategoryType] = useState<'EXPENSE' | 'INCOME'>(defaultType);
+    predefinedIcons: propPredefinedIcons
+}: UpdateCategoryModalProps) {
+    const [categoryName, setCategoryName] = useState("");
+    const [categoryIcon, setCategoryIcon] = useState("");
+    const [categoryType, setCategoryType] = useState<'EXPENSE' | 'INCOME'>('EXPENSE');
     const [iconSearchQuery, setIconSearchQuery] = useState("");
 
-    const handleCreateCategory = async () => {
-        if (!newCategoryName.trim() || !newCategoryIcon) {
+    // Populate form when category changes
+    useEffect(() => {
+        if (category) {
+            setCategoryName(category.name);
+            setCategoryIcon(category.icon);
+            setCategoryType(category.type);
+        }
+    }, [category]);
+
+    const handleUpdateCategory = async () => {
+        if (!categoryName.trim() || !categoryIcon || !category) {
             alert('Please enter a category name and select an icon');
             return;
         }
 
-        // Check if category already exists
-        const existingCategory = categories.find(cat => cat.name.toLowerCase() === newCategoryName.trim().toLowerCase());
+        // Check if another category with the same name already exists (excluding current category)
+        const existingCategory = categories.find(cat =>
+            cat.name.toLowerCase() === categoryName.trim().toLowerCase() &&
+            cat.categoryId !== category.categoryId
+        );
         if (existingCategory) {
-            alert('Category already exists!');
+            alert('Another category with this name already exists!');
             return;
         }
 
         try {
-            const newCategory = await createCategory({
-                userId,
-                name: newCategoryName.trim(),
-                icon: newCategoryIcon,
-                type: newCategoryType,
+            const updatedCategory = await updateCategory(category.categoryId, {
+                userId: userId,
+                name: categoryName.trim(),
+                icon: categoryIcon,
+                type: categoryType,
             });
-            onCreate(newCategory);
+            onUpdate(updatedCategory);
             handleClose();
         } catch (error) {
-            console.error('Failed to create category:', error);
+            console.error('Failed to update category:', error);
+            alert('Failed to update category. Please try again.');
         }
     };
 
     const handleClose = () => {
-        setNewCategoryName("");
-        setNewCategoryIcon("");
-        setNewCategoryType(defaultType);
+        setCategoryName("");
+        setCategoryIcon("");
+        setCategoryType('EXPENSE');
         setIconSearchQuery("");
         onClose();
     };
+
+    if (!category) return null;
 
     return (
         <Dialog open={isOpen} onOpenChange={handleClose}>
             <DialogContent className="max-w-md">
                 <DialogHeader>
-                    <DialogTitle>Create New Category</DialogTitle>
+                    <DialogTitle>Update Category</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
                     <div>
-                        <Label htmlFor="newCategoryName" className="block text-sm font-medium text-gray-700 mb-2">
+                        <Label htmlFor="categoryName" className="block text-sm font-medium text-gray-700 mb-2">
                             Category Name
                         </Label>
                         <Input
-                            id="newCategoryName"
+                            id="categoryName"
                             type="text"
-                            value={newCategoryName}
-                            onChange={(e) => setNewCategoryName(e.target.value)}
+                            value={categoryName}
+                            onChange={(e) => setCategoryName(e.target.value)}
                             placeholder="e.g., Travel"
                             required
                         />
                     </div>
                     <div>
-                        <Label htmlFor="newCategoryType" className="block text-sm font-medium text-gray-700 mb-2">
+                        <Label htmlFor="categoryType" className="block text-sm font-medium text-gray-700 mb-2">
                             Category Type
                         </Label>
-                        <Select value={newCategoryType} onValueChange={(value: 'EXPENSE' | 'INCOME') => setNewCategoryType(value)}>
+                        <Select value={categoryType} onValueChange={(value: 'EXPENSE' | 'INCOME') => setCategoryType(value)}>
                             <SelectTrigger>
                                 <SelectValue placeholder="Select Type" />
                             </SelectTrigger>
@@ -107,8 +121,8 @@ export default function NewCategoryModal({
                         </Select>
                     </div>
                     <IconSelector
-                        selectedIcon={newCategoryIcon}
-                        onSelect={setNewCategoryIcon}
+                        selectedIcon={categoryIcon}
+                        onSelect={setCategoryIcon}
                         searchQuery={iconSearchQuery}
                         setSearchQuery={setIconSearchQuery}
                         allIcons={allLucideIcons}
@@ -125,11 +139,11 @@ export default function NewCategoryModal({
                         </Button>
                         <Button
                             type="button"
-                            onClick={handleCreateCategory}
+                            onClick={handleUpdateCategory}
                             className="flex-1"
-                            disabled={!newCategoryName.trim() || !newCategoryIcon}
+                            disabled={!categoryName.trim() || !categoryIcon}
                         >
-                            Create
+                            Update
                         </Button>
                     </div>
                 </div>

@@ -33,10 +33,34 @@ export const createCategory = async (category: CategoryRequestDTO): Promise<Cate
     return newCategory;
 };
 
-export const getCategoryById = async (id: number): Promise<Category> => {
-    const response = await fetch(`${API_BASE_URL_CATEGORIES}/${id}`);
+export const updateCategory = async (id: number, category: CategoryRequestDTO): Promise<Category> => {
+    console.log('Updating category:', id, category);
+    const response = await fetch(`${API_BASE_URL_CATEGORIES}/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(category),
+    });
+    console.log('Response status:', response.status);
     if (!response.ok) {
-        throw new Error('Failed to fetch category');
+        const errorText = await response.text();
+        console.log('Error response:', errorText);
+        throw new Error('Failed to update category');
     }
-    return response.json();
+    const updatedCategory = await response.json();
+    return updatedCategory;
+};
+
+export const deleteCategory = async (id: number, userId: number): Promise<void> => {
+    console.log('Deleting category:', id, 'for user:', userId);
+    const response = await fetch(`${API_BASE_URL_CATEGORIES}/${userId}/${id}`, {
+        method: 'DELETE',
+    });
+    console.log('Response status:', response.status);
+    if (!response.ok) {
+        const errorText = await response.text();
+        console.log('Error response:', errorText);
+        throw new Error('Failed to delete category');
+    }
 };
