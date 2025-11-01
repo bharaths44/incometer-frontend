@@ -1,15 +1,3 @@
-export interface Insight {
-	title: string;
-	value: string;
-	detail: string;
-}
-
-export interface MonthlyData {
-	month: string;
-	income: number;
-	expenses: number;
-}
-
 export interface CategoryAnalytics {
 	categoryName: string;
 	totalSpent: number;

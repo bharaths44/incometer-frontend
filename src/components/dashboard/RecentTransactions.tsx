@@ -1,4 +1,5 @@
 import { useRecentTransactions } from '@/hooks/useTransactions.ts';
+import Icon from '@/lib/iconUtils';
 
 interface RecentTransactionsProps {
 	userId: number;
@@ -11,29 +12,6 @@ export default function RecentTransactions({
 }: RecentTransactionsProps) {
 	const { data: transactions = [], isLoading: loading } =
 		useRecentTransactions(userId, limit);
-
-	const getTransactionIcon = (description: string, type: string) => {
-		const desc = description.toLowerCase();
-		if (type === 'INCOME') {
-			if (desc.includes('salary') || desc.includes('deposit'))
-				return '💰';
-			if (desc.includes('freelance') || desc.includes('project'))
-				return '💼';
-			return '💵';
-		} else {
-			if (desc.includes('grocery') || desc.includes('food')) return '🛒';
-			if (desc.includes('coffee') || desc.includes('drink')) return '☕';
-			if (desc.includes('netflix') || desc.includes('subscription'))
-				return '🎬';
-			if (
-				desc.includes('transport') ||
-				desc.includes('bus') ||
-				desc.includes('taxi')
-			)
-				return '🚗';
-			return '💳';
-		}
-	};
 
 	const formatDate = (dateString: string) => {
 		const date = new Date(dateString);
@@ -94,11 +72,12 @@ export default function RecentTransactions({
 							className='flex items-center justify-between p-4 rounded-2xl hover:bg-gray-50 transition-colors duration-200'
 						>
 							<div className='flex items-center gap-4'>
-								<div className='w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center text-2xl'>
-									{getTransactionIcon(
-										transaction.description,
-										transaction.transactionType
-									)}
+								<div className='w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center'>
+									<Icon
+										name={transaction.category.icon}
+										size={24}
+										className="text-gray-600"
+									/>
 								</div>
 								<div>
 									<div className='font-semibold text-gray-900'>

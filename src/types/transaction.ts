@@ -2,18 +2,6 @@ import { CategoryDto } from './category';
 
 export type TransactionType = 'EXPENSE' | 'INCOME';
 
-export interface Transaction {
-	transactionId: number;
-	userId: number;
-	category: CategoryDto;
-	amount: number;
-	description: string;
-	paymentMethod: PaymentMethodDto;
-	transactionDate: string;
-	transactionType: TransactionType;
-	createdAt: string;
-}
-
 export interface TransactionRequestDTO {
 	userId: number;
 	categoryId: number;

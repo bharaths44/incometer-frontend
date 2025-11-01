@@ -1,10 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { TransactionRequestDTO } from '../types/transaction';
+import { TransactionRequestDTO } from '@/types/transaction';
 import {
 	createExpenseService,
 	createIncomeService,
-} from '../services/transactionService';
-
+	TransactionService,
+} from '@/services/transactionService';
+import { analyticsKeys } from './useAnalytics';
 // Query keys
 export const transactionKeys = {
 	all: ['transactions'] as const,
@@ -16,27 +17,89 @@ export const transactionKeys = {
 		[...transactionKeys.details(), userId, id] as const,
 };
 
-// Hooks for expense transactions
-export const useExpenseTransactions = (userId: number) => {
+// Generic transaction query hook
+const useTransactions = (userId: number, type: 'expense' | 'income') => {
 	return useQuery({
-		queryKey: transactionKeys.list(userId, 'expense'),
+		queryKey: transactionKeys.list(userId, type),
 		queryFn: async () => {
-			const service = createExpenseService();
+			const service = type === 'expense' ? createExpenseService() : createIncomeService();
 			return service.getAll(userId);
 		},
 		enabled: !!userId,
 	});
 };
 
-export const useIncomeTransactions = (userId: number) => {
-	return useQuery({
-		queryKey: transactionKeys.list(userId, 'income'),
-		queryFn: async () => {
-			const service = createIncomeService();
-			return service.getAll(userId);
+// Generic mutation hooks
+const useCreateTransactionMutation = (createService: () => TransactionService) => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: async (dto: TransactionRequestDTO) => {
+			const service = createService();
+			return service.create(dto);
 		},
-		enabled: !!userId,
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: transactionKeys.lists(),
+			});
+			queryClient.invalidateQueries({
+				queryKey: analyticsKeys.all,
+			});
+		},
 	});
+};
+
+const useUpdateTransactionMutation = (createService: () => TransactionService) => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: async ({
+			id,
+			dto,
+		}: {
+			id: number;
+			dto: TransactionRequestDTO;
+		}) => {
+			const service = createService();
+			return service.update(id, dto);
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: transactionKeys.lists(),
+			});
+			queryClient.invalidateQueries({
+				queryKey: analyticsKeys.all,
+			});
+		},
+	});
+};
+
+const useDeleteTransactionMutation = (createService: () => TransactionService) => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: async ({ id, userId }: { id: number; userId: number }) => {
+			const service = createService();
+			return service.delete(id, userId);
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: transactionKeys.lists(),
+			});
+			queryClient.invalidateQueries({
+				queryKey: analyticsKeys.all,
+			});
+		},
+	});
+};
+
+// Hooks for expense transactions
+export const useExpenseTransactions = (userId: number) => {
+	return useTransactions(userId, 'expense');
+};
+
+export const useIncomeTransactions = (userId: number) => {
+	return useTransactions(userId, 'income');
 };
 
 export const useRecentTransactions = (userId: number, limit: number = 5) => {
@@ -64,111 +127,25 @@ export const useRecentTransactions = (userId: number, limit: number = 5) => {
 };
 
 export const useCreateExpense = () => {
-	const queryClient = useQueryClient();
-
-	return useMutation({
-		mutationFn: async (dto: TransactionRequestDTO) => {
-			const service = createExpenseService();
-			return service.create(dto);
-		},
-		onSuccess: () => {
-			// Invalidate and refetch expense transactions
-			queryClient.invalidateQueries({
-				queryKey: transactionKeys.lists(),
-			});
-		},
-	});
+	return useCreateTransactionMutation(createExpenseService);
 };
 
 export const useCreateIncome = () => {
-	const queryClient = useQueryClient();
-
-	return useMutation({
-		mutationFn: async (dto: TransactionRequestDTO) => {
-			const service = createIncomeService();
-			return service.create(dto);
-		},
-		onSuccess: () => {
-			// Invalidate and refetch income transactions
-			queryClient.invalidateQueries({
-				queryKey: transactionKeys.lists(),
-			});
-		},
-	});
+	return useCreateTransactionMutation(createIncomeService);
 };
 
 export const useUpdateExpense = () => {
-	const queryClient = useQueryClient();
-
-	return useMutation({
-		mutationFn: async ({
-			id,
-			dto,
-		}: {
-			id: number;
-			dto: TransactionRequestDTO;
-		}) => {
-			const service = createExpenseService();
-			return service.update(id, dto);
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: transactionKeys.lists(),
-			});
-		},
-	});
+	return useUpdateTransactionMutation(createExpenseService);
 };
 
 export const useUpdateIncome = () => {
-	const queryClient = useQueryClient();
-
-	return useMutation({
-		mutationFn: async ({
-			id,
-			dto,
-		}: {
-			id: number;
-			dto: TransactionRequestDTO;
-		}) => {
-			const service = createIncomeService();
-			return service.update(id, dto);
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: transactionKeys.lists(),
-			});
-		},
-	});
+	return useUpdateTransactionMutation(createIncomeService);
 };
 
 export const useDeleteExpense = () => {
-	const queryClient = useQueryClient();
-
-	return useMutation({
-		mutationFn: async ({ id, userId }: { id: number; userId: number }) => {
-			const service = createExpenseService();
-			return service.delete(id, userId);
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: transactionKeys.lists(),
-			});
-		},
-	});
+	return useDeleteTransactionMutation(createExpenseService);
 };
 
 export const useDeleteIncome = () => {
-	const queryClient = useQueryClient();
-
-	return useMutation({
-		mutationFn: async ({ id, userId }: { id: number; userId: number }) => {
-			const service = createIncomeService();
-			return service.delete(id, userId);
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: transactionKeys.lists(),
-			});
-		},
-	});
+	return useDeleteTransactionMutation(createIncomeService);
 };
