@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import {
+	fetchBudgetAnalytics,
 	fetchCategoryBreakdown,
 	fetchExpenseSummary,
-	fetchBudgetAnalytics,
 } from '../services/analyticsService';
 
 // Query keys

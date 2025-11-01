@@ -1,5 +1,5 @@
 import { AlertTriangle, CheckCircle, IndianRupee } from 'lucide-react';
-import { BudgetAnalytics } from '../../types/analytics';
+import { BudgetAnalytics } from '@/types/analytics.ts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface BudgetOverviewProps {

@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as changeCase from 'change-case';
 
 interface LucideIconProps {
@@ -37,10 +37,7 @@ export const getAllLucideIconNames = async (): Promise<string[]> => {
 			changeCase.kebabCase(name)
 		);
 
-		// Remove duplicates and sort
-		const uniqueIcons = [...new Set(kebabCaseIcons)].sort();
-
-		return uniqueIcons;
+		return [...new Set(kebabCaseIcons)].sort();
 	} catch (error) {
 		console.warn(
 			'getAllLucideIconNames: Failed to load Lucide icons:',

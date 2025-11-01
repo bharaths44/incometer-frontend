@@ -1,16 +1,7 @@
-import { useState, useEffect } from 'react';
-import {
-	TransactionRequestDTO,
-	TransactionResponseDTO,
-	TransactionConfig,
-} from '../../types/transaction';
+import { useEffect, useState } from 'react';
+import { TransactionConfig, TransactionRequestDTO, TransactionResponseDTO, } from '@/types/transaction.ts';
 import { Button } from '@/components/ui/button';
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, } from '@/components/ui/dialog';
 import {
 	AlertDialog,
 	AlertDialogAction,

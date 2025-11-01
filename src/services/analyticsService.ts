@@ -1,6 +1,6 @@
 import {
-	CategoryAnalytics,
 	BudgetAnalytics,
+	CategoryAnalytics,
 	ExpenseSummary,
 } from '../types/analytics';
 import { API_BASE_URL } from '@/lib/constants';

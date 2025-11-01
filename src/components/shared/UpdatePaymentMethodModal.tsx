@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { updatePaymentMethod } from '@/services/paymentMethodService';
 import { Button } from '@/components/ui/button';
@@ -28,9 +28,9 @@ import {
 } from '@/components/ui/alert-dialog';
 
 import {
-	PaymentMethodResponseDTO,
-	PaymentMethodRequestDTO,
 	PAYMENT_METHOD_TYPE_LABELS,
+	PaymentMethodRequestDTO,
+	PaymentMethodResponseDTO,
 } from '@/types/paymentMethod';
 import { PREDEFINED_ICONS } from '@/lib/constants';
 import IconSelector from './IconSelector';

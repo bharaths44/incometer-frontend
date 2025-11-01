@@ -9,12 +9,12 @@ import { Button } from '@/components/ui/button';
 import {
 	Dialog,
 	DialogContent,
-	DialogHeader,
-	DialogTitle,
 	DialogDescription,
 	DialogFooter,
+	DialogHeader,
+	DialogTitle,
 } from '@/components/ui/dialog';
-import { Edit2, Trash2, AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Edit2, Trash2 } from 'lucide-react';
 
 interface CategoryManagementProps {
 	userId: number;

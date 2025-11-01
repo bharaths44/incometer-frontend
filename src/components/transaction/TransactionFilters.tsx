@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Filter, CalendarIcon, Search } from 'lucide-react';
+import { CalendarIcon, Filter, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

@@ -6,7 +6,7 @@ import {
 	TrendingUp,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useExpenseSummary } from '../../hooks/useAnalytics';
+import { useExpenseSummary } from '@/hooks/useAnalytics.ts';
 
 interface DashboardStatsProps {
 	userId: number;

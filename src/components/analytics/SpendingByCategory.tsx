@@ -1,5 +1,5 @@
 import { PieChart } from 'lucide-react';
-import { CategoryAnalytics } from '../../types/analytics';
+import { CategoryAnalytics } from '@/types/analytics.ts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface SpendingByCategoryProps {

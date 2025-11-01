@@ -1,9 +1,9 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
-	getAllPaymentMethods,
 	createPaymentMethod,
-	updatePaymentMethod,
 	deletePaymentMethod,
+	getAllPaymentMethods,
+	updatePaymentMethod,
 } from '../services/paymentMethodService';
 import { PaymentMethodRequestDTO } from '../types/paymentMethod';
 

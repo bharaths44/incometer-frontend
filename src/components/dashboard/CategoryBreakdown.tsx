@@ -1,4 +1,4 @@
-import { useCategoryBreakdown } from '../../hooks/useAnalytics';
+import { useCategoryBreakdown } from '@/hooks/useAnalytics.ts';
 
 interface CategoryBreakdownProps {
 	userId: number;

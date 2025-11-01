@@ -1,5 +1,5 @@
 import { IndianRupee, TrendingDown, TrendingUp } from 'lucide-react';
-import { ExpenseSummary } from '../../types/analytics';
+import { ExpenseSummary } from '@/types/analytics.ts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface FinancialOverviewProps {

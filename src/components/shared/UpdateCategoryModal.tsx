@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { updateCategory } from '@/services/categoryService';
 import { Button } from '@/components/ui/button';

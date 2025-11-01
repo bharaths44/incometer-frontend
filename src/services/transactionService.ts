@@ -1,7 +1,7 @@
 import {
+	TransactionConfig,
 	TransactionRequestDTO,
 	TransactionResponseDTO,
-	TransactionConfig,
 } from '../types/transaction';
 import { API_BASE_URL } from '../lib/constants';
 

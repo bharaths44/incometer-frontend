@@ -1,7 +1,7 @@
 import {
+	TransactionConfig,
 	TransactionRequestDTO,
 	TransactionResponseDTO,
-	TransactionConfig,
 } from '@/types/transaction';
 import TransactionFormModal from '@/components/transaction/TransactionFormModal';
 

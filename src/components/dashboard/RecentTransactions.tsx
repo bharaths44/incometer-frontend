@@ -1,4 +1,4 @@
-import { useRecentTransactions } from '../../hooks/useTransactions';
+import { useRecentTransactions } from '@/hooks/useTransactions.ts';
 
 interface RecentTransactionsProps {
 	userId: number;

@@ -1,7 +1,7 @@
 import { DollarSign } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useExpenseSummary } from '../../hooks/useAnalytics';
-import { ExpenseSummary } from '../../types/analytics';
+import { useExpenseSummary } from '@/hooks/useAnalytics.ts';
+import { ExpenseSummary } from '@/types/analytics.ts';
 
 interface FinancialHealthScoreProps {
 	userId: number;
