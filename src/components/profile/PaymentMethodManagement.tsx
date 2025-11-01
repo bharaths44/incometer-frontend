@@ -85,20 +85,20 @@ export default function PaymentMethodManagement({
 	) => (
 		<div
 			key={paymentMethod.paymentMethodId}
-			className='flex items-center justify-between p-4 bg-white rounded-2xl border border-gray-100 hover:shadow-md transition-shadow'
+			className='flex items-center justify-between p-4 bg-surface-container rounded-2xl border border-outline-variant hover:shadow-md transition-shadow'
 		>
 			<div className='flex items-center gap-3'>
-				<div className='w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center'>
+				<div className='w-10 h-10 bg-surface-container-high rounded-xl flex items-center justify-center'>
 					<Icon
 						name={paymentMethod.icon || 'credit-card'}
-						className='w-5 h-5 text-gray-600'
+						className='w-5 h-5 text-surface-variant-foreground'
 					/>
 				</div>
 				<div>
 					<div className='font-medium'>
 						{paymentMethod.displayName || paymentMethod.name}
 					</div>
-					<div className='text-sm text-gray-500 capitalize'>
+					<div className='text-sm text-surface-variant-foreground capitalize'>
 						{PAYMENT_METHOD_TYPE_LABELS[paymentMethod.type] ||
 							paymentMethod.type}
 					</div>
@@ -109,7 +109,7 @@ export default function PaymentMethodManagement({
 					variant='ghost'
 					size='sm'
 					onClick={() => handleUpdatePaymentMethod(paymentMethod)}
-					className='h-8 w-8 p-0 hover:bg-blue-50'
+					className='h-8 w-8 p-0 hover:bg-tertiary-container'
 				>
 					<Edit2 className='h-4 w-4' />
 				</Button>
@@ -119,7 +119,7 @@ export default function PaymentMethodManagement({
 					onClick={() => handleDeletePaymentMethod(paymentMethod)}
 					className='h-8 w-8 p-0 hover:bg-red-50'
 				>
-					<Trash2 className='h-4 w-4 text-red-600' />
+					<Trash2 className='h-4 w-4 text-error' />
 				</Button>
 			</div>
 		</div>
@@ -164,7 +164,7 @@ export default function PaymentMethodManagement({
 				<DialogContent>
 					<DialogHeader>
 						<DialogTitle className='flex items-center gap-2'>
-							<AlertTriangle className='h-5 w-5 text-red-600' />
+							<AlertTriangle className='h-5 w-5 text-error' />
 							Delete Payment Method
 						</DialogTitle>
 						<DialogDescription>

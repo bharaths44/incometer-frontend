@@ -46,12 +46,12 @@ export default function Sidebar({
 		<>
 			{/* Desktop Sidebar */}
 			<aside
-				className={`hidden md:flex flex-col bg-white border-r border-gray-100 fixed left-0 top-0 h-full z-50 transition-all duration-300 ${
+				className={`hidden md:flex flex-col bg-surface-container border-r border-outline-variant fixed left-0 top-0 h-full z-50 transition-all duration-300 ${
 					isCollapsed ? 'w-16' : 'w-64'
 				}`}
 			>
 				<div
-					className={`p-4 border-b border-gray-100 ${isCollapsed ? 'px-2' : 'p-6'}`}
+					className={`p-4 border-b border-outline-variant ${isCollapsed ? 'px-2' : 'p-6'}`}
 				>
 					<div
 						className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}
@@ -69,7 +69,7 @@ export default function Sidebar({
 						onClick={() => onToggleCollapse(!isCollapsed)}
 						variant='ghost'
 						size='icon'
-						className='absolute -right-3 top-6 w-6 h-6 rounded-full bg-white border border-gray-200 shadow-sm hover:bg-gray-50'
+						className='absolute -right-3 top-6 w-6 h-6 rounded-full bg-surface-container border border-outline shadow-sm hover:bg-surface-container-low'
 					>
 						{isCollapsed ? (
 							<ChevronRight className='w-3 h-3' />
@@ -103,7 +103,7 @@ export default function Sidebar({
 				</nav>
 
 				<div
-					className={`border-t border-gray-100 ${isCollapsed ? 'p-2' : 'p-4'} space-y-2`}
+					className={`border-t border-outline-variant ${isCollapsed ? 'p-2' : 'p-4'} space-y-2`}
 				>
 					{bottomNavItems.map((item) => (
 						<Button
@@ -135,8 +135,8 @@ export default function Sidebar({
 					className='md:hidden fixed inset-0 z-50 bg-black/50'
 					onClick={() => onToggleMobileMenu(false)}
 				>
-					<aside className='w-64 bg-white h-full fixed left-0 top-0 shadow-lg'>
-						<div className='p-6 border-b border-gray-100'>
+					<aside className='w-64 bg-surface-container h-full fixed left-0 top-0 shadow-lg'>
+						<div className='p-6 border-b border-outline-variant'>
 							<div className='flex items-center gap-3'>
 								<div className='w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center'>
 									<TrendingUp className='w-6 h-6 text-white' />
@@ -172,7 +172,7 @@ export default function Sidebar({
 							))}
 						</nav>
 
-						<div className='p-4 border-t border-gray-100 space-y-2'>
+						<div className='p-4 border-t border-outline-variant space-y-2'>
 							{bottomNavItems.map((item) => (
 								<Button
 									key={item.id}

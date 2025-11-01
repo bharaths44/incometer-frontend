@@ -36,7 +36,7 @@ export default function Analytics() {
 			<div className='flex items-center justify-between'>
 				<div>
 					<h1 className='text-4xl font-bold mb-2'>Analytics</h1>
-					<p className='text-gray-600 flex items-center gap-2'>
+					<p className='text-surface-variant-foreground flex items-center gap-2'>
 						<Calendar className='w-4 h-4' />
 						{new Date().toLocaleDateString('en-US', {
 							year: 'numeric',

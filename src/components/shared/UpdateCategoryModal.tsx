@@ -122,7 +122,7 @@ export default function UpdateCategoryModal({
 						<div>
 							<Label
 								htmlFor='categoryName'
-								className='block text-sm font-medium text-gray-700 mb-2'
+								className='block text-sm font-medium text-foreground mb-2'
 							>
 								Category Name
 							</Label>
@@ -140,7 +140,7 @@ export default function UpdateCategoryModal({
 						<div>
 							<Label
 								htmlFor='categoryType'
-								className='block text-sm font-medium text-gray-700 mb-2'
+								className='block text-sm font-medium text-foreground mb-2'
 							>
 								Category Type
 							</Label>

@@ -98,7 +98,7 @@ export default function Profile() {
 		<div className='page-transition space-y-8'>
 			<div>
 				<h1 className='text-4xl font-bold mb-2'>Profile</h1>
-				<p className='text-gray-600'>
+				<p className='text-surface-variant-foreground'>
 					Manage your account and preferences
 				</p>
 			</div>
@@ -111,7 +111,7 @@ export default function Profile() {
 						className={`py-2 px-1 border-b-2 font-medium text-sm ${
 							activeTab === 'profile'
 								? 'border-green-500 text-green-600'
-								: 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+								: 'border-transparent text-surface-variant-foreground hover:text-gray-700 hover:border-gray-300'
 						}`}
 					>
 						Profile
@@ -121,7 +121,7 @@ export default function Profile() {
 						className={`py-2 px-1 border-b-2 font-medium text-sm ${
 							activeTab === 'categories'
 								? 'border-green-500 text-green-600'
-								: 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+								: 'border-transparent text-surface-variant-foreground hover:text-gray-700 hover:border-gray-300'
 						}`}
 					>
 						Categories
@@ -131,7 +131,7 @@ export default function Profile() {
 						className={`py-2 px-1 border-b-2 font-medium text-sm ${
 							activeTab === 'payment-methods'
 								? 'border-green-500 text-green-600'
-								: 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+								: 'border-transparent text-surface-variant-foreground hover:text-gray-700 hover:border-gray-300'
 						}`}
 					>
 						Payment Methods
@@ -150,7 +150,7 @@ export default function Profile() {
 							<h2 className='text-2xl font-bold mb-1'>
 								{user.name}
 							</h2>
-							<p className='text-gray-600 mb-6'>{user.email}</p>
+							<p className='text-surface-variant-foreground mb-6'>{user.email}</p>
 							<button className='btn-primary w-full flex items-center justify-center gap-2'>
 								<Edit2 className='w-4 h-4' />
 								Edit Profile
@@ -161,7 +161,7 @@ export default function Profile() {
 							<div className='flex items-center gap-3 text-gray-700'>
 								<Calendar className='w-5 h-5 text-gray-400' />
 								<div>
-									<div className='text-sm text-gray-500'>
+									<div className='text-sm text-surface-variant-foreground'>
 										Member since
 									</div>
 									<div className='font-medium'>
@@ -172,7 +172,7 @@ export default function Profile() {
 							<div className='flex items-center gap-3 text-gray-700'>
 								<MapPin className='w-5 h-5 text-gray-400' />
 								<div>
-									<div className='text-sm text-gray-500'>
+									<div className='text-sm text-surface-variant-foreground'>
 										Location
 									</div>
 									<div className='font-medium'>
@@ -201,7 +201,7 @@ export default function Profile() {
 									<div className='text-3xl font-bold mb-1'>
 										{stat.value}
 									</div>
-									<div className='text-sm text-gray-600'>
+									<div className='text-sm text-surface-variant-foreground'>
 										{stat.label}
 									</div>
 								</div>
@@ -213,14 +213,14 @@ export default function Profile() {
 								Account Settings
 							</h3>
 							<div className='space-y-3'>
-								<button className='w-full flex items-center justify-between p-4 rounded-2xl hover:bg-gray-50 transition-colors'>
+								<button className='w-full flex items-center justify-between p-4 rounded-2xl hover:bg-background transition-colors'>
 									<div className='flex items-center gap-3'>
-										<User className='w-5 h-5 text-gray-600' />
+										<User className='w-5 h-5 text-surface-variant-foreground' />
 										<div className='text-left'>
 											<div className='font-medium'>
 												Personal Information
 											</div>
-											<div className='text-sm text-gray-600'>
+											<div className='text-sm text-surface-variant-foreground'>
 												Update your name and email
 											</div>
 										</div>
@@ -228,14 +228,14 @@ export default function Profile() {
 									<Edit2 className='w-5 h-5 text-gray-400' />
 								</button>
 
-								<button className='w-full flex items-center justify-between p-4 rounded-2xl hover:bg-gray-50 transition-colors'>
+								<button className='w-full flex items-center justify-between p-4 rounded-2xl hover:bg-background transition-colors'>
 									<div className='flex items-center gap-3'>
-										<Shield className='w-5 h-5 text-gray-600' />
+										<Shield className='w-5 h-5 text-surface-variant-foreground' />
 										<div className='text-left'>
 											<div className='font-medium'>
 												Security
 											</div>
-											<div className='text-sm text-gray-600'>
+											<div className='text-sm text-surface-variant-foreground'>
 												Password and authentication
 											</div>
 										</div>
@@ -243,14 +243,14 @@ export default function Profile() {
 									<Edit2 className='w-5 h-5 text-gray-400' />
 								</button>
 
-								<button className='w-full flex items-center justify-between p-4 rounded-2xl hover:bg-gray-50 transition-colors'>
+								<button className='w-full flex items-center justify-between p-4 rounded-2xl hover:bg-background transition-colors'>
 									<div className='flex items-center gap-3'>
-										<Bell className='w-5 h-5 text-gray-600' />
+										<Bell className='w-5 h-5 text-surface-variant-foreground' />
 										<div className='text-left'>
 											<div className='font-medium'>
 												Notifications
 											</div>
-											<div className='text-sm text-gray-600'>
+											<div className='text-sm text-surface-variant-foreground'>
 												Email and push notifications
 											</div>
 										</div>
@@ -271,7 +271,7 @@ export default function Profile() {
 										className={`p-4 rounded-2xl border-2 transition-all duration-300 ${
 											achievement.earned
 												? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-200'
-												: 'bg-gray-50 border-gray-200 opacity-60'
+												: 'bg-background border-gray-200 opacity-60'
 										}`}
 									>
 										<div className='text-4xl mb-2'>
@@ -280,7 +280,7 @@ export default function Profile() {
 										<div className='font-bold mb-1'>
 											{achievement.title}
 										</div>
-										<div className='text-sm text-gray-600'>
+										<div className='text-sm text-surface-variant-foreground'>
 											{achievement.description}
 										</div>
 										{achievement.earned && (
@@ -305,7 +305,7 @@ export default function Profile() {
 						/>
 					) : (
 						<div className='flex items-center justify-center py-8'>
-							<div className='text-gray-500'>
+							<div className='text-surface-variant-foreground'>
 								Loading icons...
 							</div>
 						</div>
@@ -322,7 +322,7 @@ export default function Profile() {
 						/>
 					) : (
 						<div className='flex items-center justify-center py-8'>
-							<div className='text-gray-500'>
+							<div className='text-surface-variant-foreground'>
 								Loading icons...
 							</div>
 						</div>

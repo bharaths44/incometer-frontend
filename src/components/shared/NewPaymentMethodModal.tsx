@@ -128,7 +128,7 @@ export default function NewPaymentMethodModal({
 						<div>
 							<Label
 								htmlFor='newPaymentMethodDisplayName'
-								className='block text-sm font-medium text-gray-700 mb-2'
+								className='block text-sm font-medium text-foreground mb-2'
 							>
 								Display Name
 							</Label>
@@ -148,7 +148,7 @@ export default function NewPaymentMethodModal({
 						<div>
 							<Label
 								htmlFor='newPaymentMethodType'
-								className='block text-sm font-medium text-gray-700 mb-2'
+								className='block text-sm font-medium text-foreground mb-2'
 							>
 								Type
 							</Label>
@@ -175,7 +175,7 @@ export default function NewPaymentMethodModal({
 						<div>
 							<Label
 								htmlFor='newPaymentMethodLastFourDigits'
-								className='block text-sm font-medium text-gray-700 mb-2'
+								className='block text-sm font-medium text-foreground mb-2'
 							>
 								Last Four Digits (optional)
 							</Label>
@@ -195,7 +195,7 @@ export default function NewPaymentMethodModal({
 						<div>
 							<Label
 								htmlFor='newPaymentMethodIssuerName'
-								className='block text-sm font-medium text-gray-700 mb-2'
+								className='block text-sm font-medium text-foreground mb-2'
 							>
 								Issuer Name (optional)
 							</Label>

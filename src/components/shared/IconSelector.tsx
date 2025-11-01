@@ -28,7 +28,7 @@ export default function IconSelector({
 			: predefinedIcons;
 	return (
 		<div>
-			<label className='block text-sm font-medium text-gray-700 mb-2'>
+			<label className='block text-sm font-medium text-foreground mb-2'>
 				Icon
 			</label>
 			<input
@@ -39,7 +39,7 @@ export default function IconSelector({
 				placeholder='Search all Lucide icons (e.g., gym, car, food)...'
 			/>
 			{!searchQuery && (
-				<p className='text-xs text-gray-500 mb-2'>
+				<p className='text-xs text-surface-variant-foreground mb-2'>
 					Popular icons shown below. Start typing to search all{' '}
 					{allIcons.length > 0 ? allIcons.length : ''} Lucide icons.
 				</p>
@@ -50,10 +50,10 @@ export default function IconSelector({
 						key={iconName}
 						type='button'
 						onClick={() => onSelect(iconName)}
-						className={`p-2 border rounded-lg hover:bg-gray-50 ${
+						className={`p-2 border rounded-lg hover:bg-surface-container-low ${
 							selectedIcon === iconName
 								? 'border-blue-500 bg-blue-50'
-								: 'border-gray-200'
+								: 'border-outline'
 						}`}
 						title={iconName}
 					>
@@ -62,12 +62,12 @@ export default function IconSelector({
 				))}
 			</div>
 			{filteredIcons.length === 0 && searchQuery && (
-				<p className='text-sm text-gray-500 mt-2'>
+				<p className='text-sm text-surface-variant-foreground mt-2'>
 					No icons found for "{searchQuery}"
 				</p>
 			)}
 			{filteredIcons.length > 0 && searchQuery && (
-				<p className='text-xs text-gray-500 mt-2'>
+				<p className='text-xs text-surface-variant-foreground mt-2'>
 					{filteredIcons.length} icons found
 				</p>
 			)}

@@ -31,7 +31,7 @@ export default function TransactionStats({
 						₹{totalAmount.toFixed(2)}
 					</div>
 				</div>
-				<div className='w-20 h-20 bg-white/20 rounded-3xl flex items-center justify-center backdrop-blur-sm'>
+				<div className='w-20 h-20 bg-surface-container/20 rounded-3xl flex items-center justify-center backdrop-blur-sm'>
 					<svg
 						className='w-10 h-10'
 						fill='currentColor'

@@ -28,7 +28,7 @@ export default function Login({ onLogin, onSwitchToSignup }: LoginProps) {
 						</span>
 					</div>
 					<h1 className='text-4xl font-bold mb-3'>Welcome back</h1>
-					<p className='text-gray-600'>
+					<p className='text-surface-variant-foreground'>
 						Sign in to continue your financial journey
 					</p>
 				</div>
@@ -77,7 +77,7 @@ export default function Login({ onLogin, onSwitchToSignup }: LoginProps) {
 									type='checkbox'
 									className='w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500'
 								/>
-								<span className='text-gray-600'>
+								<span className='text-surface-variant-foreground'>
 									Remember me
 								</span>
 							</label>
@@ -99,7 +99,7 @@ export default function Login({ onLogin, onSwitchToSignup }: LoginProps) {
 					</form>
 				</div>
 
-				<p className='text-center text-gray-600 mt-6'>
+				<p className='text-center text-surface-variant-foreground mt-6'>
 					Don't have an account?{' '}
 					<button
 						onClick={onSwitchToSignup}

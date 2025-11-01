@@ -10,7 +10,7 @@ export default function ProjectedBalance() {
 							Projected Year-End Balance
 						</h2>
 						<div className='text-5xl font-bold mb-2'>₹95,400</div>
-						<p className='text-green-50'>
+						<p className='text-primary-foreground'>
 							Based on your current spending and income trends,
 							you're on track to exceed your savings goal by 22%.
 						</p>

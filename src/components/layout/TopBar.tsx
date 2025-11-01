@@ -54,7 +54,7 @@ export default function TopBar({
 								</DropdownMenuItem>
 								<DropdownMenuItem
 									onClick={onLogout}
-									className='text-red-600 focus:text-red-600'
+									className='text-error focus:text-error'
 								>
 									<LogOut className='w-4 h-4 mr-2' />
 									Logout

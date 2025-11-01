@@ -13,7 +13,7 @@ export default function SpendingByCategory({
 		<Card>
 			<CardHeader>
 				<CardTitle className='flex items-center gap-2'>
-					<PieChart className='w-6 h-6 text-green-600' />
+					<PieChart className='w-6 h-6 text-primary' />
 					Spending by Category
 				</CardTitle>
 			</CardHeader>
@@ -36,7 +36,7 @@ export default function SpendingByCategory({
 							<div className='flex items-center gap-3'>
 								<div className='flex-1 h-3 bg-muted rounded-full overflow-hidden'>
 									<div
-										className='h-full bg-green-500 rounded-full transition-all duration-1000 ease-out'
+										className='h-full bg-primary rounded-full transition-all duration-1000 ease-out'
 										style={{
 											width: `${item.percentageOfTotal}%`,
 											animationDelay: `${index * 100}ms`,

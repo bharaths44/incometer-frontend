@@ -74,13 +74,13 @@ export default function FinancialHealthScore({
 			<div className='card bg-gradient-to-br from-green-500 to-emerald-600 border-0 text-white animate-pulse'>
 				<div className='flex items-center justify-between'>
 					<div>
-						<div className='text-green-100 mb-2'>
+						<div className='text-primary-foreground mb-2'>
 							Financial Health Score
 						</div>
-						<div className='w-24 h-12 bg-white/20 rounded mb-2'></div>
-						<div className='w-48 h-4 bg-white/20 rounded'></div>
+						<div className='w-24 h-12 bg-surface-container/20 rounded mb-2'></div>
+						<div className='w-48 h-4 bg-surface-container/20 rounded'></div>
 					</div>
-					<div className='w-32 h-32 bg-white/20 rounded-full'></div>
+					<div className='w-32 h-32 bg-surface-container/20 rounded-full'></div>
 				</div>
 			</div>
 		);
@@ -100,11 +100,11 @@ export default function FinancialHealthScore({
 		<div className='card bg-gradient-to-br from-green-500 to-emerald-600 border-0 text-white'>
 			<div className='flex items-center justify-between'>
 				<div>
-					<div className='text-green-100 mb-2'>
+					<div className='text-primary-foreground mb-2'>
 						Financial Health Score
 					</div>
 					<div className='text-5xl font-bold mb-2'>{score}/100</div>
-					<div className='text-green-50'>{message}</div>
+					<div className='text-primary-foreground'>{message}</div>
 				</div>
 				<div className='w-32 h-32 relative'>
 					<svg className='transform -rotate-90' viewBox='0 0 120 120'>

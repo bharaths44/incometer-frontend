@@ -31,7 +31,7 @@ export default function Signup({ onSignup, onSwitchToLogin }: SignupProps) {
 					<h1 className='text-4xl font-bold mb-3'>
 						Create your account
 					</h1>
-					<p className='text-gray-600'>
+					<p className='text-surface-variant-foreground'>
 						Start managing your finances in minutes
 					</p>
 				</div>
@@ -89,7 +89,7 @@ export default function Signup({ onSignup, onSwitchToLogin }: SignupProps) {
 									required
 								/>
 							</div>
-							<p className='text-xs text-gray-500 mt-2'>
+							<p className='text-xs text-surface-variant-foreground mt-2'>
 								Must be at least 8 characters long
 							</p>
 						</div>
@@ -103,7 +103,7 @@ export default function Signup({ onSignup, onSwitchToLogin }: SignupProps) {
 							/>
 							<label
 								htmlFor='terms'
-								className='text-sm text-gray-600'
+								className='text-sm text-surface-variant-foreground'
 							>
 								I agree to the{' '}
 								<button
@@ -132,7 +132,7 @@ export default function Signup({ onSignup, onSwitchToLogin }: SignupProps) {
 					</form>
 				</div>
 
-				<p className='text-center text-gray-600 mt-6'>
+				<p className='text-center text-surface-variant-foreground mt-6'>
 					Already have an account?{' '}
 					<button
 						onClick={onSwitchToLogin}

@@ -39,12 +39,12 @@ export default function ItemManagement<T extends Item>({
 	if (isLoading) {
 		return (
 			<div className='space-y-4'>
-				<div className='h-8 bg-gray-200 rounded animate-pulse'></div>
+				<div className='h-8 bg-surface-variant rounded animate-pulse'></div>
 				<div className='grid gap-4'>
 					{[1, 2, 3].map((i) => (
 						<div
 							key={i}
-							className='h-16 bg-gray-200 rounded animate-pulse'
+							className='h-16 bg-surface-variant rounded animate-pulse'
 						></div>
 					))}
 				</div>
@@ -66,7 +66,7 @@ export default function ItemManagement<T extends Item>({
 			</div>
 
 			<div className='relative'>
-				<Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4' />
+				<Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-surface-variant-foreground w-4 h-4' />
 				<Input
 					type='text'
 					placeholder={searchPlaceholder}
@@ -78,7 +78,7 @@ export default function ItemManagement<T extends Item>({
 
 			<div className='grid gap-4'>
 				{filteredItems.length === 0 ? (
-					<div className='text-center py-8 text-gray-500'>
+					<div className='text-center py-8 text-surface-variant-foreground'>
 						{searchQuery
 							? 'No items found matching your search.'
 							: 'No items found.'}

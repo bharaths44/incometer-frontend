@@ -71,7 +71,7 @@ export default function Landing({ onGetStarted }: LandingProps) {
 							grow wealth.
 						</span>
 					</h1>
-					<p className='text-xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed'>
+					<p className='text-xl text-surface-variant-foreground mb-10 max-w-2xl mx-auto leading-relaxed'>
 						Experience a fresh approach to personal finance.
 						Beautifully designed, incredibly simple, powered by
 						intelligence.
@@ -98,7 +98,7 @@ export default function Landing({ onGetStarted }: LandingProps) {
 							<h3 className='text-lg font-semibold mb-2 text-gray-900'>
 								{feature.title}
 							</h3>
-							<p className='text-gray-600 leading-relaxed'>
+							<p className='text-surface-variant-foreground leading-relaxed'>
 								{feature.description}
 							</p>
 						</div>

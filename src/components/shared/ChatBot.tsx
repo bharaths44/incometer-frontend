@@ -78,25 +78,25 @@ export default function ChatBot() {
 				}`}
 			>
 				<MessageCircle className='w-7 h-7 group-hover:scale-110 transition-transform' />
-				<div className='absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center'>
+				<div className='absolute -top-1 -right-1 w-5 h-5 bg-error rounded-full flex items-center justify-center'>
 					<Sparkles className='w-3 h-3' />
 				</div>
 			</Button>
 
 			<div
-				className={`fixed bottom-6 right-6 w-96 h-[600px] bg-white rounded-3xl shadow-2xl border border-gray-200 flex flex-col z-50 transition-all duration-300 ${
+				className={`fixed bottom-6 right-6 w-96 h-[600px] bg-surface-container rounded-3xl shadow-2xl border border-outline flex flex-col z-50 transition-all duration-300 ${
 					isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
 				}`}
 				style={{ transformOrigin: 'bottom right' }}
 			>
 				<div className='bg-gradient-to-br from-green-500 to-emerald-600 p-6 rounded-t-3xl text-white flex items-center justify-between'>
 					<div className='flex items-center gap-3'>
-						<div className='w-10 h-10 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center'>
+						<div className='w-10 h-10 bg-surface-container/20 backdrop-blur-sm rounded-2xl flex items-center justify-center'>
 							<Sparkles className='w-6 h-6' />
 						</div>
 						<div>
 							<h3 className='font-bold text-lg'>AI Assistant</h3>
-							<p className='text-xs text-green-100'>
+							<p className='text-xs text-primary-foreground'>
 								Always here to help
 							</p>
 						</div>
@@ -105,7 +105,7 @@ export default function ChatBot() {
 						onClick={() => setIsOpen(false)}
 						variant='ghost'
 						size='icon'
-						className='w-8 h-8 bg-white/20 backdrop-blur-sm rounded-xl hover:bg-white/30 text-white'
+						className='w-8 h-8 bg-surface-container/20 backdrop-blur-sm rounded-xl hover:bg-surface-container/30 text-white'
 					>
 						<X className='w-5 h-5' />
 					</Button>
@@ -121,13 +121,13 @@ export default function ChatBot() {
 								className={`max-w-[80%] p-4 rounded-2xl ${
 									message.role === 'user'
 										? 'bg-gradient-to-br from-green-500 to-emerald-600 text-white'
-										: 'bg-gray-100 text-gray-900'
+										: 'bg-surface-container-high text-foreground'
 								}`}
 							>
 								{message.role === 'assistant' && (
 									<div className='flex items-center gap-2 mb-2'>
-										<Sparkles className='w-4 h-4 text-green-600' />
-										<span className='text-xs font-semibold text-green-600'>
+										<Sparkles className='w-4 h-4 text-primary' />
+										<span className='text-xs font-semibold text-primary'>
 											AI Assistant
 										</span>
 									</div>
@@ -141,7 +141,7 @@ export default function ChatBot() {
 
 					{messages.length === 1 && (
 						<div className='space-y-3'>
-							<p className='text-xs text-gray-500 text-center mb-3'>
+							<p className='text-xs text-surface-variant-foreground text-center mb-3'>
 								Quick questions:
 							</p>
 							<div className='grid grid-cols-2 gap-2'>
@@ -164,7 +164,7 @@ export default function ChatBot() {
 					<div ref={messagesEndRef} />
 				</div>
 
-				<div className='p-4 border-t border-gray-100'>
+				<div className='p-4 border-t border-outline-variant'>
 					<div className='flex gap-2'>
 						<Input
 							type='text'

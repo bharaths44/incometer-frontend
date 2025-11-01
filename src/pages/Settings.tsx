@@ -19,7 +19,7 @@ export default function Settings() {
 		<div className='page-transition space-y-8'>
 			<div>
 				<h1 className='text-4xl font-bold mb-2'>Settings</h1>
-				<p className='text-gray-600'>
+				<p className='text-surface-variant-foreground'>
 					Customize your Incometer experience
 				</p>
 			</div>
@@ -32,18 +32,18 @@ export default function Settings() {
 							Appearance
 						</h3>
 						<div className='space-y-4'>
-							<div className='flex items-center justify-between p-4 bg-gray-50 rounded-2xl'>
+							<div className='flex items-center justify-between p-4 bg-background rounded-2xl'>
 								<div className='flex items-center gap-3'>
 									{darkMode ? (
-										<Moon className='w-5 h-5 text-gray-600' />
+										<Moon className='w-5 h-5 text-surface-variant-foreground' />
 									) : (
-										<Sun className='w-5 h-5 text-gray-600' />
+										<Sun className='w-5 h-5 text-surface-variant-foreground' />
 									)}
 									<div>
 										<div className='font-medium'>
 											Dark Mode
 										</div>
-										<div className='text-sm text-gray-600'>
+										<div className='text-sm text-surface-variant-foreground'>
 											Toggle dark theme
 										</div>
 									</div>
@@ -66,14 +66,14 @@ export default function Settings() {
 								</button>
 							</div>
 
-							<div className='flex items-center justify-between p-4 bg-gray-50 rounded-2xl'>
+							<div className='flex items-center justify-between p-4 bg-background rounded-2xl'>
 								<div className='flex items-center gap-3'>
-									<Globe className='w-5 h-5 text-gray-600' />
+									<Globe className='w-5 h-5 text-surface-variant-foreground' />
 									<div>
 										<div className='font-medium'>
 											Language
 										</div>
-										<div className='text-sm text-gray-600'>
+										<div className='text-sm text-surface-variant-foreground'>
 											Choose your language
 										</div>
 									</div>
@@ -86,14 +86,14 @@ export default function Settings() {
 								</select>
 							</div>
 
-							<div className='flex items-center justify-between p-4 bg-gray-50 rounded-2xl'>
+							<div className='flex items-center justify-between p-4 bg-background rounded-2xl'>
 								<div className='flex items-center gap-3'>
-									<Globe className='w-5 h-5 text-gray-600' />
+									<Globe className='w-5 h-5 text-surface-variant-foreground' />
 									<div>
 										<div className='font-medium'>
 											Currency
 										</div>
-										<div className='text-sm text-gray-600'>
+										<div className='text-sm text-surface-variant-foreground'>
 											Display currency
 										</div>
 									</div>
@@ -114,12 +114,12 @@ export default function Settings() {
 							Notifications
 						</h3>
 						<div className='space-y-4'>
-							<div className='flex items-center justify-between p-4 bg-gray-50 rounded-2xl'>
+							<div className='flex items-center justify-between p-4 bg-background rounded-2xl'>
 								<div>
 									<div className='font-medium'>
 										Push Notifications
 									</div>
-									<div className='text-sm text-gray-600'>
+									<div className='text-sm text-surface-variant-foreground'>
 										Receive app notifications
 									</div>
 								</div>
@@ -143,12 +143,12 @@ export default function Settings() {
 								</button>
 							</div>
 
-							<div className='flex items-center justify-between p-4 bg-gray-50 rounded-2xl'>
+							<div className='flex items-center justify-between p-4 bg-background rounded-2xl'>
 								<div>
 									<div className='font-medium'>
 										Email Notifications
 									</div>
-									<div className='text-sm text-gray-600'>
+									<div className='text-sm text-surface-variant-foreground'>
 										Weekly summary emails
 									</div>
 								</div>
@@ -184,28 +184,28 @@ export default function Settings() {
 							Privacy & Security
 						</h3>
 						<div className='space-y-3'>
-							<button className='w-full flex items-center justify-between p-4 rounded-2xl hover:bg-gray-50 transition-colors text-left'>
+							<button className='w-full flex items-center justify-between p-4 rounded-2xl hover:bg-background transition-colors text-left'>
 								<div className='flex items-center gap-3'>
-									<Lock className='w-5 h-5 text-gray-600' />
+									<Lock className='w-5 h-5 text-surface-variant-foreground' />
 									<div>
 										<div className='font-medium'>
 											Change Password
 										</div>
-										<div className='text-sm text-gray-600'>
+										<div className='text-sm text-surface-variant-foreground'>
 											Update your password
 										</div>
 									</div>
 								</div>
 							</button>
 
-							<button className='w-full flex items-center justify-between p-4 rounded-2xl hover:bg-gray-50 transition-colors text-left'>
+							<button className='w-full flex items-center justify-between p-4 rounded-2xl hover:bg-background transition-colors text-left'>
 								<div className='flex items-center gap-3'>
-									<Shield className='w-5 h-5 text-gray-600' />
+									<Shield className='w-5 h-5 text-surface-variant-foreground' />
 									<div>
 										<div className='font-medium'>
 											Two-Factor Authentication
 										</div>
-										<div className='text-sm text-gray-600'>
+										<div className='text-sm text-surface-variant-foreground'>
 											Add extra security
 										</div>
 									</div>
@@ -215,14 +215,14 @@ export default function Settings() {
 								</span>
 							</button>
 
-							<button className='w-full flex items-center justify-between p-4 rounded-2xl hover:bg-gray-50 transition-colors text-left'>
+							<button className='w-full flex items-center justify-between p-4 rounded-2xl hover:bg-background transition-colors text-left'>
 								<div className='flex items-center gap-3'>
-									<Globe className='w-5 h-5 text-gray-600' />
+									<Globe className='w-5 h-5 text-surface-variant-foreground' />
 									<div>
 										<div className='font-medium'>
 											Privacy Settings
 										</div>
-										<div className='text-sm text-gray-600'>
+										<div className='text-sm text-surface-variant-foreground'>
 											Manage data sharing
 										</div>
 									</div>

@@ -59,7 +59,7 @@ export default function TransactionFormFields({
 			<div>
 				<Label
 					htmlFor='description'
-					className='block text-sm font-medium text-gray-700 mb-2'
+					className='block text-sm font-medium text-foreground mb-2'
 				>
 					{config.formLabels.description}
 				</Label>
@@ -77,12 +77,12 @@ export default function TransactionFormFields({
 			<div>
 				<Label
 					htmlFor='amount'
-					className='block text-sm font-medium text-gray-700 mb-2'
+					className='block text-sm font-medium text-foreground mb-2'
 				>
 					{config.formLabels.amount}
 				</Label>
 				<div className='relative'>
-					<span className='absolute left-4 top-1/2 -translate-y-1/2 text-gray-500'>
+					<span className='absolute left-4 top-1/2 -translate-y-1/2 text-surface-variant-foreground'>
 						₹
 					</span>
 					<Input
@@ -103,7 +103,7 @@ export default function TransactionFormFields({
 			<div>
 				<Label
 					htmlFor='category'
-					className='block text-sm font-medium text-gray-700 mb-2'
+					className='block text-sm font-medium text-foreground mb-2'
 				>
 					{config.formLabels.category}
 				</Label>
@@ -134,7 +134,7 @@ export default function TransactionFormFields({
 			<div>
 				<Label
 					htmlFor='paymentMethodId'
-					className='block text-sm font-medium text-gray-700 mb-2'
+					className='block text-sm font-medium text-foreground mb-2'
 				>
 					{config.formLabels.paymentMethod}
 				</Label>
@@ -171,7 +171,7 @@ export default function TransactionFormFields({
 			<div>
 				<Label
 					htmlFor='date'
-					className='block text-sm font-medium text-gray-700 mb-2'
+					className='block text-sm font-medium text-foreground mb-2'
 				>
 					{config.formLabels.date}
 				</Label>

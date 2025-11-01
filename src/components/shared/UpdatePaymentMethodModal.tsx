@@ -147,7 +147,7 @@ export default function UpdatePaymentMethodModal({
 						<div>
 							<Label
 								htmlFor='name'
-								className='block text-sm font-medium text-gray-700 mb-2'
+								className='block text-sm font-medium text-foreground mb-2'
 							>
 								Payment Method Name *
 							</Label>
@@ -163,7 +163,7 @@ export default function UpdatePaymentMethodModal({
 						<div>
 							<Label
 								htmlFor='displayName'
-								className='block text-sm font-medium text-gray-700 mb-2'
+								className='block text-sm font-medium text-foreground mb-2'
 							>
 								Display Name
 							</Label>
@@ -178,7 +178,7 @@ export default function UpdatePaymentMethodModal({
 						<div>
 							<Label
 								htmlFor='type'
-								className='block text-sm font-medium text-gray-700 mb-2'
+								className='block text-sm font-medium text-foreground mb-2'
 							>
 								Payment Method Type *
 							</Label>
@@ -201,7 +201,7 @@ export default function UpdatePaymentMethodModal({
 						<div>
 							<Label
 								htmlFor='lastFourDigits'
-								className='block text-sm font-medium text-gray-700 mb-2'
+								className='block text-sm font-medium text-foreground mb-2'
 							>
 								Last 4 Digits
 							</Label>
@@ -223,7 +223,7 @@ export default function UpdatePaymentMethodModal({
 						<div>
 							<Label
 								htmlFor='issuerName'
-								className='block text-sm font-medium text-gray-700 mb-2'
+								className='block text-sm font-medium text-foreground mb-2'
 							>
 								Issuer Name
 							</Label>

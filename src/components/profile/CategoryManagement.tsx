@@ -127,7 +127,7 @@ export default function CategoryManagement({
 					variant='ghost'
 					size='sm'
 					onClick={() => handleCategoryClick(category)}
-					className='h-8 w-8 p-0 hover:bg-blue-50'
+					className='h-8 w-8 p-0 hover:bg-tertiary-container'
 				>
 					<Edit2 className='h-4 w-4' />
 				</Button>
@@ -137,7 +137,7 @@ export default function CategoryManagement({
 					onClick={() => handleDeleteCategory(category)}
 					className='h-8 w-8 p-0 hover:bg-red-50'
 				>
-					<Trash2 className='h-4 w-4 text-red-600' />
+					<Trash2 className='h-4 w-4 text-error' />
 				</Button>
 			</div>
 		</div>
@@ -193,7 +193,7 @@ export default function CategoryManagement({
 						placeholder='Search categories...'
 						value={searchQuery}
 						onChange={(e) => setSearchQuery(e.target.value)}
-						className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent'
+						className='w-full px-4 py-2 border border-outline rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent'
 					/>
 				</div>
 
@@ -204,12 +204,12 @@ export default function CategoryManagement({
 							{[1, 2, 3].map((i) => (
 								<div
 									key={i}
-									className='h-16 bg-gray-200 rounded animate-pulse'
+									className='h-16 bg-surface-variant rounded animate-pulse'
 								></div>
 							))}
 						</div>
 					) : filteredCategories.length === 0 ? (
-						<div className='text-center py-8 text-gray-500'>
+						<div className='text-center py-8 text-surface-variant-foreground'>
 							{searchQuery || selectedType !== 'ALL'
 								? 'No categories found matching your criteria.'
 								: 'No categories found.'}
@@ -260,7 +260,7 @@ export default function CategoryManagement({
 							<strong>"{categoryToDelete?.name}"</strong>?
 							<br />
 							<br />
-							<span className='text-red-600 font-medium'>
+							<span className='text-error font-medium'>
 								⚠️ Warning: This will also delete all associated
 								budgets and transactions for this category. This
 								action cannot be undone.
@@ -294,7 +294,7 @@ export default function CategoryManagement({
 				<DialogContent className='sm:max-w-[425px]'>
 					<DialogHeader>
 						<DialogTitle className='flex items-center gap-2'>
-							<AlertTriangle className='h-5 w-5 text-red-600' />
+							<AlertTriangle className='h-5 w-5 text-error' />
 							Error
 						</DialogTitle>
 						<DialogDescription>{errorMessage}</DialogDescription>

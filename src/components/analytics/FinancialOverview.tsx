@@ -13,7 +13,7 @@ export default function FinancialOverview({
 		<Card>
 			<CardHeader>
 				<CardTitle className='flex items-center gap-2'>
-					<TrendingUp className='w-6 h-6 text-green-600' />
+					<TrendingUp className='w-6 h-6 text-primary' />
 					Financial Overview
 				</CardTitle>
 			</CardHeader>
@@ -24,9 +24,9 @@ export default function FinancialOverview({
 							<span className='text-foreground font-medium'>
 								Total Income
 							</span>
-							<TrendingUp className='w-5 h-5 text-green-600' />
+							<TrendingUp className='w-5 h-5 text-primary' />
 						</div>
-						<div className='text-3xl font-bold text-green-600 mb-1'>
+						<div className='text-3xl font-bold text-primary mb-1'>
 							₹{expenseSummary.totalIncome}
 						</div>
 						<div className='text-sm text-muted-foreground'>
@@ -39,9 +39,9 @@ export default function FinancialOverview({
 							<span className='text-foreground font-medium'>
 								Total Expense
 							</span>
-							<TrendingDown className='w-5 h-5 text-blue-600' />
+							<TrendingDown className='w-5 h-5 text-tertiary' />
 						</div>
-						<div className='text-3xl font-bold text-blue-600 mb-1'>
+						<div className='text-3xl font-bold text-tertiary mb-1'>
 							₹{expenseSummary.totalExpense}
 						</div>
 						<div className='text-sm text-muted-foreground'>
@@ -54,9 +54,9 @@ export default function FinancialOverview({
 							<span className='text-foreground font-medium'>
 								Net Savings
 							</span>
-							<IndianRupee className='w-5 h-5 text-orange-600' />
+							<IndianRupee className='w-5 h-5 text-error' />
 						</div>
-						<div className='text-3xl font-bold text-orange-600 mb-1'>
+						<div className='text-3xl font-bold text-error mb-1'>
 							₹{expenseSummary.netSavings}
 						</div>
 						<div className='text-sm text-muted-foreground'>
