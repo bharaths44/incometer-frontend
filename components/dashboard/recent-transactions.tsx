@@ -64,10 +64,10 @@ export function RecentTransactions() {
 							>
 								<div className='flex items-center gap-3'>
 									<div
-										className={`p-2 rounded-lg ${isIncome ? 'bg-lime-50 dark:bg-lime-950' : 'bg-red-50 dark:bg-red-950'}`}
+										className={`p-2 rounded-lg ${isIncome ? 'bg-emerald-50 dark:bg-emerald-950/50' : 'bg-red-50 dark:bg-red-950/50'}`}
 									>
 										<Icon
-											className={`h-4 w-4 ${isIncome ? 'text-lime-600' : 'text-red-600'}`}
+											className={`h-4 w-4 ${isIncome ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}
 											suppressHydrationWarning
 										/>
 									</div>
@@ -82,7 +82,7 @@ export function RecentTransactions() {
 								</div>
 								<div className='text-right'>
 									<p
-										className={`font-semibold text-sm ${isIncome ? 'text-lime-600 dark:text-lime-400' : 'text-red-600'}`}
+										className={`font-semibold text-sm ${isIncome ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}
 									>
 										{isIncome ? '+' : '-'}$
 										{transaction.amount.toFixed(2)}

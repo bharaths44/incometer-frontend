@@ -17,7 +17,7 @@ export default function DashboardPage() {
 							Dashboard
 						</h1>
 						<p className='text-muted-foreground mt-1'>
-							Welcome back! Here's your financial overview.
+							Welcome back! Here&apos;s your financial overview.
 						</p>
 					</div>
 					<div className='flex gap-2'>

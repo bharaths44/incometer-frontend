@@ -253,7 +253,7 @@ export default function ProfilePage() {
 								<p className='text-sm text-muted-foreground mb-1'>
 									Account Balance
 								</p>
-								<p className='font-medium text-lime-600 dark:text-lime-400'>
+								<p className='font-medium text-emerald-600 dark:text-emerald-400'>
 									$32,389.75
 								</p>
 							</div>

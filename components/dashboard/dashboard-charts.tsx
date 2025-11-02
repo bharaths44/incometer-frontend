@@ -37,12 +37,7 @@ const categoryData = [
 	{ name: 'Utilities', value: 20 },
 ];
 
-const COLORS = [
-	'hsl(var(--color-chart-1))',
-	'hsl(var(--color-chart-2))',
-	'hsl(var(--color-chart-3))',
-	'hsl(var(--color-chart-4))',
-];
+const COLORS = ['#71717a', '#a1a1aa', '#d4d4d8', '#e4e4e7'];
 
 export function DashboardCharts() {
 	return (
@@ -66,13 +61,13 @@ export function DashboardCharts() {
 							<Line
 								type='monotone'
 								dataKey='income'
-								stroke='hsl(var(--color-chart-2))'
+								stroke='#10b981'
 								strokeWidth={2}
 							/>
 							<Line
 								type='monotone'
 								dataKey='expenses'
-								stroke='hsl(var(--color-chart-3))'
+								stroke='#ef4444'
 								strokeWidth={2}
 							/>
 						</LineChart>
