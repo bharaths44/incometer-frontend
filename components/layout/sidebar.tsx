@@ -1,4 +1,5 @@
 'use client';
+
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -9,19 +10,17 @@ import {
 	User,
 	Settings,
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
 import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from '@/components/ui/tooltip';
-
-interface SidebarProps {
-	open: boolean;
-	onToggle: () => void;
-}
+	Sidebar,
+	SidebarContent,
+	SidebarHeader,
+	SidebarFooter,
+	SidebarMenu,
+	SidebarMenuItem,
+	SidebarMenuButton,
+	SidebarRail,
+} from '@/components/ui/sidebar';
+import { NavUser } from '@/components/layout/nav-user';
 
 const navItems = [
 	{ href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -32,31 +31,31 @@ const navItems = [
 	{ href: '/settings', label: 'Settings', icon: Settings },
 ];
 
-export function Sidebar({ open, onToggle }: SidebarProps) {
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const pathname = usePathname();
 
+	// Placeholder user data - replace with actual user data when authentication is implemented
+	const user = {
+		name: 'John Doe',
+		email: 'john.doe@example.com',
+		avatar: '/avatars/john-doe.jpg',
+	};
+
 	return (
-		<TooltipProvider>
-			<aside
-				className={cn(
-					'bg-sidebar border-r border-sidebar-border transition-all duration-300 ease-in-out flex flex-col h-screen sticky top-0',
-					open ? 'w-64' : 'w-20'
-				)}
-			>
-				{/* Logo */}
-				<div className='p-4 border-b border-sidebar-border flex items-center justify-center'>
+		<Sidebar collapsible='icon' {...props}>
+			<SidebarHeader>
+				<div className='flex items-center justify-center p-4 border-b border-sidebar-border'>
 					<div className='w-10 h-10 rounded-lg bg-linear-to-br from-sidebar-primary to-accent flex items-center justify-center text-sidebar-primary-foreground font-bold text-lg'>
 						I
 					</div>
-					{open && (
-						<span className='ml-3 font-bold text-lg text-sidebar-foreground'>
-							Incometer
-						</span>
-					)}
+					<span className='ml-3 font-bold text-lg text-sidebar-foreground group-data-[collapsible=icon]:hidden'>
+						Incometer
+					</span>
 				</div>
+			</SidebarHeader>
 
-				{/* Navigation */}
-				<nav className='flex-1 p-3 space-y-2'>
+			<SidebarContent>
+				<SidebarMenu>
 					{navItems.map((item) => {
 						const Icon = item.icon;
 						const isActive =
@@ -64,105 +63,27 @@ export function Sidebar({ open, onToggle }: SidebarProps) {
 							pathname.startsWith(item.href);
 
 						return (
-							<div key={item.href}>
-								{!open ? (
-									<Tooltip>
-										<TooltipTrigger asChild>
-											<Link
-												href={item.href}
-												className='block'
-											>
-												<Button
-													variant='ghost'
-													size='icon'
-													className={cn(
-														'w-full transition-colors',
-														isActive
-															? 'bg-sidebar-accent text-sidebar-accent-foreground hover:bg-sidebar-accent'
-															: 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
-													)}
-												>
-													<Icon className='h-5 w-5' />
-												</Button>
-											</Link>
-										</TooltipTrigger>
-										<TooltipContent
-											side='right'
-											className='ml-2'
-										>
-											{item.label}
-										</TooltipContent>
-									</Tooltip>
-								) : (
+							<SidebarMenuItem key={item.href}>
+								<SidebarMenuButton asChild isActive={isActive}>
 									<Link href={item.href}>
-										<Button
-											variant='ghost'
-											className={cn(
-												'w-full justify-start gap-3 transition-colors',
-												isActive
-													? 'bg-sidebar-accent text-sidebar-accent-foreground hover:bg-sidebar-accent'
-													: 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
-											)}
-										>
-											<Icon className='h-5 w-5 shrink-0' />
-											<span className='text-sm font-medium'>
-												{item.label}
-											</span>
-										</Button>
+										<Icon
+											className='h-5 w-5'
+											suppressHydrationWarning
+										/>
+										<span>{item.label}</span>
 									</Link>
-								)}
-							</div>
+								</SidebarMenuButton>
+							</SidebarMenuItem>
 						);
 					})}
-				</nav>
+				</SidebarMenu>
+			</SidebarContent>
 
-				{/* Toggle Button at top - Hamburger in collapsed state, X in expanded */}
-				<div className='p-3 border-t border-sidebar-border flex justify-center'>
-					<Tooltip>
-						<TooltipTrigger asChild>
-							<Button
-								variant='ghost'
-								size='icon'
-								onClick={onToggle}
-								className='text-sidebar-foreground hover:bg-sidebar-accent w-full'
-							>
-								{open ? (
-									<svg
-										className='h-5 w-5'
-										fill='none'
-										stroke='currentColor'
-										viewBox='0 0 24 24'
-									>
-										<path
-											strokeLinecap='round'
-											strokeLinejoin='round'
-											strokeWidth={2}
-											d='M15 19l-7-7 7-7'
-										/>
-									</svg>
-								) : (
-									<svg
-										className='h-5 w-5'
-										fill='none'
-										stroke='currentColor'
-										viewBox='0 0 24 24'
-									>
-										<path
-											strokeLinecap='round'
-											strokeLinejoin='round'
-											strokeWidth={2}
-											d='M9 5l7 7-7 7'
-										/>
-									</svg>
-								)}
-							</Button>
-						</TooltipTrigger>
-						<TooltipContent side='right' className='ml-2'>
-							{open ? 'Collapse' : 'Expand'}
-						</TooltipContent>
-					</Tooltip>
-				</div>
-			</aside>
-		</TooltipProvider>
+			<SidebarFooter>
+				<NavUser user={user} />
+			</SidebarFooter>
+
+			<SidebarRail />
+		</Sidebar>
 	);
 }

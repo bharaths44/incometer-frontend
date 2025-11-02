@@ -61,7 +61,10 @@ export function StatsOverview() {
 								<div
 									className={`${stat.bgColor} p-3 rounded-lg`}
 								>
-									<Icon className={`h-6 w-6 ${stat.color}`} />
+									<Icon
+										className={`h-6 w-6 ${stat.color}`}
+										suppressHydrationWarning
+									/>
 								</div>
 							</div>
 						</CardContent>

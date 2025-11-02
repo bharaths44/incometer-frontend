@@ -1,6 +1,6 @@
 'use client';
 
-import { Menu, Bell, Search } from 'lucide-react';
+import { PanelLeft, Bell, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -10,32 +10,12 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 
-interface TopBarProps {
-	onMenuClick: () => void;
-}
-
-export function TopBar({ onMenuClick }: TopBarProps) {
+export function TopBar() {
 	return (
-		<header className='bg-card border-b border-border h-16 flex items-center justify-between px-4 lg:px-8 gap-4'>
-			<Button
-				variant='ghost'
-				size='icon'
-				onClick={onMenuClick}
-				className='lg:hidden'
-			>
-				<Menu className='h-5 w-5' />
-			</Button>
-
-			<div className='hidden md:flex flex-1 max-w-md'>
-				<div className='relative w-full'>
-					<Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
-					<Input
-						placeholder='Search transactions...'
-						className='pl-10 bg-muted border-0 text-sm focus-visible:ring-primary'
-					/>
-				</div>
-			</div>
+		<header className='bg-card border-b border-border h-16 flex items-center justify-between px-4 lg:px-5 gap-4'>
+			<SidebarTrigger />
 
 			<div className='flex items-center gap-2 ml-auto'>
 				<Button

@@ -22,11 +22,17 @@ export default function DashboardPage() {
 					</div>
 					<div className='flex gap-2'>
 						<Button variant='outline' size='sm'>
-							<Plus className='h-4 w-4 mr-2' />
+							<Plus
+								className='h-4 w-4 mr-2'
+								suppressHydrationWarning
+							/>
 							Add Income
 						</Button>
 						<Button size='sm'>
-							<Plus className='h-4 w-4 mr-2' />
+							<Plus
+								className='h-4 w-4 mr-2'
+								suppressHydrationWarning
+							/>
 							Add Expense
 						</Button>
 					</div>

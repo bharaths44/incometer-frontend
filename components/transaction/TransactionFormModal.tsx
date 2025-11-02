@@ -3,7 +3,7 @@ import {
 	TransactionConfig,
 	TransactionRequestDTO,
 	TransactionResponseDTO,
-} from '@/types/transaction.ts';
+} from '@/types/transaction';
 import { Button } from '@/components/ui/button';
 import {
 	Dialog,

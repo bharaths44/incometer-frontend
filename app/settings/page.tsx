@@ -41,7 +41,15 @@ export default function SettingsPage() {
 		language: 'EN',
 	});
 
-	const handleToggle = (key: string) => {
+	type ToggleableSettings = keyof Pick<
+		typeof settings,
+		| 'emailNotifications'
+		| 'pushNotifications'
+		| 'monthlyReport'
+		| 'darkMode'
+	>;
+
+	const handleToggle = (key: ToggleableSettings) => {
 		setSettings((prev) => ({ ...prev, [key]: !prev[key] }));
 	};
 

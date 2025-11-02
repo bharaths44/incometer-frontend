@@ -1,161 +1,173 @@
-# Incometer Frontend - AI Coding Guidelines
+# Copilot Instructions for Incometer Frontend
 
-## Architecture Overview
+## Project Overview
 
-- **Frontend**: React 18 + TypeScript + Vite
-- **Backend**: Supabase (PostgreSQL + Auth)
-- **State Management**: TanStack Query for server state, React useState for UI
-  state
-- **Routing**: Custom page-based routing (no React Router) - pages managed in
-  `App.tsx` with string-based navigation
-- **UI**: shadcn/ui components on Radix UI primitives + Tailwind CSS + Lucide
-  icons
-- **Forms**: React Hook Form with Zod validation
-- **AI Assistant**: Built-in ChatBot component with hardcoded responses
+Next.js 16 financial tracking app (income/expense tracker) using React 19,
+TypeScript, TanStack Query, and shadcn/ui components. Backend is a Spring Boot
+REST API at `http://localhost:8080/api` (configurable via `.env`).
 
-## Key Patterns & Conventions
+## Architecture Patterns
 
-### Code Organization
+### Service Layer Pattern
 
-- **File Splitting**: Always split code into multiple files when
-  components/services become large (>200 lines). Break down by responsibility:
-  types, utilities, components, hooks, services
-- **Single Responsibility**: Each file should have one clear purpose and export
-  related functionality
+All API interactions use dedicated service classes with configuration objects:
 
-### Data Layer
+- `TransactionService` (shared for expenses/income via `createExpenseService()`
+  / `createIncomeService()`)
+- `categoryService`, `paymentMethodService`, `analyticsService` (plain function
+  exports)
+- Services map between API DTOs and frontend types
+- See `services/transactionService.ts` for the config-driven pattern
 
-- **Services**: Class-based services in `/services/` with DTO mapping between
-  API and internal types
-- **Hooks**: TanStack Query hooks in `/hooks/` with structured query keys (see
-  `useTransactions.ts`)
-- **Types**: Strict TypeScript interfaces in `/types/` with separate
-  Request/Response DTOs
-- **API Pattern**: Services handle API calls, hooks manage caching/invalidation
-- **Factory Functions**: Use `createExpenseService()` and
-  `createIncomeService()` instead of `new TransactionService()`
+### Type-Driven Configuration
 
-### Component Structure
+The `TransactionConfig` type (in `types/transaction.ts`) drives UI labels, API
+endpoints, and form fields:
 
-- **Pages**: Feature pages in `/pages/` using composition of components
-- **Components**: Feature components in `/components/{feature}/`, UI primitives
-  in `/components/ui/`
-- **Layout**: Single `Layout.tsx` component with navigation state passed via
-  props
-- **Modals**: Category/payment method selection via dedicated modal components
-  (`NewCategoryModal`, `NewPaymentMethodModal`)
+```typescript
+const config = createTransactionConfig('expense'); // or 'income'
+```
 
-### Styling & UI
+This eliminates code duplication between expense/income pages. Always extend
+this pattern for similar dual-mode features.
 
-- **Design System**: shadcn/ui "new-york" style with zinc color scheme
-- **Currency**: Indian Rupee (₹) hardcoded throughout - always format as
-  `₹{amount}`
-- **Gradients**: Custom green-to-emerald gradients for branding
-  (`bg-gradient-to-br from-gray-50 via-green-50/20 to-emerald-50/30`)
-- **Icons**: Lucide React icons with dynamic loading via `Icon` component
-  (kebab-case names like "shopping-bag")
-- **Transitions**: Use `page-transition` CSS class for page animations
-- **UI Components**: Always use shadcn/ui components instead of browser APIs
-    - Use `Dialog` component for confirmations instead of `window.confirm`
-    - Use `AlertDialog` for destructive actions requiring confirmation
-    - Never use browser alert/confirm/prompt dialogs
-    - Always prefer shadcn/ui components for consistent UX
+### Component Composition Strategy
 
-## Critical Implementation Details
+Transaction pages follow strict separation:
 
-#### Authentication & User Context
+- `TransactionPage.tsx` - Layout orchestration only
+- `TransactionPageLogic.tsx` - Custom hook with all state/handlers
+- `TransactionFormFields.tsx` - Reusable form UI
+- `TransactionTable.tsx`, `TransactionStats.tsx`, etc. - Feature components
 
-- User ID hardcoded as `1` throughout (TODO: replace with auth context)
-- Authentication state managed in `App.tsx` root component
-- Auth flow: landing → login/signup → dashboard with conditional rendering
+**Always extract logic into custom hooks** (`use*` pattern) and keep page
+components purely compositional.
 
-#### Transaction Management
+### React Query Patterns
 
-- Separate services for expenses vs income (`createExpenseService()` vs
-  `createIncomeService()`)
-- Transactions fetched via parallel queries in `useRecentTransactions()`
-- Date sorting: newest first using `transactionDate` field
-- DTO Mapping: Services handle conversion between API format and internal types
+- Query keys use factory pattern: `transactionKeys.list(userId, type)`
+- Mutations invalidate both transaction and analytics queries
+- All data fetching uses TanStack Query (no `useState` for server data)
+- See `hooks/useTransactions.ts` for reference implementation
 
-#### Analytics Data Flow
+### Hardcoded User ID
 
-- Analytics hooks (`useAnalytics.ts`) compute derived data from transaction
-  services
-- Budget tracking compares category spending against limits
-- Financial health score calculated from expense-to-income ratios
+**Critical**: User authentication not implemented yet (planned for future). All
+pages use `userId = 1` (see `TransactionPageLogic.tsx:29`). When adding new
+features requiring userId, follow this pattern consistently until auth is
+implemented.
 
-#### Form Handling
+## Tech Stack Specifics
 
-- React Hook Form with Zod validation schemas
-- Category/payment method selection via modals with
-  `NewCategoryModal`/`NewPaymentMethodModal`
-- Date handling with `react-day-picker` and `date-fns` formatting
-- Icon selection from predefined list with pascal-to-kebab-case conversion
+### UI Components (shadcn/ui)
 
-#### Icon System
+- Use New York style variant with CSS variables (see `components.json`)
+- Import from `@/components/ui/*` - these are pre-configured Radix primitives
+- Form components use `react-hook-form` + `zod` validation
+- Theme toggling via `next-themes` (see `components/theme-provider.tsx`)
 
-- Dynamic loading: Convert kebab-case ("shopping-bag") to PascalCase
-  ("ShoppingBag") for Lucide import
-- Predefined icons list in `TransactionForm.tsx` for category selection
-- Fallback handling for unknown icon names
+### Icon System
 
-### Development Workflow
+Dynamic Lucide icon loading via `lib/iconUtils.tsx`:
+
+```typescript
+<Icon name="shopping-bag" size={20} />
+```
+
+Icons searchable by kebab-case names. Predefined set in `lib/constants.ts`. Use
+`getAllLucideIconNames()` for full list.
+
+### Styling
+
+- Tailwind CSS 4.x with `@tailwindcss/postcss`
+- Path alias: `@/*` maps to project root
+- All app pages require `'use client'` directive (client-side state management)
+- Layout components handle responsive sidebar/topbar
+
+## Development Workflow
+
+### Commands
 
 ```bash
-npm run dev          # Start Vite dev server
-npm run build        # Production build
-npm run lint         # ESLint check
-npm run typecheck    # TypeScript check
+pnpm dev          # Dev server (port 3000)
+pnpm build        # Production build
+pnpm lint         # ESLint check
+pnpm format       # Prettier auto-format
+pnpm format:check # Prettier validation
 ```
 
-### File Organization Examples
+### Environment Variables
+
+Set `VITE_API_BASE_URL` in `.env` (defaults to `http://localhost:8080/api` in
+`lib/constants.ts`). Note: Using Vite env convention despite being Next.js
+project.
+
+### Build Configuration
+
+- TypeScript build errors ignored (`ignoreBuildErrors: true` in
+  `next.config.mjs`)
+- Images unoptimized for static export compatibility
+- App Router mode (Next.js 16 with React 19 RC)
+
+## Common Patterns & Gotchas
+
+### Page Structure
+
+Every app route page:
+
+1. Starts with `'use client'` directive
+2. Wraps content in `<AppLayout>` component
+3. Uses shared layout components (no inline layout logic)
+
+### Form Handling
+
+- All forms use `react-hook-form` with resolver pattern
+- Date fields use `react-day-picker` via shadcn Calendar component
+- Category/payment method dropdowns fetch via custom hooks (`useCategories`,
+  `usePaymentMethods`)
+
+### API Response Mapping
+
+Services transform API responses to frontend types. Always handle:
+
+- `transactionId` / `categoryId` / `paymentMethodId` fields
+- `userUserId` (nested user reference)
+- Date strings in ISO format
+
+### Modal/Dialog Pattern
+
+Modals controlled by parent state (`isOpen`, `onClose`). See `TransactionForm`
+for reference. Use shadcn `Dialog` component, not custom implementations.
+
+## File Organization
 
 ```
-# Add new transaction type
-1. Add to `types/transaction.ts` (Request/Response DTOs)
-2. Create service method in `services/transactionService.ts`
-3. Add hook in `hooks/useTransactions.ts` with structured query keys
-4. Update form in `components/transaction/TransactionForm.tsx`
-
-# Add analytics metric
-1. Define type in `types/analytics.ts`
-2. Add computation in `hooks/useAnalytics.ts`
-3. Create component in `components/analytics/`
-4. Add to `pages/Analytics.tsx` grid
-
-# Add new icon
-1. Add kebab-case name to predefinedIcons array in `TransactionForm.tsx`
-2. Icon component handles PascalCase conversion automatically
+app/              # Next.js pages (all 'use client')
+components/       # Organized by feature (dashboard, transaction, layout, shared, ui)
+hooks/            # Custom React hooks with query key factories
+services/         # API service layer
+types/            # TypeScript interfaces (DTOs match backend)
+lib/              # Utilities (iconUtils, constants, cn helper)
 ```
 
-### Common Gotchas
+## Backend Integration
 
-- **Query Keys**: Always use structured keys like
-  `transactionKeys.list(userId, 'expense')`
-- **Service Instantiation**: Use factory functions like `createExpenseService()`
-  not `new TransactionService()`
-- **Currency Display**: Always format as `₹{amount}` with Indian Rupee symbol
-- **Loading States**: Check multiple loading flags:
-  `categoryLoading || expenseLoading || budgetLoading`
-- **Navigation**: Use string page IDs, not routes: `onNavigate('dashboard')`
-- **User ID**: Hardcoded as `1` - replace with auth context when implementing
-  real auth
-- **Date Sorting**: Use
-  `new Date(b.transactionDate).getTime() - new Date(a.transactionDate).getTime()`
-  for newest-first
-- **Parallel Queries**: Combine expense/income data with
-  `Promise.all([expenseService.getAll(), incomeService.getAll()])`
-- **Modal Selection**: Categories and payment methods require modal components
-  for creation/selection
-- **Icon Loading**: Handle async icon loading with loading states and error
-  fallbacks
+- Spring Boot REST API with standard JSON responses
+- DTOs follow Java naming conventions (e.g., `userUserId`, nested objects)
+- Error responses handled via response status checks in services
+- No authentication headers required (will be added when auth is implemented)
 
-### External Dependencies
+## Testing & Deployment
 
-- **Supabase**: Database and auth - check connection strings in services
-- **TanStack Query**: Cache invalidation required after mutations
-- **Radix UI**: Accessible primitives - prefer over custom implementations
-- **Tailwind**: Custom gradients defined inline, not in config
-- **Lucide React**: Dynamic icon loading with name conversion
-- **React Day Picker**: Date selection with custom formatting
-- **React Hook Form + Zod**: Form validation with schema-based validation
+- **Testing**: Not currently implemented
+- **Deployment**: No specific deployment process configured
+
+## When Adding Features
+
+1. Check if pattern exists in transaction/category/paymentMethod implementations
+2. Create service class/functions in `services/`
+3. Define TypeScript types in `types/` (match Spring Boot DTOs)
+4. Build custom hook in `hooks/` with TanStack Query
+5. Create feature components in `components/<feature>/`
+6. Add page in `app/` directory using existing page template
+7. Update sidebar navigation in `components/layout/sidebar.tsx` if needed

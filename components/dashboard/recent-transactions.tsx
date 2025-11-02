@@ -68,6 +68,7 @@ export function RecentTransactions() {
 									>
 										<Icon
 											className={`h-4 w-4 ${isIncome ? 'text-lime-600' : 'text-red-600'}`}
+											suppressHydrationWarning
 										/>
 									</div>
 									<div>
