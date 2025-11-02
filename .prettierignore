@@ -17,3 +17,6 @@ package-lock.json
 postcss.config.js
 tailwind.config.js
 vite.config.ts
+pnpm-lock.yaml
+eslint.config.js
+next-evn.d.ts

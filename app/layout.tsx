@@ -11,7 +11,6 @@ const geistMono = Geist_Mono({ subsets: ['latin'] });
 export const metadata: Metadata = {
 	title: 'Incometer - Financial Expense Tracker',
 	description: 'Track your income and expenses with ease',
-	generator: 'v0.app',
 };
 
 export default function RootLayout({
