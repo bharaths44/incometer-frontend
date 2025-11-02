@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { ArrowRight, Lock, Mail, TrendingUp } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 interface LoginProps {
 	onLogin: () => void;
@@ -32,73 +35,75 @@ export default function Login({ onLogin, onSwitchToSignup }: LoginProps) {
 						Sign in to continue your financial journey
 					</p>
 				</div>
-
-				<div className='card'>
-					<form onSubmit={handleSubmit} className='space-y-5'>
-						<div>
-							<label className='block text-sm font-medium text-gray-700 mb-2'>
-								Email
-							</label>
-							<div className='relative'>
-								<Mail className='absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400' />
-								<input
-									type='email'
-									value={email}
-									onChange={(e) => setEmail(e.target.value)}
-									className='input-field pl-12'
-									placeholder='you@example.com'
-									required
-								/>
+				<Card>
+					<CardContent className='p-8'>
+						<form onSubmit={handleSubmit} className='space-y-5'>
+							<div>
+								<label className='block text-sm font-medium text-gray-700 mb-2'>
+									Email
+								</label>
+								<div className='relative'>
+									<Mail className='absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400' />
+									<Input
+										type='email'
+										value={email}
+										onChange={(e) =>
+											setEmail(e.target.value)
+										}
+										className='pl-12'
+										placeholder='you@example.com'
+										required
+									/>
+								</div>
 							</div>
-						</div>
 
-						<div>
-							<label className='block text-sm font-medium text-gray-700 mb-2'>
-								Password
-							</label>
-							<div className='relative'>
-								<Lock className='absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400' />
-								<input
-									type='password'
-									value={password}
-									onChange={(e) =>
-										setPassword(e.target.value)
-									}
-									className='input-field pl-12'
-									placeholder='••••••••'
-									required
-								/>
+							<div>
+								<label className='block text-sm font-medium text-gray-700 mb-2'>
+									Password
+								</label>
+								<div className='relative'>
+									<Lock className='absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400' />
+									<Input
+										type='password'
+										value={password}
+										onChange={(e) =>
+											setPassword(e.target.value)
+										}
+										className='pl-12'
+										placeholder='••••••••'
+										required
+									/>
+								</div>
 							</div>
-						</div>
 
-						<div className='flex items-center justify-between text-sm'>
-							<label className='flex items-center gap-2 cursor-pointer'>
-								<input
-									type='checkbox'
-									className='w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500'
-								/>
-								<span className='text-surface-variant-foreground'>
-									Remember me
-								</span>
-							</label>
-							<button
-								type='button'
-								className='text-green-600 hover:text-green-700 font-medium'
+							<div className='flex items-center justify-between text-sm'>
+								<label className='flex items-center gap-2 cursor-pointer'>
+									<input
+										type='checkbox'
+										className='w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500'
+									/>
+									<span className='text-surface-variant-foreground'>
+										Remember me
+									</span>
+								</label>
+								<button
+									type='button'
+									className='text-green-600 hover:text-green-700 font-medium'
+								>
+									Forgot password?
+								</button>
+							</div>
+
+							<Button
+								type='submit'
+								className='w-full flex items-center justify-center gap-2'
 							>
-								Forgot password?
-							</button>
-						</div>
-
-						<button
-							type='submit'
-							className='btn-primary w-full flex items-center justify-center gap-2'
-						>
-							Sign In
-							<ArrowRight className='w-5 h-5' />
-						</button>
-					</form>
-				</div>
-
+								Sign In
+								<ArrowRight className='w-5 h-5' />
+							</Button>
+						</form>
+					</CardContent>
+				</Card>{' '}
 				<p className='text-center text-surface-variant-foreground mt-6'>
 					Don't have an account?{' '}
 					<button

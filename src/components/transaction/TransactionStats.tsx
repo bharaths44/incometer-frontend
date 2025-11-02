@@ -1,4 +1,6 @@
 import { TransactionResponseDTO } from '@/types/transaction';
+import { Card, CardContent } from '@/components/ui/card';
+import { Search } from 'lucide-react';
 
 interface TransactionStatsProps {
 	transactions: TransactionResponseDTO[];
@@ -17,10 +19,10 @@ export default function TransactionStats({
 	);
 
 	return (
-		<div
-			className={`card bg-gradient-to-br ${type === 'expense' ? 'from-orange-500 to-red-500' : 'from-green-500 to-emerald-500'} border-0 text-white`}
+		<Card
+			className={`bg-gradient-to-br ${type === 'expense' ? 'from-orange-500 to-red-500' : 'from-green-500 to-emerald-500'} border-0 text-white`}
 		>
-			<div className='flex items-center justify-between'>
+			<CardContent className='flex items-center justify-between'>
 				<div>
 					<div
 						className={`text-${type === 'expense' ? 'orange' : 'green'}-100 mb-2 text-sm`}
@@ -32,15 +34,9 @@ export default function TransactionStats({
 					</div>
 				</div>
 				<div className='w-20 h-20 bg-surface-container/20 rounded-3xl flex items-center justify-center backdrop-blur-sm'>
-					<svg
-						className='w-10 h-10'
-						fill='currentColor'
-						viewBox='0 0 24 24'
-					>
-						<path d='M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z' />
-					</svg>
+					<Search className='w-10 h-10' />
 				</div>
-			</div>
-		</div>
+			</CardContent>
+		</Card>
 	);
 }

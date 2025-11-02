@@ -5,6 +5,8 @@ import {
 	TrendingUp,
 	Wallet,
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface LandingProps {
 	onGetStarted: () => void;
@@ -50,12 +52,13 @@ export default function Landing({ onGetStarted }: LandingProps) {
 							Incometer
 						</span>
 					</div>
-					<button
+					<Button
 						onClick={onGetStarted}
-						className='btn-secondary text-sm'
+						variant='outline'
+						className='text-sm'
 					>
 						Sign In
-					</button>
+					</Button>
 				</nav>
 
 				<div className='text-center max-w-4xl mx-auto mb-20'>
@@ -76,51 +79,55 @@ export default function Landing({ onGetStarted }: LandingProps) {
 						Beautifully designed, incredibly simple, powered by
 						intelligence.
 					</p>
-					<button
+					<Button
 						onClick={onGetStarted}
-						className='btn-primary text-lg px-8 py-4 inline-flex items-center gap-2 group'
+						className='text-lg px-8 py-4 inline-flex items-center gap-2 group'
 					>
 						Get Started Free
 						<ArrowRight className='w-5 h-5 group-hover:translate-x-1 transition-transform' />
-					</button>
+					</Button>
 				</div>
 
 				<div className='grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20'>
 					{features.map((feature, index) => (
-						<div
+						<Card
 							key={index}
-							className='card group cursor-default'
+							className='group cursor-default'
 							style={{ animationDelay: `${index * 100}ms` }}
 						>
-							<div className='w-14 h-14 bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300'>
-								<feature.icon className='w-7 h-7 text-green-600' />
-							</div>
-							<h3 className='text-lg font-semibold mb-2 text-gray-900'>
-								{feature.title}
-							</h3>
-							<p className='text-surface-variant-foreground leading-relaxed'>
-								{feature.description}
-							</p>
-						</div>
+							<CardContent className='pt-6'>
+								<div className='w-14 h-14 bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300'>
+									<feature.icon className='w-7 h-7 text-green-600' />
+								</div>
+								<h3 className='text-lg font-semibold mb-2 text-gray-900'>
+									{feature.title}
+								</h3>
+								<p className='text-surface-variant-foreground leading-relaxed'>
+									{feature.description}
+								</p>
+							</CardContent>
+						</Card>
 					))}
 				</div>
 
-				<div className='card max-w-4xl mx-auto text-center py-12 bg-gradient-to-br from-green-500 to-emerald-600 border-0'>
-					<h2 className='text-3xl font-bold text-white mb-4'>
-						Ready to take control?
-					</h2>
-					<p className='text-green-50 text-lg mb-8 max-w-xl mx-auto'>
-						Join thousands making smarter financial decisions every
-						day.
-					</p>
-					<button
-						onClick={onGetStarted}
-						className='bg-white text-green-600 px-8 py-4 rounded-2xl font-semibold hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center gap-2'
-					>
-						Start Your Journey
-						<ArrowRight className='w-5 h-5' />
-					</button>
-				</div>
+				<Card className='max-w-4xl mx-auto text-center py-12 bg-gradient-to-br from-green-500 to-emerald-600 border-0'>
+					<CardContent>
+						<h2 className='text-3xl font-bold text-white mb-4'>
+							Ready to take control?
+						</h2>
+						<p className='text-green-50 text-lg mb-8 max-w-xl mx-auto'>
+							Join thousands making smarter financial decisions
+							every day.
+						</p>
+						<Button
+							onClick={onGetStarted}
+							className='bg-white text-green-600 px-8 py-4 rounded-2xl font-semibold hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 inline-flex items-center gap-2'
+						>
+							Start Your Journey
+							<ArrowRight className='w-5 h-5' />
+						</Button>
+					</CardContent>
+				</Card>
 			</div>
 		</div>
 	);

@@ -22,7 +22,10 @@ const useTransactions = (userId: number, type: 'expense' | 'income') => {
 	return useQuery({
 		queryKey: transactionKeys.list(userId, type),
 		queryFn: async () => {
-			const service = type === 'expense' ? createExpenseService() : createIncomeService();
+			const service =
+				type === 'expense'
+					? createExpenseService()
+					: createIncomeService();
 			return service.getAll(userId);
 		},
 		enabled: !!userId,
@@ -30,7 +33,9 @@ const useTransactions = (userId: number, type: 'expense' | 'income') => {
 };
 
 // Generic mutation hooks
-const useCreateTransactionMutation = (createService: () => TransactionService) => {
+const useCreateTransactionMutation = (
+	createService: () => TransactionService
+) => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
@@ -49,7 +54,9 @@ const useCreateTransactionMutation = (createService: () => TransactionService) =
 	});
 };
 
-const useUpdateTransactionMutation = (createService: () => TransactionService) => {
+const useUpdateTransactionMutation = (
+	createService: () => TransactionService
+) => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
@@ -74,7 +81,9 @@ const useUpdateTransactionMutation = (createService: () => TransactionService) =
 	});
 };
 
-const useDeleteTransactionMutation = (createService: () => TransactionService) => {
+const useDeleteTransactionMutation = (
+	createService: () => TransactionService
+) => {
 	const queryClient = useQueryClient();
 
 	return useMutation({

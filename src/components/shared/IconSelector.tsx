@@ -1,5 +1,6 @@
 import Icon from '@/lib/iconUtils';
 import { useEffect } from 'react';
+import { Input } from '@/components/ui/input';
 
 interface IconSelectorProps {
 	selectedIcon: string;
@@ -31,11 +32,11 @@ export default function IconSelector({
 			<label className='block text-sm font-medium text-foreground mb-2'>
 				Icon
 			</label>
-			<input
+			<Input
 				type='text'
 				value={searchQuery}
 				onChange={(e) => setSearchQuery(e.target.value)}
-				className='input-field mb-3'
+				className='mb-3'
 				placeholder='Search all Lucide icons (e.g., gym, car, food)...'
 			/>
 			{!searchQuery && (

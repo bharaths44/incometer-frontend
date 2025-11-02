@@ -2,6 +2,7 @@ import { DollarSign } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useExpenseSummary } from '@/hooks/useAnalytics.ts';
 import { ExpenseSummary } from '@/types/analytics.ts';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface FinancialHealthScoreProps {
 	userId: number;
@@ -71,8 +72,8 @@ export default function FinancialHealthScore({
 
 	if (loading) {
 		return (
-			<div className='card bg-gradient-to-br from-green-500 to-emerald-600 border-0 text-white animate-pulse'>
-				<div className='flex items-center justify-between'>
+			<Card className='bg-gradient-to-br from-green-500 to-emerald-600 border-0 text-white animate-pulse'>
+				<CardContent className='flex items-center justify-between'>
 					<div>
 						<div className='text-primary-foreground mb-2'>
 							Financial Health Score
@@ -81,24 +82,24 @@ export default function FinancialHealthScore({
 						<div className='w-48 h-4 bg-surface-container/20 rounded'></div>
 					</div>
 					<div className='w-32 h-32 bg-surface-container/20 rounded-full'></div>
-				</div>
-			</div>
+				</CardContent>
+			</Card>
 		);
 	}
 
 	if (!summary) {
 		return (
-			<div className='card bg-gradient-to-br from-gray-500 to-gray-600 border-0 text-white'>
-				<div className='text-center py-8'>
+			<Card className='bg-gradient-to-br from-gray-500 to-gray-600 border-0 text-white'>
+				<CardContent className='text-center py-8'>
 					Failed to load financial health score
-				</div>
-			</div>
+				</CardContent>
+			</Card>
 		);
 	}
 
 	return (
-		<div className='card bg-gradient-to-br from-green-500 to-emerald-600 border-0 text-white'>
-			<div className='flex items-center justify-between'>
+		<Card className='bg-gradient-to-br from-green-500 to-emerald-600 border-0 text-white'>
+			<CardContent className='flex items-center justify-between'>
 				<div>
 					<div className='text-primary-foreground mb-2'>
 						Financial Health Score
@@ -131,7 +132,7 @@ export default function FinancialHealthScore({
 						<DollarSign className='w-12 h-12' />
 					</div>
 				</div>
-			</div>
-		</div>
+			</CardContent>
+		</Card>
 	);
 }

@@ -1,4 +1,5 @@
 import { Calendar } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import SpendingByCategory from '../components/analytics/SpendingByCategory';
 import FinancialOverview from '../components/analytics/FinancialOverview';
 import BudgetOverview from '../components/analytics/BudgetOverview';
@@ -45,12 +46,12 @@ export default function Analytics() {
 					</p>
 				</div>
 				<div className='flex gap-3'>
-					<button className='btn-secondary text-sm'>
+					<Button variant='outline' className='text-sm'>
 						Last 30 Days
-					</button>
-					<button className='btn-secondary text-sm'>
+					</Button>
+					<Button variant='outline' className='text-sm'>
 						Last 6 Months
-					</button>
+					</Button>
 				</div>
 			</div>
 
