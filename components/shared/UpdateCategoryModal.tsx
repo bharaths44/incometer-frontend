@@ -51,22 +51,13 @@ export default function UpdateCategoryModal({
 	allLucideIcons,
 	predefinedIcons: propPredefinedIcons,
 }: UpdateCategoryModalProps) {
-	const [categoryName, setCategoryName] = useState('');
-	const [categoryIcon, setCategoryIcon] = useState('');
+	const [categoryName, setCategoryName] = useState(category?.name || '');
+	const [categoryIcon, setCategoryIcon] = useState(category?.icon || '');
 	const [categoryType, setCategoryType] = useState<'EXPENSE' | 'INCOME'>(
-		'EXPENSE'
+		category?.type || 'EXPENSE'
 	);
 	const [iconSearchQuery, setIconSearchQuery] = useState('');
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-	// Populate form when category changes
-	useEffect(() => {
-		if (category) {
-			setCategoryName(category.name);
-			setCategoryIcon(category.icon);
-			setCategoryType(category.type);
-		}
-	}, [category]);
 
 	const handleUpdateCategory = async () => {
 		if (!categoryName.trim() || !categoryIcon || !category) {

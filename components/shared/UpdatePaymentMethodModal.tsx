@@ -56,26 +56,20 @@ export default function UpdatePaymentMethodModal({
 	allLucideIcons,
 	predefinedIcons: propPredefinedIcons,
 }: UpdatePaymentMethodModalProps) {
-	const [name, setName] = useState('');
-	const [displayName, setDisplayName] = useState('');
-	const [type, setType] = useState('');
-	const [icon, setIcon] = useState('');
-	const [lastFourDigits, setLastFourDigits] = useState('');
-	const [issuerName, setIssuerName] = useState('');
+	const [name, setName] = useState(paymentMethod?.name || '');
+	const [displayName, setDisplayName] = useState(
+		paymentMethod?.displayName || ''
+	);
+	const [type, setType] = useState(paymentMethod?.type || '');
+	const [icon, setIcon] = useState(paymentMethod?.icon || '');
+	const [lastFourDigits, setLastFourDigits] = useState(
+		paymentMethod?.lastFourDigits || ''
+	);
+	const [issuerName, setIssuerName] = useState(
+		paymentMethod?.issuerName || ''
+	);
 	const [iconSearchQuery, setIconSearchQuery] = useState('');
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-	// Populate form when paymentMethod changes
-	useEffect(() => {
-		if (paymentMethod) {
-			setName(paymentMethod.name);
-			setDisplayName(paymentMethod.displayName || '');
-			setType(paymentMethod.type);
-			setIcon(paymentMethod.icon || '');
-			setLastFourDigits(paymentMethod.lastFourDigits || '');
-			setIssuerName(paymentMethod.issuerName || '');
-		}
-	}, [paymentMethod]);
 
 	const handleUpdatePaymentMethod = async () => {
 		if (!name.trim() || !type || !paymentMethod) {

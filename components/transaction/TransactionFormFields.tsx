@@ -20,6 +20,7 @@ import { format } from 'date-fns';
 import { Category } from '@/types/category';
 import { PaymentMethodResponseDTO } from '@/types/paymentMethod';
 import { TransactionConfig } from '@/types/transaction';
+import Icon from '@/lib/iconUtils';
 
 type FormData = {
 	description: string;
@@ -82,7 +83,7 @@ export default function TransactionFormFields({
 					{config.formLabels.amount}
 				</Label>
 				<div className='relative'>
-					<span className='absolute left-4 top-1/2 -translate-y-1/2 text-surface-variant-foreground'>
+					<span className='absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground'>
 						₹
 					</span>
 					<Input
@@ -121,7 +122,14 @@ export default function TransactionFormFields({
 								key={`category-${cat.categoryId}`}
 								value={cat.categoryId.toString()}
 							>
-								{cat.name}
+								<div className='flex items-center gap-2'>
+									<Icon
+										name={cat.icon}
+										size={16}
+										className='text-muted-foreground'
+									/>
+									<span>{cat.name}</span>
+								</div>
 							</SelectItem>
 						))}
 						<SelectItem value='new'>
@@ -158,7 +166,16 @@ export default function TransactionFormFields({
 								key={`payment-${pm.paymentMethodId}`}
 								value={pm.paymentMethodId.toString()}
 							>
-								{pm.displayName}
+								<div className='flex items-center gap-2'>
+									{pm.icon && (
+										<Icon
+											name={pm.icon}
+											size={16}
+											className='text-muted-foreground'
+										/>
+									)}
+									<span>{pm.displayName}</span>
+								</div>
 							</SelectItem>
 						))}
 						<SelectItem value='new'>

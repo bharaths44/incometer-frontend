@@ -74,11 +74,11 @@ export default function TransactionTable({
 							<TableRow key={transaction.transactionId}>
 								<TableCell>
 									<div className='flex items-center gap-3'>
-										<div className='w-8 h-8 bg-surface-container-high rounded-lg flex items-center justify-center'>
+										<div className='w-8 h-8 bg-muted rounded-lg flex items-center justify-center'>
 											<Icon
 												name={transaction.category.icon}
 												size={16}
-												className='text-surface-variant-foreground'
+												className='text-muted-foreground'
 											/>
 										</div>
 										<span className='text-sm font-medium'>
@@ -117,7 +117,7 @@ export default function TransactionTable({
 											}
 											variant='ghost'
 											size='icon'
-											className='text-error hover:text-red-700 hover:bg-red-50'
+											className='text-destructive hover:text-destructive hover:bg-destructive/10'
 										>
 											<Trash2 className='w-4 h-4' />
 										</Button>

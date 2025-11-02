@@ -40,7 +40,7 @@ export default function IconSelector({
 				placeholder='Search all Lucide icons (e.g., gym, car, food)...'
 			/>
 			{!searchQuery && (
-				<p className='text-xs text-surface-variant-foreground mb-2'>
+				<p className='text-xs text-muted-foreground mb-2'>
 					Popular icons shown below. Start typing to search all{' '}
 					{allIcons.length > 0 ? allIcons.length : ''} Lucide icons.
 				</p>
@@ -51,10 +51,10 @@ export default function IconSelector({
 						key={iconName}
 						type='button'
 						onClick={() => onSelect(iconName)}
-						className={`p-2 border rounded-lg hover:bg-surface-container-low ${
+						className={`p-2 border rounded-lg hover:bg-muted ${
 							selectedIcon === iconName
-								? 'border-blue-500 bg-blue-50'
-								: 'border-outline'
+								? 'border-primary bg-muted'
+								: 'border-border'
 						}`}
 						title={iconName}
 					>
@@ -63,8 +63,8 @@ export default function IconSelector({
 				))}
 			</div>
 			{filteredIcons.length === 0 && searchQuery && (
-				<p className='text-sm text-surface-variant-foreground mt-2'>
-					No icons found for "{searchQuery}"
+				<p className='text-sm text-muted-foreground mt-2'>
+					No icons found for &quot;{searchQuery}&quot;
 				</p>
 			)}
 			{filteredIcons.length > 0 && searchQuery && (

@@ -1,6 +1,6 @@
 import { TransactionResponseDTO } from '@/types/transaction';
 import { Card, CardContent } from '@/components/ui/card';
-import { Search } from 'lucide-react';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 
 interface TransactionStatsProps {
 	transactions: TransactionResponseDTO[];
@@ -18,23 +18,27 @@ export default function TransactionStats({
 		0
 	);
 
+	const Icon = type === 'income' ? TrendingUp : TrendingDown;
+
 	return (
-		<Card
-			className={`bg-gradient-to-br ${type === 'expense' ? 'from-orange-500 to-red-500' : 'from-green-500 to-emerald-500'} border-0 text-white`}
-		>
-			<CardContent className='flex items-center justify-between'>
-				<div>
+		<Card>
+			<CardContent className='pt-6'>
+				<div className='flex items-center justify-between'>
+					<div>
+						<p className='text-sm text-muted-foreground mb-2'>
+							Total {title} This Month
+						</p>
+						<h3 className='text-4xl font-bold'>
+							₹{totalAmount.toFixed(2)}
+						</h3>
+					</div>
 					<div
-						className={`text-${type === 'expense' ? 'orange' : 'green'}-100 mb-2 text-sm`}
+						className={`p-4 rounded-lg ${type === 'income' ? 'bg-emerald-100 dark:bg-emerald-900/20' : 'bg-red-100 dark:bg-red-900/20'}`}
 					>
-						Total {title} This Month
+						<Icon
+							className={`w-8 h-8 ${type === 'income' ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}
+						/>
 					</div>
-					<div className='text-5xl font-bold'>
-						₹{totalAmount.toFixed(2)}
-					</div>
-				</div>
-				<div className='w-20 h-20 bg-surface-container/20 rounded-3xl flex items-center justify-center backdrop-blur-sm'>
-					<Search className='w-10 h-10' />
 				</div>
 			</CardContent>
 		</Card>
