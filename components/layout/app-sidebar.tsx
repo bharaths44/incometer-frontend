@@ -14,7 +14,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const user = {
 		name: 'John Doe',
 		email: 'john.doe@example.com',
-		avatar: '/avatars/john-doe.jpg',
+		avatar: '', // Empty string will use the AvatarFallback
 	};
 
 	return (

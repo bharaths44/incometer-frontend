@@ -59,12 +59,13 @@ export const Icon: React.FC<IconProps> = ({ name, size = 20, ...props }) => {
 				iconCache.set(pascalName, IconComponent);
 				return { default: IconComponent };
 			})
-			.catch((error) => {
+			.catch(async (error) => {
 				console.warn(`Failed to load icon: ${name}`, error);
 				// Return fallback on error
-				return import('lucide-react').then((icons) => ({
+				const icons = await import('lucide-react');
+				return {
 					default: icons.HelpCircle,
-				}));
+				};
 			})
 	);
 
