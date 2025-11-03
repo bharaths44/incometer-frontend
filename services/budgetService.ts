@@ -1,4 +1,8 @@
-import { BudgetRequestDTO, BudgetResponseDTO, BudgetType } from '../types/budget';
+import {
+	BudgetRequestDTO,
+	BudgetResponseDTO,
+	BudgetType,
+} from '../types/budget';
 import { API_BASE_URL } from '../lib/constants';
 
 // API URLs for budget operations
@@ -15,7 +19,10 @@ const BUDGET_API_URLS = {
 };
 
 // Helper function to replace URL parameters
-const replaceUrlParams = (url: string, params: Record<string, string | number>): string => {
+const replaceUrlParams = (
+	url: string,
+	params: Record<string, string | number>
+): string => {
 	let result = url;
 	Object.entries(params).forEach(([key, value]) => {
 		result = result.replace(`:${key}`, value.toString());
@@ -25,7 +32,9 @@ const replaceUrlParams = (url: string, params: Record<string, string | number>):
 };
 
 // Create a new budget
-export const createBudget = async (budgetData: BudgetRequestDTO): Promise<BudgetResponseDTO> => {
+export const createBudget = async (
+	budgetData: BudgetRequestDTO
+): Promise<BudgetResponseDTO> => {
 	try {
 		const response = await fetch(BUDGET_API_URLS.create, {
 			method: 'POST',
@@ -64,7 +73,9 @@ export const getBudgetById = async (id: number): Promise<BudgetResponseDTO> => {
 };
 
 // Get budgets by user ID
-export const getBudgetsByUser = async (userId: number): Promise<BudgetResponseDTO[]> => {
+export const getBudgetsByUser = async (
+	userId: number
+): Promise<BudgetResponseDTO[]> => {
 	try {
 		const url = replaceUrlParams(BUDGET_API_URLS.getByUser, { userId });
 		const response = await fetch(url);
@@ -86,7 +97,9 @@ export const getBudgetsByUserAndDate = async (
 	date?: string
 ): Promise<BudgetResponseDTO[]> => {
 	try {
-		let url = replaceUrlParams(BUDGET_API_URLS.getByUserAndDate, { userId });
+		let url = replaceUrlParams(BUDGET_API_URLS.getByUserAndDate, {
+			userId,
+		});
 		if (date) {
 			url += `?date=${date}`;
 		}
@@ -131,9 +144,14 @@ export const updateBudget = async (
 };
 
 // Delete a budget
-export const deleteBudget = async (id: number, userId: number): Promise<void> => {
+export const deleteBudget = async (
+	id: number,
+	userId: number
+): Promise<void> => {
 	try {
-		const url = replaceUrlParams(BUDGET_API_URLS.delete, { id }) + `?userId=${userId}`;
+		const url =
+			replaceUrlParams(BUDGET_API_URLS.delete, { id }) +
+			`?userId=${userId}`;
 		const response = await fetch(url, {
 			method: 'DELETE',
 		});
@@ -148,15 +166,22 @@ export const deleteBudget = async (id: number, userId: number): Promise<void> =>
 };
 
 // Deactivate a budget
-export const deactivateBudget = async (id: number, userId: number): Promise<BudgetResponseDTO> => {
+export const deactivateBudget = async (
+	id: number,
+	userId: number
+): Promise<BudgetResponseDTO> => {
 	try {
-		const url = replaceUrlParams(BUDGET_API_URLS.deactivate, { id }) + `?userId=${userId}`;
+		const url =
+			replaceUrlParams(BUDGET_API_URLS.deactivate, { id }) +
+			`?userId=${userId}`;
 		const response = await fetch(url, {
 			method: 'PUT',
 		});
 
 		if (!response.ok) {
-			throw new Error(`Failed to deactivate budget: ${response.statusText}`);
+			throw new Error(
+				`Failed to deactivate budget: ${response.statusText}`
+			);
 		}
 
 		return await response.json();
@@ -172,7 +197,9 @@ export const getAllBudgets = async (): Promise<BudgetResponseDTO[]> => {
 		const response = await fetch(BUDGET_API_URLS.getAll);
 
 		if (!response.ok) {
-			throw new Error(`Failed to get all budgets: ${response.statusText}`);
+			throw new Error(
+				`Failed to get all budgets: ${response.statusText}`
+			);
 		}
 
 		return await response.json();
@@ -183,10 +210,12 @@ export const getAllBudgets = async (): Promise<BudgetResponseDTO[]> => {
 };
 
 // Get targets by user ID (targets are budgets with type TARGET)
-export const getTargetsByUser = async (userId: number): Promise<BudgetResponseDTO[]> => {
+export const getTargetsByUser = async (
+	userId: number
+): Promise<BudgetResponseDTO[]> => {
 	try {
 		const budgets = await getBudgetsByUser(userId);
-		return budgets.filter(budget => budget.type === BudgetType.TARGET);
+		return budgets.filter((budget) => budget.type === BudgetType.TARGET);
 	} catch (error) {
 		console.error('Error getting targets by user:', error);
 		throw error;

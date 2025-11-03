@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react';
 import { BudgetResponseDTO } from '@/types/budget';
 import { getTargetsByUser } from '@/services/budgetService';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Plus, Target, TrendingUp } from 'lucide-react';
+import { Plus, Target } from 'lucide-react';
+import BudgetCard from '@/components/shared/BudgetCard';
 
 export default function TargetList() {
 	const [targets, setTargets] = useState<BudgetResponseDTO[]>([]);
@@ -27,17 +27,6 @@ export default function TargetList() {
 		} finally {
 			setLoading(false);
 		}
-	};
-
-	const formatCurrency = (amount: number) => {
-		return new Intl.NumberFormat('en-IN', {
-			style: 'currency',
-			currency: 'INR',
-		}).format(amount);
-	};
-
-	const calculateProgress = (current: number, target: number) => {
-		return Math.min((current / target) * 100, 100);
 	};
 
 	return (
@@ -65,103 +54,9 @@ export default function TargetList() {
 				</Card>
 			) : (
 				<div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
-					{targets.map((target, index) => {
-						// For demo: Use different progress levels for variety
-						const progressLevels = [0.3, 0.6, 0.8, 0.95]; // 30%, 60%, 80%, 95%
-						const progress =
-							progressLevels[index % progressLevels.length] * 100;
-						const currentAmount = Math.floor(
-							target.amount * (progress / 100)
-						);
-						const isCompleted = progress >= 100;
-
-						return (
-							<Card key={target.budgetId}>
-								<CardHeader className='pb-3'>
-									<div className='flex justify-between items-start'>
-										<CardTitle className='text-lg flex items-center gap-2'>
-											<Target className='h-5 w-5' />
-											{target.categoryName} Target
-										</CardTitle>
-										<Badge
-											variant={
-												isCompleted
-													? 'default'
-													: 'secondary'
-											}
-										>
-											{isCompleted
-												? 'Completed'
-												: `${progress.toFixed(0)}%`}
-										</Badge>
-									</div>
-								</CardHeader>
-								<CardContent>
-									<div className='space-y-3'>
-										<div className='flex justify-between'>
-											<span className='text-sm text-muted-foreground'>
-												Current:
-											</span>
-											<span className='font-semibold'>
-												{formatCurrency(currentAmount)}
-											</span>
-										</div>
-										<div className='flex justify-between'>
-											<span className='text-sm text-muted-foreground'>
-												Target:
-											</span>
-											<span className='font-semibold'>
-												{formatCurrency(target.amount)}
-											</span>
-										</div>
-										<div className='flex justify-between'>
-											<span className='text-sm text-muted-foreground'>
-												Remaining:
-											</span>
-											<span className='font-semibold'>
-												{formatCurrency(
-													target.amount -
-														currentAmount
-												)}
-											</span>
-										</div>
-										<div className='flex justify-between'>
-											<span className='text-sm text-muted-foreground'>
-												Deadline:
-											</span>
-											<span className='text-sm'>
-												{new Date(
-													target.endDate
-												).toLocaleDateString()}
-											</span>
-										</div>
-
-										{/* Progress bar */}
-										<div className='space-y-1'>
-											<div className='flex justify-between text-xs'>
-												<span>Progress</span>
-												<span>
-													{progress.toFixed(0)}%
-												</span>
-											</div>
-											<div className='w-full bg-secondary rounded-full h-2'>
-												<div
-													className={`h-2 rounded-full transition-all duration-300 ${
-														isCompleted
-															? 'bg-green-500'
-															: 'bg-primary'
-													}`}
-													style={{
-														width: `${progress}%`,
-													}}
-												/>
-											</div>
-										</div>
-									</div>
-								</CardContent>
-							</Card>
-						);
-					})}
+					{targets.map((target) => (
+						<BudgetCard key={target.budgetId} budget={target} />
+					))}
 				</div>
 			)}
 		</div>

@@ -26,6 +26,7 @@ export interface BudgetResponseDTO {
 	categoryId: number;
 	categoryName: string;
 	amount: number;
+	spent: number;
 	startDate: string;
 	endDate: string;
 	frequency: BudgetFrequency;
