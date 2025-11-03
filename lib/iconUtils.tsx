@@ -1,5 +1,5 @@
 import { lazy, Suspense, useMemo } from 'react';
-import { kebabCase, pascalCase } from 'change-case';
+import { pascalCase } from 'change-case';
 import { LucideProps } from 'lucide-react';
 
 interface IconProps extends LucideProps {
@@ -8,28 +8,6 @@ interface IconProps extends LucideProps {
 
 // Cache for loaded icons to prevent re-imports
 const iconCache = new Map<string, React.ComponentType<LucideProps>>();
-
-// Get all Lucide icon names (keep as async for external use)
-export const getAllLucideIconNames = async (): Promise<string[]> => {
-	try {
-		const icons = await import('lucide-react');
-		const iconNames = Object.keys(icons).filter(
-			(key) =>
-				key !== 'default' &&
-				key !== 'createLucideIcon' &&
-				key !== 'LucideIcon' &&
-				key !== 'icons' &&
-				!key.startsWith('Lucid') &&
-				!key.endsWith('Icon') &&
-				key.charAt(0) === key.charAt(0).toUpperCase()
-		);
-
-		return [...new Set(iconNames.map((name) => kebabCase(name)))].sort();
-	} catch (error) {
-		console.warn('Failed to load Lucide icons:', error);
-		return [];
-	}
-};
 
 // Optimized Icon component with caching
 export const Icon: React.FC<IconProps> = ({ name, size = 20, ...props }) => {

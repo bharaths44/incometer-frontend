@@ -4,7 +4,7 @@ import { BudgetResponseDTO, BudgetType } from '@/types/budget';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Edit, Trash2, Target, TrendingUp } from 'lucide-react';
+import { Edit, Trash2, HandCoins, ChartNoAxesCombined } from 'lucide-react';
 import { formatCurrency, getFrequencyLabel } from '@/lib/utils';
 
 interface BudgetCardProps {
@@ -58,9 +58,9 @@ export default function BudgetCard({
 				<div className='flex justify-between items-start'>
 					<CardTitle className='text-lg flex items-center gap-2'>
 						{isTarget ? (
-							<Target className='h-5 w-5' />
+							<ChartNoAxesCombined className='h-5 w-5' />
 						) : (
-							<TrendingUp className='h-5 w-5' />
+							<HandCoins className='h-5 w-5' />
 						)}
 						{budget.categoryName} {isTarget ? 'Target' : 'Budget'}
 					</CardTitle>
@@ -135,37 +135,29 @@ export default function BudgetCard({
 						</div>
 					</div>
 
-					{!isTarget && (
-						<div className='flex justify-between items-center pt-2'>
-							<Badge
-								variant={
-									budget.active ? 'default' : 'secondary'
-								}
-							>
-								{budget.active ? 'Active' : 'Inactive'}
-							</Badge>
-							<div className='flex gap-1'>
-								{onEdit && (
-									<Button
-										variant='ghost'
-										size='sm'
-										onClick={() => onEdit(budget)}
-									>
-										<Edit className='h-4 w-4' />
-									</Button>
-								)}
-								{onDelete && (
-									<Button
-										variant='ghost'
-										size='sm'
-										onClick={() => onDelete(budget)}
-									>
-										<Trash2 className='h-4 w-4' />
-									</Button>
-								)}
-							</div>
+					<div className='flex justify-end items-right pt-2'>
+						<div className='flex gap-1'>
+							{onEdit && (
+								<Button
+									variant='ghost'
+									size='sm'
+									onClick={() => onEdit(budget)}
+								>
+									<Edit className='h-4 w-4' />
+								</Button>
+							)}
+							{onDelete && (
+								<Button
+									variant='ghost'
+									size='sm'
+									onClick={() => onDelete(budget)}
+									className='text-red-600 hover:text-red-700 hover:bg-red-50'
+								>
+									<Trash2 className='h-4 w-4' />
+								</Button>
+							)}
 						</div>
-					)}
+					</div>
 				</div>
 			</CardContent>
 		</Card>

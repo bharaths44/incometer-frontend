@@ -1,65 +1,81 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { BudgetResponseDTO, BudgetType } from '@/types/budget';
+import { BudgetResponseDTO, BudgetFrequency, BudgetType } from '@/types/budget';
 import { getBudgetsByUser } from '@/services/budgetService';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Plus, Edit, Trash2 } from 'lucide-react';
 import BudgetCard from '@/components/shared/BudgetCard';
+import BudgetFormModal from '@/components/shared/BudgetFormModal';
+import { useBudgets, useDeleteBudget } from '@/hooks/useBudgets';
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { formatCurrency } from '@/lib/utils';
 
-// Calculate real spending for a budget based on transaction data
-const calculateRealSpending = (
-	budget: BudgetResponseDTO,
-	transactions: any[]
-) => {
-	const budgetStartDate = new Date(budget.startDate);
-	const budgetEndDate = new Date(budget.endDate);
-
-	// Filter transactions for this budget's category and date range
-	const relevantTransactions = transactions.filter((transaction) => {
-		const transactionDate = new Date(transaction.transactionDate);
-		const isInDateRange =
-			transactionDate >= budgetStartDate &&
-			transactionDate <= budgetEndDate;
-		const isInCategory = transaction.category?.name === budget.categoryName;
-
-		return isInDateRange && isInCategory;
-	});
-
-	// Sum the amounts of relevant transactions
-	return relevantTransactions.reduce(
-		(total, transaction) => total + transaction.amount,
-		0
-	);
-};
-
 export default function BudgetList() {
-	const [budgets, setBudgets] = useState<BudgetResponseDTO[]>([]);
-	const [loading, setLoading] = useState(true);
 	const userId = 1; // TODO: Get from auth context
+	const { data: allBudgets = [], isLoading } = useBudgets(userId);
+	const deleteBudgetMutation = useDeleteBudget();
 
-	useEffect(() => {
-		loadBudgets();
-	}, []);
+	// Filter to only show LIMIT type budgets and sort by newest start date first
+	const budgets = allBudgets
+		.filter((budget) => budget.type === BudgetType.LIMIT)
+		.sort(
+			(a, b) =>
+				new Date(b.startDate).getTime() -
+				new Date(a.startDate).getTime()
+		);
 
-	const loadBudgets = async () => {
-		try {
-			const data = await getBudgetsByUser(userId);
-			// Filter to only show LIMIT type budgets (TARGET type budgets are shown on target page)
-			const limitBudgets = data.filter(
-				(budget) => budget.type === 'LIMIT'
-			);
-			setBudgets(limitBudgets);
-		} catch (error) {
-			console.error('Failed to load budgets:', error);
-			setBudgets([]); // Show empty state on error
-		} finally {
-			setLoading(false);
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [editingBudget, setEditingBudget] =
+		useState<BudgetResponseDTO | null>(null);
+	const [deletingBudget, setDeletingBudget] =
+		useState<BudgetResponseDTO | null>(null);
+
+	const handleAddBudget = () => {
+		setEditingBudget(null);
+		setIsModalOpen(true);
+	};
+
+	const handleEditBudget = (budget: BudgetResponseDTO) => {
+		setEditingBudget(budget);
+		setIsModalOpen(true);
+	};
+
+	const handleDeleteBudget = (budget: BudgetResponseDTO) => {
+		setDeletingBudget(budget);
+	};
+
+	const confirmDelete = async () => {
+		if (deletingBudget) {
+			try {
+				await deleteBudgetMutation.mutateAsync({
+					id: deletingBudget.budgetId,
+					userId,
+				});
+				setDeletingBudget(null);
+			} catch (error) {
+				console.error('Failed to delete budget:', error);
+			}
 		}
 	};
-	if (loading) {
+
+	const handleModalClose = () => {
+		setIsModalOpen(false);
+		setEditingBudget(null);
+	};
+
+	if (isLoading) {
 		return <div className='text-center py-8'>Loading budgets...</div>;
 	}
 
@@ -67,7 +83,7 @@ export default function BudgetList() {
 		<div className='space-y-6'>
 			<div className='flex justify-between items-center'>
 				<h2 className='text-2xl font-semibold'>Your Budgets</h2>
-				<Button>
+				<Button onClick={handleAddBudget}>
 					<Plus className='h-4 w-4 mr-2' />
 					Add Budget
 				</Button>
@@ -79,7 +95,7 @@ export default function BudgetList() {
 						<p className='text-muted-foreground mb-4'>
 							No budgets created yet
 						</p>
-						<Button>
+						<Button onClick={handleAddBudget}>
 							<Plus className='h-4 w-4 mr-2' />
 							Create Your First Budget
 						</Button>
@@ -88,10 +104,52 @@ export default function BudgetList() {
 			) : (
 				<div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
 					{budgets.map((budget) => (
-						<BudgetCard key={budget.budgetId} budget={budget} />
+						<BudgetCard
+							key={budget.budgetId}
+							budget={budget}
+							onEdit={handleEditBudget}
+							onDelete={handleDeleteBudget}
+						/>
 					))}
 				</div>
 			)}
+
+			{/* Budget Form Modal */}
+			<BudgetFormModal
+				isOpen={isModalOpen}
+				onClose={handleModalClose}
+				budget={editingBudget}
+				userId={userId}
+			/>
+
+			{/* Delete Confirmation Dialog */}
+			<AlertDialog
+				open={!!deletingBudget}
+				onOpenChange={() => setDeletingBudget(null)}
+			>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Delete Budget</AlertDialogTitle>
+						<AlertDialogDescription>
+							Are you sure you want to delete the budget for &#34;
+							{deletingBudget?.categoryName}&#34;? This action
+							cannot be undone.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel>Cancel</AlertDialogCancel>
+						<AlertDialogAction
+							onClick={confirmDelete}
+							className='bg-red-600 hover:bg-red-700'
+							disabled={deleteBudgetMutation.isPending}
+						>
+							{deleteBudgetMutation.isPending
+								? 'Deleting...'
+								: 'Delete'}
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	);
 }

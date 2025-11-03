@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import {
 	Sidebar,
 	SidebarHeader,
@@ -21,9 +22,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		<Sidebar collapsible='icon' {...props}>
 			<SidebarHeader>
 				<div className='flex items-center gap-2 px-3 py-3 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center'>
-					<img
+					<Image
 						src='/logo.svg'
 						alt='Incometer Logo'
+						width={40}
+						height={40}
 						className='w-10 h-10 shrink-0'
 					/>
 					<span className='font-semibold text-base group-data-[collapsible=icon]:hidden'>
