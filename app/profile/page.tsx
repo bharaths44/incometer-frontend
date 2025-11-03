@@ -254,7 +254,7 @@ export default function ProfilePage() {
 									Account Balance
 								</p>
 								<p className='font-medium text-emerald-600 dark:text-emerald-400'>
-									$32,389.75
+									₹32,389.75
 								</p>
 							</div>
 						</div>

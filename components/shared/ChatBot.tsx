@@ -39,7 +39,7 @@ export default function ChatBot() {
 		setTimeout(() => {
 			const responses = [
 				"Based on your spending patterns, I recommend setting aside 20% of your income for savings. You're currently at 18%, so you're close to the goal!",
-				'Your top spending category is Food & Dining at $1,250 this month. Consider meal prepping to reduce costs by 15-20%.',
+				'Your top spending category is Food & Dining at ₹1,250 this month. Consider meal prepping to reduce costs by 15-20%.',
 				"Great question! I notice you've been consistent with tracking. Your financial health score is 85/100, which is excellent!",
 				'Looking at your data, your expenses decreased by 8.2% this month. Keep up the good work!',
 			];
@@ -73,7 +73,7 @@ export default function ChatBot() {
 			<Button
 				onClick={() => setIsOpen(true)}
 				size='icon'
-				className={`fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50 group ${
+				className={`fixed bottom-6 right-6 w-16 h-16 bg-linear-to-br from-green-500 to-emerald-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50 group ${
 					isOpen ? 'scale-0' : 'scale-100'
 				}`}
 			>
@@ -89,7 +89,7 @@ export default function ChatBot() {
 				}`}
 				style={{ transformOrigin: 'bottom right' }}
 			>
-				<div className='bg-gradient-to-br from-green-500 to-emerald-600 p-6 rounded-t-3xl text-white flex items-center justify-between'>
+				<div className='bg-linear-to-br from-green-500 to-emerald-600 p-6 rounded-t-3xl text-white flex items-center justify-between'>
 					<div className='flex items-center gap-3'>
 						<div className='w-10 h-10 bg-surface-container/20 backdrop-blur-sm rounded-2xl flex items-center justify-center'>
 							<Sparkles className='w-6 h-6' />
@@ -120,7 +120,7 @@ export default function ChatBot() {
 							<div
 								className={`max-w-[80%] p-4 rounded-2xl ${
 									message.role === 'user'
-										? 'bg-gradient-to-br from-green-500 to-emerald-600 text-white'
+										? 'bg-linear-to-br from-green-500 to-emerald-600 text-white'
 										: 'bg-surface-container-high text-foreground'
 								}`}
 							>
@@ -177,7 +177,7 @@ export default function ChatBot() {
 						<Button
 							onClick={handleSend}
 							size='icon'
-							className='bg-gradient-to-br from-green-500 to-emerald-600 hover:shadow-lg transition-all hover:scale-105 active:scale-95'
+							className='bg-linear-to-br from-green-500 to-emerald-600 hover:shadow-lg transition-all hover:scale-105 active:scale-95'
 						>
 							<Send className='w-5 h-5' />
 						</Button>

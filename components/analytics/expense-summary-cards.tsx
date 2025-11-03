@@ -2,17 +2,21 @@
 
 import { Card, CardContent } from '@/components/ui/card';
 import { TrendingUp, TrendingDown, DollarSign, Wallet } from 'lucide-react';
-import { useExpenseSummary } from '@/hooks/useAnalytics';
+import { ExpenseSummary } from '@/types/analytics';
 import { Skeleton } from '@/components/ui/skeleton';
 
-export function StatsOverview() {
-	// Hardcoded userId (auth not implemented yet)
-	const userId = 1;
-	const { data: summary, isLoading, error } = useExpenseSummary(userId);
+interface ExpenseSummaryCardsProps {
+	expenseSummary: ExpenseSummary | undefined;
+	isLoading: boolean;
+}
 
+export function ExpenseSummaryCards({
+	expenseSummary,
+	isLoading,
+}: ExpenseSummaryCardsProps) {
 	if (isLoading) {
 		return (
-			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
+			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6'>
 				{[1, 2, 3, 4].map((i) => (
 					<Card key={i} className='border shadow-sm'>
 						<CardContent className='pt-6'>
@@ -24,19 +28,7 @@ export function StatsOverview() {
 		);
 	}
 
-	if (error) {
-		return (
-			<Card className='border-red-200 bg-red-50 dark:bg-red-950/20'>
-				<CardContent className='pt-6'>
-					<p className='text-red-600 dark:text-red-400'>
-						Failed to load stats. Please try again.
-					</p>
-				</CardContent>
-			</Card>
-		);
-	}
-
-	if (!summary) {
+	if (!expenseSummary) {
 		return null;
 	}
 
@@ -58,41 +50,41 @@ export function StatsOverview() {
 	const stats = [
 		{
 			label: 'Total Income',
-			value: formatCurrency(summary.totalIncome),
-			change: formatPercentage(summary.incomePercentageChange),
-			changeValue: summary.incomePercentageChange,
+			value: formatCurrency(expenseSummary.totalIncome),
+			change: formatPercentage(expenseSummary.incomePercentageChange),
+			changeValue: expenseSummary.incomePercentageChange,
 			icon: TrendingUp,
 			color: 'text-emerald-600 dark:text-emerald-400',
 			bgColor: 'bg-emerald-50 dark:bg-emerald-950/50',
 		},
 		{
 			label: 'Total Expenses',
-			value: formatCurrency(summary.totalExpense),
-			change: formatPercentage(summary.expensePercentageChange),
-			changeValue: summary.expensePercentageChange,
+			value: formatCurrency(expenseSummary.totalExpense),
+			change: formatPercentage(expenseSummary.expensePercentageChange),
+			changeValue: expenseSummary.expensePercentageChange,
 			icon: TrendingDown,
 			color: 'text-red-600 dark:text-red-400',
 			bgColor: 'bg-red-50 dark:bg-red-950/50',
 		},
 		{
 			label: 'Net Savings',
-			value: formatCurrency(summary.netSavings),
-			change: formatPercentage(summary.savingsPercentageChange),
-			changeValue: summary.savingsPercentageChange,
+			value: formatCurrency(expenseSummary.netSavings),
+			change: formatPercentage(expenseSummary.savingsPercentageChange),
+			changeValue: expenseSummary.savingsPercentageChange,
 			icon: DollarSign,
 			color:
-				summary.netSavings >= 0
+				expenseSummary.netSavings >= 0
 					? 'text-emerald-600 dark:text-emerald-400'
 					: 'text-red-600 dark:text-red-400',
 			bgColor:
-				summary.netSavings >= 0
+				expenseSummary.netSavings >= 0
 					? 'bg-emerald-50 dark:bg-emerald-950/50'
 					: 'bg-red-50 dark:bg-red-950/50',
 		},
 		{
 			label: 'Current Month',
-			value: formatCurrency(summary.currentMonthExpense),
-			change: `Income: ${formatCurrency(summary.currentMonthIncome)}`,
+			value: formatCurrency(expenseSummary.currentMonthExpense),
+			change: `Income: ${formatCurrency(expenseSummary.currentMonthIncome)}`,
 			changeValue: null,
 			icon: Wallet,
 			color: 'text-zinc-600 dark:text-zinc-400',
@@ -101,7 +93,7 @@ export function StatsOverview() {
 	];
 
 	return (
-		<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
+		<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6'>
 			{stats.map((stat, index) => {
 				const Icon = stat.icon;
 				const hasPositiveChange =

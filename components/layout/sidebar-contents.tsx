@@ -7,8 +7,8 @@ import {
 	TrendingUp,
 	TrendingDown,
 	BarChart3,
-	Target,
 	Wallet,
+	Goal,
 } from 'lucide-react';
 import {
 	SidebarContent,
@@ -24,7 +24,7 @@ const navItems = [
 	{ href: '/income', label: 'Income', icon: TrendingUp },
 	{ href: '/expense', label: 'Expense', icon: TrendingDown },
 	{ href: '/budget', label: 'Budget', icon: Wallet },
-	{ href: '/target', label: 'Target', icon: Target },
+	{ href: '/target', label: 'Target', icon: Goal },
 	{ href: '/analytics', label: 'Analytics', icon: BarChart3 },
 ];
 

@@ -8,11 +8,14 @@ import { API_BASE_URL } from '@/lib/constants';
 const API_BASE_URL_ANALYTICS = `${API_BASE_URL}/analytics`;
 
 export const fetchCategoryBreakdown = async (
-	userId: number
+	userId: number,
+	dateRange?: { startDate: string; endDate: string } | null
 ): Promise<CategoryAnalytics[]> => {
-	const response = await fetch(
-		`${API_BASE_URL_ANALYTICS}/user/${userId}/categories`
-	);
+	let url = `${API_BASE_URL_ANALYTICS}/user/${userId}/categories`;
+	if (dateRange) {
+		url += `?startDate=${dateRange.startDate}&endDate=${dateRange.endDate}`;
+	}
+	const response = await fetch(url);
 	if (!response.ok) {
 		throw new Error('Failed to fetch category analytics');
 	}
@@ -20,11 +23,14 @@ export const fetchCategoryBreakdown = async (
 };
 
 export const fetchExpenseSummary = async (
-	userId: number
+	userId: number,
+	dateRange?: { startDate: string; endDate: string } | null
 ): Promise<ExpenseSummary> => {
-	const response = await fetch(
-		`${API_BASE_URL_ANALYTICS}/user/${userId}/expense-summary`
-	);
+	let url = `${API_BASE_URL_ANALYTICS}/user/${userId}/expense-summary`;
+	if (dateRange) {
+		url += `?startDate=${dateRange.startDate}&endDate=${dateRange.endDate}`;
+	}
+	const response = await fetch(url);
 	if (!response.ok) {
 		throw new Error('Failed to fetch expense summary');
 	}

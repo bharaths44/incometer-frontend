@@ -8,27 +8,38 @@ import {
 // Query keys
 export const analyticsKeys = {
 	all: ['analytics'] as const,
-	categoryBreakdown: (userId: number) =>
-		[...analyticsKeys.all, 'categoryBreakdown', userId] as const,
-	expenseSummary: (userId: number) =>
-		[...analyticsKeys.all, 'expenseSummary', userId] as const,
+	categoryBreakdown: (
+		userId: number,
+		dateRange?: { startDate: string; endDate: string } | null
+	) =>
+		[...analyticsKeys.all, 'categoryBreakdown', userId, dateRange] as const,
+	expenseSummary: (
+		userId: number,
+		dateRange?: { startDate: string; endDate: string } | null
+	) => [...analyticsKeys.all, 'expenseSummary', userId, dateRange] as const,
 	budgetAnalytics: (userId: number) =>
 		[...analyticsKeys.all, 'budgetAnalytics', userId] as const,
 };
 
 // Hooks
-export const useCategoryBreakdown = (userId: number) => {
+export const useCategoryBreakdown = (
+	userId: number,
+	dateRange?: { startDate: string; endDate: string } | null
+) => {
 	return useQuery({
-		queryKey: analyticsKeys.categoryBreakdown(userId),
-		queryFn: () => fetchCategoryBreakdown(userId),
+		queryKey: analyticsKeys.categoryBreakdown(userId, dateRange),
+		queryFn: () => fetchCategoryBreakdown(userId, dateRange),
 		enabled: !!userId,
 	});
 };
 
-export const useExpenseSummary = (userId: number) => {
+export const useExpenseSummary = (
+	userId: number,
+	dateRange?: { startDate: string; endDate: string } | null
+) => {
 	return useQuery({
-		queryKey: analyticsKeys.expenseSummary(userId),
-		queryFn: () => fetchExpenseSummary(userId),
+		queryKey: analyticsKeys.expenseSummary(userId, dateRange),
+		queryFn: () => fetchExpenseSummary(userId, dateRange),
 		enabled: !!userId,
 	});
 };
