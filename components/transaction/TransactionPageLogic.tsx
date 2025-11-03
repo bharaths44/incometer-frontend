@@ -55,6 +55,8 @@ export const useTransactionPageLogic = (config: {
 
 	const [editingTransaction, setEditingTransaction] =
 		useState<TransactionResponseDTO | null>(null);
+	const [transactionToDelete, setTransactionToDelete] =
+		useState<TransactionResponseDTO | null>(null);
 	const [formData, setFormData] = useState({
 		description: '',
 		amount: '',
@@ -78,24 +80,33 @@ export const useTransactionPageLogic = (config: {
 		setShowAddModal(true);
 	};
 
-	const handleDelete = async (transaction: TransactionResponseDTO) => {
-		if (confirm(`Are you sure you want to delete this ${config.type}?`)) {
-			try {
-				if (config.type === 'expense') {
-					await deleteExpenseMutation.mutateAsync({
-						id: transaction.transactionId,
-						userId: transaction.userUserId,
-					});
-				} else {
-					await deleteIncomeMutation.mutateAsync({
-						id: transaction.transactionId,
-						userId: transaction.userUserId,
-					});
-				}
-			} catch (error) {
-				console.error(`Failed to delete ${config.type}:`, error);
+	const handleDelete = (transaction: TransactionResponseDTO) => {
+		setTransactionToDelete(transaction);
+	};
+
+	const confirmDelete = async () => {
+		if (!transactionToDelete) return;
+
+		try {
+			if (config.type === 'expense') {
+				await deleteExpenseMutation.mutateAsync({
+					id: transactionToDelete.transactionId,
+					userId: transactionToDelete.userUserId,
+				});
+			} else {
+				await deleteIncomeMutation.mutateAsync({
+					id: transactionToDelete.transactionId,
+					userId: transactionToDelete.userUserId,
+				});
 			}
+			setTransactionToDelete(null);
+		} catch (error) {
+			console.error(`Failed to delete ${config.type}:`, error);
 		}
+	};
+
+	const cancelDelete = () => {
+		setTransactionToDelete(null);
 	};
 
 	const handleSubmit = async (dto: TransactionRequestDTO) => {
@@ -157,36 +168,61 @@ export const useTransactionPageLogic = (config: {
 		setAmountMax('');
 	};
 
-	const filteredTransactions = transactions.filter((transaction) => {
-		const matchesSearch = transaction.description
-			.toLowerCase()
-			.includes(searchQuery.toLowerCase());
-		const matchesCategory =
-			selectedCategory === 'all' ||
-			transaction.category.name === selectedCategory;
-		const matchesPaymentMethod =
-			selectedPaymentMethod === 'all' ||
-			transaction.paymentMethod.paymentMethodId.toString() ===
-				selectedPaymentMethod;
-		const matchesDateFrom =
-			!dateFrom || new Date(transaction.transactionDate) >= dateFrom;
-		const matchesDateTo =
-			!dateTo || new Date(transaction.transactionDate) <= dateTo;
-		const matchesAmountMin =
-			!amountMin || transaction.amount >= parseFloat(amountMin);
-		const matchesAmountMax =
-			!amountMax || transaction.amount <= parseFloat(amountMax);
+	const filteredTransactions = transactions
+		.filter((transaction) => {
+			const searchLower = searchQuery.toLowerCase();
+			const matchesSearch =
+				!searchQuery ||
+				transaction.description.toLowerCase().includes(searchLower) ||
+				transaction.category.name.toLowerCase().includes(searchLower) ||
+				transaction.paymentMethod.displayName
+					.toLowerCase()
+					.includes(searchLower) ||
+				transaction.paymentMethod.name
+					.toLowerCase()
+					.includes(searchLower) ||
+				transaction.amount.toString().includes(searchQuery) ||
+				new Date(transaction.transactionDate)
+					.toLocaleDateString('en-US', {
+						year: 'numeric',
+						month: 'short',
+						day: 'numeric',
+					})
+					.toLowerCase()
+					.includes(searchLower);
+			const matchesCategory =
+				selectedCategory === 'all' ||
+				transaction.category.name === selectedCategory;
+			const matchesPaymentMethod =
+				selectedPaymentMethod === 'all' ||
+				transaction.paymentMethod.paymentMethodId.toString() ===
+					selectedPaymentMethod;
+			const matchesDateFrom =
+				!dateFrom || new Date(transaction.transactionDate) >= dateFrom;
+			const matchesDateTo =
+				!dateTo || new Date(transaction.transactionDate) <= dateTo;
+			const matchesAmountMin =
+				!amountMin || transaction.amount >= parseFloat(amountMin);
+			const matchesAmountMax =
+				!amountMax || transaction.amount <= parseFloat(amountMax);
 
-		return (
-			matchesSearch &&
-			matchesCategory &&
-			matchesPaymentMethod &&
-			matchesDateFrom &&
-			matchesDateTo &&
-			matchesAmountMin &&
-			matchesAmountMax
-		);
-	});
+			return (
+				matchesSearch &&
+				matchesCategory &&
+				matchesPaymentMethod &&
+				matchesDateFrom &&
+				matchesDateTo &&
+				matchesAmountMin &&
+				matchesAmountMax
+			);
+		})
+		.sort((a, b) => {
+			// Sort by date descending (newest first)
+			return (
+				new Date(b.transactionDate).getTime() -
+				new Date(a.transactionDate).getTime()
+			);
+		});
 
 	// Get unique payment methods from transactions
 	const uniquePaymentMethods = Array.from(
@@ -204,6 +240,7 @@ export const useTransactionPageLogic = (config: {
 		setShowAddModal,
 		editingTransaction,
 		formData,
+		transactionToDelete,
 
 		// Data
 		transactions: filteredTransactions,
@@ -230,6 +267,8 @@ export const useTransactionPageLogic = (config: {
 		// Actions
 		handleEdit,
 		handleDelete,
+		confirmDelete,
+		cancelDelete,
 		handleSubmit,
 		openAddModal,
 		clearFilters,

@@ -1,7 +1,7 @@
 'use client';
 
 import { type ReactNode } from 'react';
-import { AppSidebar } from './sidebar';
+import { AppSidebar } from './app-sidebar';
 import { TopBar } from './topbar';
 import {
 	SidebarProvider,
@@ -20,12 +20,13 @@ export function AppLayout({ children }: AppLayoutProps) {
 			<AppSidebar />
 			<SidebarInset>
 				<header className='flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12'>
-					<div className='flex items-center gap-2 px-4'></div>
-					<SidebarTrigger className='-ml-1' />
-					<Separator
-						orientation='vertical'
-						className='mr-2 data-[orientation=vertical]:h-4'
-					/>
+					<div className='flex items-center gap-2 px-4'>
+						<SidebarTrigger className='-ml-1' />
+						<Separator
+							orientation='vertical'
+							className='mr-2 data-[orientation=vertical]:h-4'
+						/>
+					</div>
 				</header>
 				{/* Page Content */}
 				<main className='flex-1 overflow-y-auto p-6 lg:p-8 bg-muted/10'>

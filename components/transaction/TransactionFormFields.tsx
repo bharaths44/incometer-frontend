@@ -113,8 +113,10 @@ export default function TransactionFormFields({
 					onValueChange={onCategoryChange}
 					disabled={loadingCategories}
 				>
-					<SelectTrigger>
-						<SelectValue placeholder='Select Category' />
+					<SelectTrigger className='w-full'>
+						<SelectValue
+							placeholder={`Select ${config.formLabels.category}`}
+						/>
 					</SelectTrigger>
 					<SelectContent>
 						{categories.map((cat) => (
@@ -151,13 +153,9 @@ export default function TransactionFormFields({
 					onValueChange={onPaymentMethodChange}
 					disabled={loadingPaymentMethods}
 				>
-					<SelectTrigger>
+					<SelectTrigger className='w-full'>
 						<SelectValue
-							placeholder={
-								config.type === 'income'
-									? 'Select Received Method'
-									: 'Select Payment Method'
-							}
+							placeholder={`Select ${config.formLabels.paymentMethod}`}
 						/>
 					</SelectTrigger>
 					<SelectContent>

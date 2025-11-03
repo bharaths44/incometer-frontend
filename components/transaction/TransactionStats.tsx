@@ -13,7 +13,20 @@ export default function TransactionStats({
 	type,
 	title,
 }: TransactionStatsProps) {
-	const totalAmount = transactions.reduce(
+	// Get current month transactions
+	const currentDate = new Date();
+	const currentMonth = currentDate.getMonth();
+	const currentYear = currentDate.getFullYear();
+
+	const currentMonthTransactions = transactions.filter((transaction) => {
+		const transactionDate = new Date(transaction.transactionDate);
+		return (
+			transactionDate.getMonth() === currentMonth &&
+			transactionDate.getFullYear() === currentYear
+		);
+	});
+
+	const totalAmount = currentMonthTransactions.reduce(
 		(sum, transaction) => sum + transaction.amount,
 		0
 	);
@@ -22,7 +35,7 @@ export default function TransactionStats({
 
 	return (
 		<Card>
-			<CardContent className='pt-6'>
+			<CardContent className='pt-4 pb-4'>
 				<div className='flex items-center justify-between'>
 					<div>
 						<p className='text-sm text-muted-foreground mb-2'>

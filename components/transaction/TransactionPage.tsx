@@ -5,6 +5,16 @@ import TransactionStats from '@/components/transaction/TransactionStats';
 import TransactionPageHeader from '@/components/transaction/TransactionPageHeader';
 import TransactionFilters from '@/components/transaction/TransactionFilters';
 import { useTransactionPageLogic } from '@/components/transaction/TransactionPageLogic';
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 interface TransactionPageProps {
 	config: TransactionConfig;
@@ -16,6 +26,7 @@ export default function TransactionPage({ config }: TransactionPageProps) {
 		setShowAddModal,
 		editingTransaction,
 		formData,
+		transactionToDelete,
 		transactions,
 		categories,
 		paymentMethods,
@@ -36,6 +47,8 @@ export default function TransactionPage({ config }: TransactionPageProps) {
 		setAmountMax,
 		handleEdit,
 		handleDelete,
+		confirmDelete,
+		cancelDelete,
 		handleSubmit,
 		openAddModal,
 		clearFilters,
@@ -93,6 +106,55 @@ export default function TransactionPage({ config }: TransactionPageProps) {
 				initialData={formData}
 				config={config}
 			/>
+
+			<AlertDialog
+				open={!!transactionToDelete}
+				onOpenChange={cancelDelete}
+			>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>
+							Delete {config.type}
+						</AlertDialogTitle>
+						<AlertDialogDescription>
+							Are you sure you want to delete this{' '}
+							{config.type.toLowerCase()}? This action cannot be
+							undone.
+							{transactionToDelete && (
+								<div className='mt-2 p-3 bg-muted rounded-md'>
+									<p className='font-medium'>
+										{transactionToDelete.description}
+									</p>
+									<p className='text-sm text-muted-foreground'>
+										₹{transactionToDelete.amount.toFixed(2)}{' '}
+										• {transactionToDelete.category.name}
+									</p>
+									<p className='text-sm text-muted-foreground'>
+										{new Date(
+											transactionToDelete.transactionDate
+										).toLocaleDateString('en-US', {
+											year: 'numeric',
+											month: 'short',
+											day: 'numeric',
+										})}
+									</p>
+								</div>
+							)}
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel onClick={cancelDelete}>
+							Cancel
+						</AlertDialogCancel>
+						<AlertDialogAction
+							onClick={confirmDelete}
+							className='bg-destructive text-destructive-foreground hover:bg-destructive/90'
+						>
+							Delete
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	);
 }

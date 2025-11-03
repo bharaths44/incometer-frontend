@@ -6,7 +6,7 @@ import {
 	SidebarFooter,
 	SidebarRail,
 } from '@/components/ui/sidebar';
-import { NavUser } from '@/components/layout/nav-user';
+import { SidebarFooterMenu } from '@/components/layout/sidebar-footer-menu';
 import { SidebarContents } from './sidebar-contents';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -21,9 +21,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		<Sidebar collapsible='icon' {...props}>
 			<SidebarHeader>
 				<div className='flex items-center gap-2 px-3 py-3 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center'>
-					<div className='w-8 h-8 rounded-lg bg-zinc-900 dark:bg-zinc-100 flex items-center justify-center text-zinc-100 dark:text-zinc-900 font-bold text-sm shrink-0'>
-						I
-					</div>
+					<img
+						src='/logo.svg'
+						alt='Incometer Logo'
+						className='w-10 h-10 shrink-0'
+					/>
 					<span className='font-semibold text-base group-data-[collapsible=icon]:hidden'>
 						Incometer
 					</span>
@@ -33,7 +35,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<SidebarContents />
 
 			<SidebarFooter>
-				<NavUser user={user} />
+				<SidebarFooterMenu user={user} />
 			</SidebarFooter>
 
 			<SidebarRail />

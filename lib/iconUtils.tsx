@@ -1,23 +1,15 @@
-/* eslint-disable react-refresh/only-export-components */
-import React, { useEffect, useState } from 'react';
-import * as changeCase from 'change-case';
+import { lazy, Suspense, useMemo } from 'react';
+import { kebabCase, pascalCase } from 'change-case';
+import { LucideProps } from 'lucide-react';
 
-interface LucideIconProps {
-	size?: number;
-	color?: string;
-	className?: string;
-}
-
-type LucideIconComponent = React.ComponentType<LucideIconProps>;
-
-interface IconProps {
+interface IconProps extends LucideProps {
 	name: string;
-	size?: number;
-	color?: string;
-	className?: string;
 }
 
-// Get all Lucide icon names
+// Cache for loaded icons to prevent re-imports
+const iconCache = new Map<string, React.ComponentType<LucideProps>>();
+
+// Get all Lucide icon names (keep as async for external use)
 export const getAllLucideIconNames = async (): Promise<string[]> => {
 	try {
 		const icons = await import('lucide-react');
@@ -32,87 +24,62 @@ export const getAllLucideIconNames = async (): Promise<string[]> => {
 				key.charAt(0) === key.charAt(0).toUpperCase()
 		);
 
-		// Convert PascalCase names to kebab-case for Icon component
-		const kebabCaseIcons: string[] = iconNames.map((name) =>
-			changeCase.kebabCase(name)
-		);
-
-		return [...new Set(kebabCaseIcons)].sort();
+		return [...new Set(iconNames.map((name) => kebabCase(name)))].sort();
 	} catch (error) {
-		console.warn(
-			'getAllLucideIconNames: Failed to load Lucide icons:',
-			error
-		);
+		console.warn('Failed to load Lucide icons:', error);
 		return [];
 	}
 };
 
-export const Icon: React.FC<IconProps> = ({
-	name,
-	size = 20,
-	color = 'currentColor',
-	className,
-}) => {
-	const [IconComponent, setIconComponent] =
-		useState<LucideIconComponent | null>(null);
-	const [loading, setLoading] = useState(true);
+// Optimized Icon component with caching
+export const Icon: React.FC<IconProps> = ({ name, size = 20, ...props }) => {
+	const pascalName = useMemo(() => pascalCase(name), [name]);
 
-	useEffect(() => {
-		if (!name) {
-			setLoading(false);
-			return;
-		}
+	// Check cache first
+	const CachedIcon = iconCache.get(pascalName);
 
-		const loadIcon = async () => {
-			try {
-				const icons = await import('lucide-react'); // import all icons once
-				const pascalName = changeCase.pascalCase(name);
+	if (CachedIcon) {
+		return <CachedIcon width={size} height={size} {...props} />;
+	}
 
-				const LucideIcon = (
-					icons as unknown as Record<string, LucideIconComponent>
-				)[pascalName];
+	// Lazy load icon only if not cached
+	// lazy() expects a sync function that returns a Promise
+	const LazyIcon = lazy(() =>
+		import('lucide-react')
+			.then((icons) => {
+				const IconComponent = (icons as any)[pascalName];
 
-				if (LucideIcon) {
-					setIconComponent(() => LucideIcon);
-				} else {
-					console.warn(
-						`⚠️ Icon component: Unknown icon name: ${name} (PascalCase: ${pascalName})`
-					);
+				if (!IconComponent) {
+					console.warn(`Unknown icon: ${name} (${pascalName})`);
+					// Return HelpCircle as fallback
+					return { default: icons.HelpCircle };
 				}
-			} catch (error) {
-				console.warn(
-					`⚠️ Icon component: Failed to load icon: ${name}`,
-					error
-				);
-			} finally {
-				setLoading(false);
+
+				// Cache the loaded icon
+				iconCache.set(pascalName, IconComponent);
+				return { default: IconComponent };
+			})
+			.catch((error) => {
+				console.warn(`Failed to load icon: ${name}`, error);
+				// Return fallback on error
+				return import('lucide-react').then((icons) => ({
+					default: icons.HelpCircle,
+				}));
+			})
+	);
+
+	return (
+		<Suspense
+			fallback={
+				<span
+					style={{ width: size, height: size }}
+					className='inline-block rounded-full bg-gray-200 animate-pulse'
+				/>
 			}
-		};
-
-		loadIcon();
-	}, [name]);
-
-	if (loading) {
-		return (
-			<span
-				style={{ width: size, height: size }}
-				className={`inline-block rounded-full bg-gray-200 animate-pulse ${className ?? ''}`}
-			/>
-		);
-	}
-
-	if (!IconComponent) {
-		return (
-			<span
-				style={{ fontSize: size, color }}
-				className={`inline-block rounded-full border border-gray-400 p-1 ${className ?? ''}`}
-			>
-				?
-			</span>
-		);
-	}
-
-	return <IconComponent size={size} color={color} className={className} />;
+		>
+			<LazyIcon width={size} height={size} {...props} />
+		</Suspense>
+	);
 };
 
 export default Icon;
