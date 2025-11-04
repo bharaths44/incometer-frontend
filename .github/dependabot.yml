@@ -1,4 +1,4 @@
-version: 1
+version: 2
 updates:
   # Enable version updates for npm (works with pnpm lockfiles)
   # Note: Dependabot uses "npm" ecosystem for pnpm projects but will update pnpm-lock.yaml
