@@ -43,11 +43,23 @@ Transaction pages follow strict separation:
 **Always extract logic into custom hooks** (`use*` pattern) and keep page
 components purely compositional.
 
+### Data Flow Architecture
+
+**API → Service → Hook → Component** flow:
+
+1. **API Layer**: Spring Boot REST endpoints return nested DTOs (`userUserId`,
+   `category.categoryId`)
+2. **Service Layer**: Maps API responses to frontend types, handles HTTP
+   requests
+3. **Hook Layer**: TanStack Query for caching, mutations with invalidation
+4. **Component Layer**: Pure UI components receiving data via hooks
+
 ### React Query Patterns
 
 - Query keys use factory pattern: `transactionKeys.list(userId, type)`
-- Mutations invalidate both transaction and analytics queries
+- Mutations invalidate both transaction and analytics queries automatically
 - All data fetching uses TanStack Query (no `useState` for server data)
+- Cross-query invalidation: transaction mutations refresh analytics data
 - See `hooks/useTransactions.ts` for reference implementation
 
 ### Hardcoded User ID
@@ -74,8 +86,9 @@ Dynamic Lucide icon loading via `lib/iconUtils.tsx`:
 <Icon name="shopping-bag" size={20} />
 ```
 
-Icons searchable by kebab-case names. Predefined set in `lib/constants.ts`. Use
-`getAllLucideIconNames()` for full list.
+Icons searchable by kebab-case names. Predefined set in `lib/constants.ts`. Uses
+lazy loading with caching to prevent re-imports. Use `getAllLucideIconNames()`
+for full list.
 
 ### Styling
 
@@ -88,9 +101,10 @@ Icons searchable by kebab-case names. Predefined set in `lib/constants.ts`. Use
 
 ### Commands
 
+**Important**: Only use `pnpm format` and `pnpm lint` commands. Never start dev
+server or build.
+
 ```bash
-pnpm dev          # Dev server (port 3000)
-pnpm build        # Production build
 pnpm lint         # ESLint check
 pnpm format       # Prettier auto-format
 pnpm format:check # Prettier validation
@@ -98,16 +112,17 @@ pnpm format:check # Prettier validation
 
 ### Environment Variables
 
-Set `VITE_API_BASE_URL` in `.env` (defaults to `http://localhost:8080/api` in
-`lib/constants.ts`). Note: Using Vite env convention despite being Next.js
-project.
+Set `API_BASE_URL` in `.env` (defaults to `http://localhost:8080/api` in
+`lib/constants.ts`). Used for backend API communication.
 
 ### Build Configuration
 
 - TypeScript build errors ignored (`ignoreBuildErrors: true` in
-  `next.config.mjs`)
+  `next.config.ts`)
+- Static export enabled (`output: 'export'`) for deployment compatibility
 - Images unoptimized for static export compatibility
 - App Router mode (Next.js 16 with React 19 RC)
+- React Strict Mode disabled in development for faster renders
 
 ## Common Patterns & Gotchas
 
@@ -131,13 +146,20 @@ Every app route page:
 Services transform API responses to frontend types. Always handle:
 
 - `transactionId` / `categoryId` / `paymentMethodId` fields
-- `userUserId` (nested user reference)
+- `userUserId` (nested user reference from Spring Boot)
 - Date strings in ISO format
+- Nested objects: `category: {categoryId, name, ...}`
 
 ### Modal/Dialog Pattern
 
 Modals controlled by parent state (`isOpen`, `onClose`). See `TransactionForm`
 for reference. Use shadcn `Dialog` component, not custom implementations.
+
+### Error Handling
+
+- API errors throw exceptions in services
+- React Query handles loading/error states automatically
+- No custom error boundaries implemented yet
 
 ## File Organization
 
@@ -148,6 +170,7 @@ hooks/            # Custom React hooks with query key factories
 services/         # API service layer
 types/            # TypeScript interfaces (DTOs match backend)
 lib/              # Utilities (iconUtils, constants, cn helper)
+public/           # Static assets and generated metadata
 ```
 
 ## Backend Integration
@@ -156,18 +179,21 @@ lib/              # Utilities (iconUtils, constants, cn helper)
 - DTOs follow Java naming conventions (e.g., `userUserId`, nested objects)
 - Error responses handled via response status checks in services
 - No authentication headers required (will be added when auth is implemented)
+- API endpoints use RESTful patterns with path parameters
 
 ## Testing & Deployment
 
 - **Testing**: Not currently implemented
-- **Deployment**: No specific deployment process configured
+- **Deployment**: Static export to compatible hosting platforms
 
 ## When Adding Features
 
 1. Check if pattern exists in transaction/category/paymentMethod implementations
 2. Create service class/functions in `services/`
-3. Define TypeScript types in `types/` (match Spring Boot DTOs)
+3. Define TypeScript types in `types/` (match Spring Boot DTOs exactly)
 4. Build custom hook in `hooks/` with TanStack Query
 5. Create feature components in `components/<feature>/`
 6. Add page in `app/` directory using existing page template
-7. Update sidebar navigation in `components/layout/sidebar.tsx` if needed
+7. Update sidebar navigation in `components/layout/sidebar-contents.tsx` if
+   needed
+8. Ensure mutations invalidate related queries (analytics, transactions)

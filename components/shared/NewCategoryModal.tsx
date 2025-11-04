@@ -137,7 +137,7 @@ export default function NewCategoryModal({
 									setNewCategoryType(value)
 								}
 							>
-								<SelectTrigger>
+								<SelectTrigger className='w-full'>
 									<SelectValue placeholder='Select Type' />
 								</SelectTrigger>
 								<SelectContent>
