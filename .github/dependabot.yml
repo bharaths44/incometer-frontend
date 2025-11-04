@@ -6,11 +6,11 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "monday"
       time: "09:00"
       timezone: "UTC"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 5
     reviewers:
       - "bharaths44"
     assignees:
@@ -21,11 +21,9 @@ updates:
       include: "scope"
     labels:
       - "dependencies"
-      - "automated"
-    # Explicitly allow pnpm lockfile updates
+    # Only update direct dependencies to reduce PR noise
     allow:
       - dependency-type: "direct"
-      - dependency-type: "indirect"
     groups:
       # Group minor and patch updates for React ecosystem
       react-ecosystem:
@@ -79,4 +77,3 @@ updates:
       include: "scope"
     labels:
       - "github-actions"
-      - "automated"
