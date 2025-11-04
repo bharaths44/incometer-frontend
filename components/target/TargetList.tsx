@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { BudgetResponseDTO, BudgetType } from '@/types/budget';
-import { getTargetsByUser } from '@/services/budgetService';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus, Target } from 'lucide-react';
@@ -22,7 +21,7 @@ import {
 
 export default function TargetList() {
 	const userId = 1; // TODO: Get from auth context
-	const { data: targets = [], isLoading } = useBudgets(userId);
+	const { data: targets = [] } = useBudgets(userId);
 	const deleteBudgetMutation = useDeleteBudget();
 
 	// Filter to only show TARGET type budgets and sort by newest start date first

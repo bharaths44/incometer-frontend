@@ -27,7 +27,15 @@ import {
 	AlertDialogTitle,
 	AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Bell, Lock, LogOut, Trash2, Moon } from 'lucide-react';
+import {
+	Bell,
+	Lock,
+	LogOut,
+	Trash2,
+	Moon,
+	Settings,
+	Shield,
+} from 'lucide-react';
 import { AppLayout } from '@/components/layout/app-layout';
 import { useState } from 'react';
 
@@ -70,13 +78,29 @@ export default function SettingsPage() {
 					</p>
 				</div>
 
-				<Tabs defaultValue='general' className='w-full'>
-					<TabsList className='grid w-full grid-cols-3'>
-						<TabsTrigger value='general'>General</TabsTrigger>
-						<TabsTrigger value='notifications'>
+				<Tabs defaultValue='general' className='space-y-6'>
+					<TabsList className='w-fit justify-start bg-muted/50'>
+						<TabsTrigger
+							value='general'
+							className='px-3 py-2 text-sm'
+						>
+							<Settings className='h-4 w-4 mr-2' />
+							General
+						</TabsTrigger>
+						<TabsTrigger
+							value='notifications'
+							className='px-3 py-2 text-sm'
+						>
+							<Bell className='h-4 w-4 mr-2' />
 							Notifications
 						</TabsTrigger>
-						<TabsTrigger value='security'>Security</TabsTrigger>
+						<TabsTrigger
+							value='security'
+							className='px-3 py-2 text-sm'
+						>
+							<Shield className='h-4 w-4 mr-2' />
+							Security
+						</TabsTrigger>
 					</TabsList>
 
 					{/* General Settings */}

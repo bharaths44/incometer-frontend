@@ -2,7 +2,6 @@
 
 import { type ReactNode } from 'react';
 import { AppSidebar } from './app-sidebar';
-import { TopBar } from './topbar';
 import {
 	SidebarProvider,
 	SidebarInset,

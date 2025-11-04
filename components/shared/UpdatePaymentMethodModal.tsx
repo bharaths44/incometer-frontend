@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { updatePaymentMethod } from '@/services/paymentMethodService';
 import { Button } from '@/components/ui/button';

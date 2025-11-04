@@ -107,13 +107,13 @@ export function UserDropdownMenu({ user }: UserDropdownMenuProps) {
 					<DropdownMenuSeparator />
 					<DropdownMenuGroup>
 						<DropdownMenuItem asChild>
-							<Link href='/categories'>
+							<Link href='/profile#categories'>
 								<Tag className='mr-2 h-4 w-4' />
 								Edit Categories
 							</Link>
 						</DropdownMenuItem>
 						<DropdownMenuItem asChild>
-							<Link href='/payment-methods'>
+							<Link href='/profile#payment-methods'>
 								<CreditCard className='mr-2 h-4 w-4' />
 								Edit Payment Methods
 							</Link>

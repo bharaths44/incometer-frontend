@@ -1,12 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { BudgetResponseDTO, BudgetFrequency, BudgetType } from '@/types/budget';
-import { getBudgetsByUser } from '@/services/budgetService';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { useState } from 'react';
+import { BudgetResponseDTO, BudgetType } from '@/types/budget';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import BudgetCard from '@/components/shared/BudgetCard';
 import BudgetFormModal from '@/components/shared/BudgetFormModal';
 import { useBudgets, useDeleteBudget } from '@/hooks/useBudgets';
@@ -20,7 +18,6 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { formatCurrency } from '@/lib/utils';
 
 export default function BudgetList() {
 	const userId = 1; // TODO: Get from auth context

@@ -1,8 +1,6 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { User, Settings, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import {
 	SidebarMenu,
 	SidebarMenuButton,
@@ -22,8 +20,6 @@ export function SidebarFooterMenu({
 		avatar: string;
 	};
 }) {
-	const pathname = usePathname();
-
 	return (
 		<SidebarGroup>
 			<SidebarGroupContent>

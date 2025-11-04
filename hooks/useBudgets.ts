@@ -5,7 +5,7 @@ import {
 	getBudgetsByUser,
 	updateBudget,
 } from '../services/budgetService';
-import { BudgetRequestDTO, BudgetResponseDTO } from '../types/budget';
+import { BudgetRequestDTO } from '../types/budget';
 
 // Query keys
 export const budgetKeys = {

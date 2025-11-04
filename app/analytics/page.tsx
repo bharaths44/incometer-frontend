@@ -162,11 +162,7 @@ export default function AnalyticsPage() {
 	// Use calculated data instead of API calls
 	const categoryData = calculatedCategoryData;
 	const expenseSummary = calculatedExpenseSummary;
-	const {
-		data: budgetAnalytics = [],
-		isLoading: budgetLoading,
-		error: budgetError,
-	} = useBudgetAnalytics(userId);
+	const { error: budgetError } = useBudgetAnalytics(userId);
 
 	// Fetch budgets and transform to analytics format
 	const { data: budgets = [], isLoading: budgetsLoading } =
