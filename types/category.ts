@@ -1,5 +1,5 @@
 export interface CategoryRequestDTO {
-	userId: number;
+	userId: string;
 	name: string;
 	icon: string;
 	type: 'INCOME' | 'EXPENSE';

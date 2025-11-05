@@ -7,7 +7,7 @@ import {
 } from '@/hooks/usePaymentMethods';
 import { PaymentMethodResponseDTO } from '@/types/paymentMethod';
 
-export const PaymentMethodManagementLogic = (userId: number) => {
+export const PaymentMethodManagementLogic = (userId: string) => {
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 	const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 	const [selectedPaymentMethod, setSelectedPaymentMethod] =
@@ -82,7 +82,7 @@ export const PaymentMethodManagementLogic = (userId: number) => {
 
 	const handleDeletePaymentMethod = (
 		paymentMethodId: number,
-		userId: number
+		userId: string
 	) => {
 		deletePaymentMethodMutation.mutate({ id: paymentMethodId, userId });
 	};

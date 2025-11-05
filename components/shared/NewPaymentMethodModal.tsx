@@ -38,7 +38,7 @@ interface NewPaymentMethodModalProps {
 	onClose: () => void;
 	onCreate: (paymentMethod: PaymentMethodResponseDTO) => void;
 	paymentMethods: PaymentMethodResponseDTO[];
-	userId: number;
+	userId: string;
 	allLucideIcons: string[];
 	predefinedIcons: string[];
 }

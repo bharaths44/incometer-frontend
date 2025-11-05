@@ -35,7 +35,7 @@ interface NewCategoryModalProps {
 	onClose: () => void;
 	onCreate: (category: Category) => void;
 	categories: Category[];
-	userId: number;
+	userId: string;
 	allLucideIcons: string[];
 	predefinedIcons: string[];
 	defaultType?: 'EXPENSE' | 'INCOME';

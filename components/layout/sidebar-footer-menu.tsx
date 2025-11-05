@@ -1,6 +1,7 @@
 'use client';
 
 import { LogOut } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import {
 	SidebarMenu,
 	SidebarMenuButton,
@@ -10,6 +11,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
 import { UserDropdownMenu } from './user-dropdown-menu';
+import { useAuthContext } from '@/components/auth/AuthProvider';
 
 export function SidebarFooterMenu({
 	user,
@@ -20,6 +22,18 @@ export function SidebarFooterMenu({
 		avatar: string;
 	};
 }) {
+	const { signOut } = useAuthContext();
+	const router = useRouter();
+
+	const handleLogout = async () => {
+		try {
+			await signOut();
+			router.push('/auth');
+		} catch (error) {
+			console.error('Logout failed:', error);
+		}
+	};
+
 	return (
 		<SidebarGroup>
 			<SidebarGroupContent>
@@ -31,12 +45,7 @@ export function SidebarFooterMenu({
 
 					{/* Logout */}
 					<SidebarMenuItem>
-						<SidebarMenuButton
-							onClick={() => {
-								// TODO: Implement logout logic
-								console.log('Logout clicked');
-							}}
-						>
+						<SidebarMenuButton onClick={handleLogout}>
 							<LogOut className='h-4 w-4' />
 							<span>Logout</span>
 						</SidebarMenuButton>

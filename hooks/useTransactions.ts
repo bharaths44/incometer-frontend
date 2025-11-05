@@ -10,15 +10,15 @@ import { analyticsKeys } from './useAnalytics';
 export const transactionKeys = {
 	all: ['transactions'] as const,
 	lists: () => [...transactionKeys.all, 'list'] as const,
-	list: (userId: number, type: 'expense' | 'income') =>
+	list: (userId: string, type: 'expense' | 'income') =>
 		[...transactionKeys.lists(), userId, type] as const,
 	details: () => [...transactionKeys.all, 'detail'] as const,
-	detail: (userId: number, id: number) =>
+	detail: (userId: string, id: number) =>
 		[...transactionKeys.details(), userId, id] as const,
 };
 
 // Generic transaction query hook
-const useTransactions = (userId: number, type: 'expense' | 'income') => {
+const useTransactions = (userId: string, type: 'expense' | 'income') => {
 	return useQuery({
 		queryKey: transactionKeys.list(userId, type),
 		queryFn: async () => {
@@ -87,7 +87,7 @@ const useDeleteTransactionMutation = (
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: async ({ id, userId }: { id: number; userId: number }) => {
+		mutationFn: async ({ id, userId }: { id: number; userId: string }) => {
 			const service = createService();
 			return service.delete(id, userId);
 		},
@@ -103,15 +103,15 @@ const useDeleteTransactionMutation = (
 };
 
 // Hooks for expense transactions
-export const useExpenseTransactions = (userId: number) => {
+export const useExpenseTransactions = (userId: string) => {
 	return useTransactions(userId, 'expense');
 };
 
-export const useIncomeTransactions = (userId: number) => {
+export const useIncomeTransactions = (userId: string) => {
 	return useTransactions(userId, 'income');
 };
 
-export const useRecentTransactions = (userId: number, limit: number = 5) => {
+export const useRecentTransactions = (userId: string, limit: number = 5) => {
 	return useQuery({
 		queryKey: [...transactionKeys.lists(), userId, 'recent', limit],
 		queryFn: async () => {

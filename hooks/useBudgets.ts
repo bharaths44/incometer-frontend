@@ -11,13 +11,13 @@ import { BudgetRequestDTO } from '../types/budget';
 export const budgetKeys = {
 	all: ['budgets'] as const,
 	lists: () => [...budgetKeys.all, 'list'] as const,
-	list: (userId: number) => [...budgetKeys.lists(), userId] as const,
+	list: (userId: string) => [...budgetKeys.lists(), userId] as const,
 	targets: () => [...budgetKeys.all, 'targets'] as const,
-	targetsList: (userId: number) => [...budgetKeys.targets(), userId] as const,
+	targetsList: (userId: string) => [...budgetKeys.targets(), userId] as const,
 };
 
 // Hooks
-export const useBudgets = (userId: number) => {
+export const useBudgets = (userId: string) => {
 	return useQuery({
 		queryKey: budgetKeys.list(userId),
 		queryFn: () => getBudgetsByUser(userId),
@@ -59,7 +59,7 @@ export const useDeleteBudget = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: ({ id, userId }: { id: number; userId: number }) =>
+		mutationFn: ({ id, userId }: { id: number; userId: string }) =>
 			deleteBudget(id, userId),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: budgetKeys.lists() });

@@ -26,7 +26,7 @@ import { Category } from '@/types/category';
 import { PREDEFINED_ICONS } from '@/lib/constants';
 
 interface CategoryManagementProps {
-	userId: number;
+	userId: string;
 }
 
 export function CategoryManagement({ userId }: CategoryManagementProps) {

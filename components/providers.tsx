@@ -3,6 +3,8 @@
 import * as React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from '@/components/theme-provider';
+import { AuthProvider } from '@/components/auth/AuthProvider';
+import { AuthGuard } from '@/components/auth/AuthGuard';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -22,7 +24,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
 				defaultTheme='light'
 				disableTransitionOnChange
 			>
-				{children}
+				<AuthProvider>
+					<AuthGuard>{children}</AuthGuard>
+				</AuthProvider>
 			</ThemeProvider>
 		</QueryClientProvider>
 	);

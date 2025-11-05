@@ -3,7 +3,7 @@ import { CategoryDto } from './category';
 export type TransactionType = 'EXPENSE' | 'INCOME';
 
 export interface TransactionRequestDTO {
-	userId: number;
+	userId: string;
 	categoryId: number;
 	amount: number;
 	description: string;
@@ -14,7 +14,7 @@ export interface TransactionRequestDTO {
 
 export interface TransactionResponseDTO {
 	transactionId: number;
-	userUserId: number;
+	userUserId: string;
 	category: CategoryDto;
 	amount: number;
 	description: string;

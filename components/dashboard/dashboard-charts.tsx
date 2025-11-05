@@ -28,6 +28,7 @@ import {
 	createIncomeService,
 } from '@/services/transactionService';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useAuthContext } from '@/components/auth/AuthProvider';
 import {
 	format,
 	parseISO,
@@ -55,8 +56,8 @@ interface MonthlyData {
 }
 
 export function DashboardCharts() {
-	// Hardcoded userId (auth not implemented yet)
-	const userId = 1;
+	const { user } = useAuthContext();
+	const userId = user ? user.userId : '1';
 
 	// Fetch category breakdown
 	const { data: categoryData = [], isLoading: categoryLoading } =

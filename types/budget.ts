@@ -11,7 +11,7 @@ export enum BudgetType {
 }
 
 export interface BudgetRequestDTO {
-	userId: number;
+	userId: string;
 	categoryId: number;
 	amount: number;
 	startDate: string;
@@ -22,7 +22,7 @@ export interface BudgetRequestDTO {
 
 export interface BudgetResponseDTO {
 	budgetId: number;
-	userId: number;
+	userId: string;
 	categoryId: number;
 	categoryName: string;
 	amount: number;

@@ -4,10 +4,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { TrendingUp, TrendingDown, DollarSign, Wallet } from 'lucide-react';
 import { useExpenseSummary } from '@/hooks/useAnalytics';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useAuthContext } from '@/components/auth/AuthProvider';
 
 export function StatsOverview() {
 	// Hardcoded userId (auth not implemented yet)
-	const userId = 1;
+	const { user } = useAuthContext();
+	const userId = user ? user.userId : '1';
 	const { data: summary, isLoading, error } = useExpenseSummary(userId);
 
 	if (isLoading) {

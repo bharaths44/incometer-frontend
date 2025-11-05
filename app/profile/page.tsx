@@ -30,6 +30,7 @@ import { AppLayout } from '@/components/layout/app-layout';
 import { CategoryManagement } from '@/components/profile/CategoryManagement';
 import { PaymentMethodManagement } from '@/components/profile/PaymentMethodManagement';
 import { useState, useEffect } from 'react';
+import { useAuthContext } from '@/components/auth/AuthProvider';
 
 export default function ProfilePage() {
 	const [isEditing, setIsEditing] = useState(false);
@@ -44,6 +45,10 @@ export default function ProfilePage() {
 	});
 
 	const [editData, setEditData] = useState(profile);
+
+	// Get userId from auth context
+	const { user } = useAuthContext();
+	const userId = user ? user.userId : '1';
 
 	useEffect(() => {
 		// Handle hash changes for navigation from dropdown menu
@@ -304,11 +309,11 @@ export default function ProfilePage() {
 					</TabsContent>
 
 					<TabsContent value='categories'>
-						<CategoryManagement userId={1} />
+						<CategoryManagement userId={userId} />
 					</TabsContent>
 
 					<TabsContent value='payment-methods'>
-						<PaymentMethodManagement userId={1} />
+						<PaymentMethodManagement userId={userId} />
 					</TabsContent>
 
 					<TabsContent value='account' className='space-y-6'>

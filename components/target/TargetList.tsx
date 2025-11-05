@@ -18,9 +18,11 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { useAuthContext } from '@/components/auth/AuthProvider';
 
 export default function TargetList() {
-	const userId = 1; // TODO: Get from auth context
+	const { user } = useAuthContext();
+	const userId = user?.userId || '1'; // Fallback to '1' if not authenticated
 	const { data: targets = [] } = useBudgets(userId);
 	const deleteBudgetMutation = useDeleteBudget();
 

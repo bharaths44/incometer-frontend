@@ -14,6 +14,7 @@ import {
 	createExpenseService,
 	createIncomeService,
 } from '@/services/transactionService';
+import { useAuthContext } from '@/components/auth/AuthProvider';
 import {
 	format,
 	parseISO,
@@ -30,7 +31,8 @@ import {
 
 export default function AnalyticsPage() {
 	// Hardcoded userId (auth not implemented yet)
-	const userId = 1;
+	const { user } = useAuthContext();
+	const userId = user ? user.userId : '1';
 
 	// Time period selection
 	const [timePeriod, setTimePeriod] = React.useState<

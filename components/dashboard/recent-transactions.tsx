@@ -15,10 +15,12 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { Icon } from '@/lib/iconUtils';
 import { formatDistanceToNow } from 'date-fns';
+import { useAuthContext } from '@/components/auth/AuthProvider';
 
 export function RecentTransactions() {
 	// Hardcoded userId (auth not implemented yet)
-	const userId = 1;
+	const { user } = useAuthContext();
+	const userId = user ? user.userId : '1';
 
 	// Fetch both expenses and income
 	const { data: expenses = [], isLoading: expensesLoading } = useQuery({

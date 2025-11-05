@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useCategories, useDeleteCategory } from '@/hooks/useCategories';
 import { Category } from '@/types/category';
 
-export const CategoryManagementLogic = (userId: number) => {
+export const CategoryManagementLogic = (userId: string) => {
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 	const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 	const [selectedCategory, setSelectedCategory] = useState<Category | null>(
@@ -74,7 +74,7 @@ export const CategoryManagementLogic = (userId: number) => {
 		setSelectedCategory(null);
 	};
 
-	const handleDeleteCategory = (categoryId: number, userId: number) => {
+	const handleDeleteCategory = (categoryId: number, userId: string) => {
 		deleteCategoryMutation.mutate({ id: categoryId, userId });
 	};
 

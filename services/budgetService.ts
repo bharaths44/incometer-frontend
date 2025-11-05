@@ -4,6 +4,7 @@ import {
 	BudgetType,
 } from '../types/budget';
 import { API_BASE_URL } from '../lib/constants';
+import { authenticatedFetch } from '../lib/authFetch';
 
 // API URLs for budget operations
 const BUDGET_API_URLS = {
@@ -36,7 +37,7 @@ export const createBudget = async (
 	budgetData: BudgetRequestDTO
 ): Promise<BudgetResponseDTO> => {
 	try {
-		const response = await fetch(BUDGET_API_URLS.create, {
+		const response = await authenticatedFetch(BUDGET_API_URLS.create, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -59,7 +60,7 @@ export const createBudget = async (
 export const getBudgetById = async (id: number): Promise<BudgetResponseDTO> => {
 	try {
 		const url = replaceUrlParams(BUDGET_API_URLS.getById, { id });
-		const response = await fetch(url);
+		const response = await authenticatedFetch(url);
 
 		if (!response.ok) {
 			throw new Error(`Failed to get budget: ${response.statusText}`);
@@ -74,11 +75,11 @@ export const getBudgetById = async (id: number): Promise<BudgetResponseDTO> => {
 
 // Get budgets by user ID
 export const getBudgetsByUser = async (
-	userId: number
+	userId: string
 ): Promise<BudgetResponseDTO[]> => {
 	try {
 		const url = replaceUrlParams(BUDGET_API_URLS.getByUser, { userId });
-		const response = await fetch(url);
+		const response = await authenticatedFetch(url);
 
 		if (!response.ok) {
 			throw new Error(`Failed to get budgets: ${response.statusText}`);
@@ -93,7 +94,7 @@ export const getBudgetsByUser = async (
 
 // Get budgets by user ID and date
 export const getBudgetsByUserAndDate = async (
-	userId: number,
+	userId: string,
 	date?: string
 ): Promise<BudgetResponseDTO[]> => {
 	try {
@@ -104,7 +105,7 @@ export const getBudgetsByUserAndDate = async (
 			url += `?date=${date}`;
 		}
 
-		const response = await fetch(url);
+		const response = await authenticatedFetch(url);
 
 		if (!response.ok) {
 			throw new Error(`Failed to get budgets: ${response.statusText}`);
@@ -124,7 +125,7 @@ export const updateBudget = async (
 ): Promise<BudgetResponseDTO> => {
 	try {
 		const url = replaceUrlParams(BUDGET_API_URLS.update, { id });
-		const response = await fetch(url, {
+		const response = await authenticatedFetch(url, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
@@ -146,13 +147,13 @@ export const updateBudget = async (
 // Delete a budget
 export const deleteBudget = async (
 	id: number,
-	userId: number
+	userId: string
 ): Promise<void> => {
 	try {
 		const url =
 			replaceUrlParams(BUDGET_API_URLS.delete, { id }) +
 			`?userId=${userId}`;
-		const response = await fetch(url, {
+		const response = await authenticatedFetch(url, {
 			method: 'DELETE',
 		});
 
@@ -168,13 +169,13 @@ export const deleteBudget = async (
 // Deactivate a budget
 export const deactivateBudget = async (
 	id: number,
-	userId: number
+	userId: string
 ): Promise<BudgetResponseDTO> => {
 	try {
 		const url =
 			replaceUrlParams(BUDGET_API_URLS.deactivate, { id }) +
 			`?userId=${userId}`;
-		const response = await fetch(url, {
+		const response = await authenticatedFetch(url, {
 			method: 'PUT',
 		});
 
@@ -194,7 +195,7 @@ export const deactivateBudget = async (
 // Get all budgets
 export const getAllBudgets = async (): Promise<BudgetResponseDTO[]> => {
 	try {
-		const response = await fetch(BUDGET_API_URLS.getAll);
+		const response = await authenticatedFetch(BUDGET_API_URLS.getAll);
 
 		if (!response.ok) {
 			throw new Error(
@@ -211,7 +212,7 @@ export const getAllBudgets = async (): Promise<BudgetResponseDTO[]> => {
 
 // Get targets by user ID (targets are budgets with type TARGET)
 export const getTargetsByUser = async (
-	userId: number
+	userId: string
 ): Promise<BudgetResponseDTO[]> => {
 	try {
 		const budgets = await getBudgetsByUser(userId);

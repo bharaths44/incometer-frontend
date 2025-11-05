@@ -11,11 +11,11 @@ import { CategoryRequestDTO } from '../types/category';
 export const categoryKeys = {
 	all: ['categories'] as const,
 	lists: () => [...categoryKeys.all, 'list'] as const,
-	list: (userId: number) => [...categoryKeys.lists(), userId] as const,
+	list: (userId: string) => [...categoryKeys.lists(), userId] as const,
 };
 
 // Hooks
-export const useCategories = (userId: number) => {
+export const useCategories = (userId: string) => {
 	return useQuery({
 		queryKey: categoryKeys.list(userId),
 		queryFn: () => getAllCategories(userId),
@@ -55,7 +55,7 @@ export const useDeleteCategory = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: ({ id, userId }: { id: number; userId: number }) =>
+		mutationFn: ({ id, userId }: { id: number; userId: string }) =>
 			deleteCategory(id, userId),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: categoryKeys.lists() });

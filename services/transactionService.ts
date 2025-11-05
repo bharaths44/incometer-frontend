@@ -4,6 +4,7 @@ import {
 	TransactionResponseDTO,
 } from '../types/transaction';
 import { API_BASE_URL } from '../lib/constants';
+import { authenticatedFetch } from '../lib/authFetch';
 
 // Helper function to build API URLs
 const buildApiUrls = (type: 'EXPENSE' | 'INCOME') => ({
@@ -76,7 +77,7 @@ export class TransactionService {
 	}
 
 	private mapGenericDtoToApi(dto: TransactionRequestDTO): {
-		userId: number;
+		userId: string;
 		categoryId: number;
 		amount: number;
 		description: string;
@@ -98,13 +99,13 @@ export class TransactionService {
 	async create(dto: TransactionRequestDTO): Promise<TransactionResponseDTO> {
 		console.log(`Creating ${this.config.type}:`, dto);
 		const apiDto = this.mapGenericDtoToApi(dto);
-		const response = await fetch(`${this.config.api.baseUrl}`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(apiDto),
-		});
+		const response = await authenticatedFetch(
+			`${this.config.api.baseUrl}`,
+			{
+				method: 'POST',
+				body: JSON.stringify(apiDto),
+			}
+		);
 		console.log('Response status:', response.status);
 		if (!response.ok) {
 			const errorText = await response.text();
@@ -115,8 +116,8 @@ export class TransactionService {
 		return this.mapApiResponseToGeneric(data);
 	}
 
-	async getAll(userId: number): Promise<TransactionResponseDTO[]> {
-		const response = await fetch(
+	async getAll(userId: string): Promise<TransactionResponseDTO[]> {
+		const response = await authenticatedFetch(
 			`${this.config.api.baseUrl}?userId=${userId}&type=${this.config.type === 'expense' ? 'EXPENSE' : 'INCOME'}`
 		);
 		if (!response.ok) {
@@ -133,13 +134,10 @@ export class TransactionService {
 		dto: TransactionRequestDTO
 	): Promise<TransactionResponseDTO> {
 		const apiDto = this.mapGenericDtoToApi(dto);
-		const response = await fetch(
+		const response = await authenticatedFetch(
 			`${this.config.api.update.replace(':id', id.toString())}`,
 			{
 				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json',
-				},
 				body: JSON.stringify(apiDto),
 			}
 		);
@@ -150,8 +148,8 @@ export class TransactionService {
 		return this.mapApiResponseToGeneric(data);
 	}
 
-	async delete(id: number, userId: number): Promise<void> {
-		const response = await fetch(
+	async delete(id: number, userId: string): Promise<void> {
+		const response = await authenticatedFetch(
 			`${this.config.api.delete.replace(':userId', userId.toString()).replace(':id', id.toString())}`,
 			{
 				method: 'DELETE',
@@ -162,8 +160,8 @@ export class TransactionService {
 		}
 	}
 
-	async getById(userId: number, id: number): Promise<TransactionResponseDTO> {
-		const response = await fetch(
+	async getById(userId: string, id: number): Promise<TransactionResponseDTO> {
+		const response = await authenticatedFetch(
 			`${this.config.api.getById.replace(':userId', userId.toString()).replace(':id', id.toString())}`
 		);
 		if (!response.ok) {
@@ -174,7 +172,7 @@ export class TransactionService {
 	}
 
 	async getByDateRange(
-		userId: number,
+		userId: string,
 		startDate: string,
 		endDate: string
 	): Promise<TransactionResponseDTO[]> {
@@ -182,7 +180,7 @@ export class TransactionService {
 			.replace(':userId', userId.toString())
 			.replace(':startDate', startDate)
 			.replace(':endDate', endDate);
-		const response = await fetch(url);
+		const response = await authenticatedFetch(url);
 		if (!response.ok) {
 			throw new Error(
 				`Failed to fetch ${this.config.type}s by date range`

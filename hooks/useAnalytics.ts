@@ -9,21 +9,21 @@ import {
 export const analyticsKeys = {
 	all: ['analytics'] as const,
 	categoryBreakdown: (
-		userId: number,
+		userId: string,
 		dateRange?: { startDate: string; endDate: string } | null
 	) =>
 		[...analyticsKeys.all, 'categoryBreakdown', userId, dateRange] as const,
 	expenseSummary: (
-		userId: number,
+		userId: string,
 		dateRange?: { startDate: string; endDate: string } | null
 	) => [...analyticsKeys.all, 'expenseSummary', userId, dateRange] as const,
-	budgetAnalytics: (userId: number) =>
+	budgetAnalytics: (userId: string) =>
 		[...analyticsKeys.all, 'budgetAnalytics', userId] as const,
 };
 
 // Hooks
 export const useCategoryBreakdown = (
-	userId: number,
+	userId: string,
 	dateRange?: { startDate: string; endDate: string } | null
 ) => {
 	return useQuery({
@@ -34,7 +34,7 @@ export const useCategoryBreakdown = (
 };
 
 export const useExpenseSummary = (
-	userId: number,
+	userId: string,
 	dateRange?: { startDate: string; endDate: string } | null
 ) => {
 	return useQuery({
@@ -44,7 +44,7 @@ export const useExpenseSummary = (
 	});
 };
 
-export const useBudgetAnalytics = (userId: number) => {
+export const useBudgetAnalytics = (userId: string) => {
 	return useQuery({
 		queryKey: analyticsKeys.budgetAnalytics(userId),
 		queryFn: () => fetchBudgetAnalytics(userId),

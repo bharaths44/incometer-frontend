@@ -29,7 +29,7 @@ import {
 import { PREDEFINED_ICONS } from '@/lib/constants';
 
 interface PaymentMethodManagementProps {
-	userId: number;
+	userId: string;
 }
 
 export function PaymentMethodManagement({

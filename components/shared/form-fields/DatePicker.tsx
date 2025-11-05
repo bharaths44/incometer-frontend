@@ -53,6 +53,7 @@ export function DatePicker({ label, value, onChange, error }: DatePickerProps) {
 							onChange(date);
 							setIsOpen(false);
 						}}
+						disabled={(date) => date > new Date()}
 						initialFocus
 					/>
 				</PopoverContent>

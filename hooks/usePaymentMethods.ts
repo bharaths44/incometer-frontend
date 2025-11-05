@@ -11,11 +11,11 @@ import { PaymentMethodRequestDTO } from '../types/paymentMethod';
 export const paymentMethodKeys = {
 	all: ['paymentMethods'] as const,
 	lists: () => [...paymentMethodKeys.all, 'list'] as const,
-	list: (userId: number) => [...paymentMethodKeys.lists(), userId] as const,
+	list: (userId: string) => [...paymentMethodKeys.lists(), userId] as const,
 };
 
 // Hooks
-export const usePaymentMethods = (userId: number) => {
+export const usePaymentMethods = (userId: string) => {
 	return useQuery({
 		queryKey: paymentMethodKeys.list(userId),
 		queryFn: () => getAllPaymentMethods(userId),
@@ -32,7 +32,7 @@ export const useCreatePaymentMethod = () => {
 			userId,
 		}: {
 			paymentMethod: PaymentMethodRequestDTO;
-			userId: number;
+			userId: string;
 		}) => createPaymentMethod(paymentMethod, userId),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
@@ -65,7 +65,7 @@ export const useDeletePaymentMethod = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: ({ id, userId }: { id: number; userId: number }) =>
+		mutationFn: ({ id, userId }: { id: number; userId: string }) =>
 			deletePaymentMethod(id, userId),
 		onSuccess: () => {
 			queryClient.invalidateQueries({

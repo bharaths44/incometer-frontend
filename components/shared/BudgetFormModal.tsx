@@ -31,7 +31,7 @@ interface BudgetFormModalProps {
 	isOpen: boolean;
 	onClose: () => void;
 	budget?: BudgetResponseDTO | null;
-	userId: number;
+	userId: string;
 	defaultType?: BudgetType;
 }
 

@@ -13,6 +13,7 @@ import {
 	useUpdateExpense,
 	useUpdateIncome,
 } from '@/hooks/useTransactions';
+import { useAuthContext } from '@/components/auth/AuthProvider';
 import { useCategories } from '@/hooks/useCategories';
 
 export const useTransactionPageLogic = (config: {
@@ -26,7 +27,8 @@ export const useTransactionPageLogic = (config: {
 	const [dateTo, setDateTo] = useState<Date | undefined>();
 	const [amountMin, setAmountMin] = useState('');
 	const [amountMax, setAmountMax] = useState('');
-	const userId = 1; // Assuming userId is 1 for now
+	const { user } = useAuthContext();
+	const userId = user ? user.userId : '1'; // Fallback to '1' if not authenticated
 
 	// Use React Query hooks
 	const { data: expenseTransactions = [], isLoading: expenseLoading } =
@@ -63,7 +65,7 @@ export const useTransactionPageLogic = (config: {
 		categoryId: '',
 		paymentMethodId: '',
 		date: '',
-		userId: 1, // Assuming userId is 1 for now
+		userId: userId,
 	});
 
 	const handleEdit = (transaction: TransactionResponseDTO) => {
@@ -111,6 +113,19 @@ export const useTransactionPageLogic = (config: {
 
 	const handleSubmit = async (dto: TransactionRequestDTO) => {
 		try {
+			// Validate date is not in the future
+			const transactionDate = new Date(dto.transactionDate);
+			const today = new Date();
+			today.setHours(23, 59, 59, 999); // Set to end of today
+
+			if (transactionDate > today) {
+				console.error('Transaction date cannot be in the future');
+				alert(
+					'Transaction date cannot be in the future. Please select today or an earlier date.'
+				);
+				return;
+			}
+
 			if (editingTransaction) {
 				if (config.type === 'expense') {
 					await updateExpenseMutation.mutateAsync({
@@ -138,7 +153,7 @@ export const useTransactionPageLogic = (config: {
 				categoryId: '',
 				paymentMethodId: '',
 				date: '',
-				userId: 1,
+				userId: userId,
 			});
 		} catch (error) {
 			console.error(`Failed to save ${config.type}:`, error);
@@ -153,7 +168,7 @@ export const useTransactionPageLogic = (config: {
 			categoryId: '',
 			paymentMethodId: '',
 			date: '',
-			userId: 1,
+			userId: userId,
 		});
 		setShowAddModal(true);
 	};

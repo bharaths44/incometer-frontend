@@ -64,6 +64,8 @@ export function SidebarContents() {
 					</SidebarMenu>
 				</SidebarGroupContent>
 			</SidebarGroup>
+
+			{/* Auth links intentionally removed from sidebar. Use /auth landing page for sign in / sign up. */}
 		</SidebarContent>
 	);
 }

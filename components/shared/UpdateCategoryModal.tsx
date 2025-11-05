@@ -36,7 +36,7 @@ interface UpdateCategoryModalProps {
 	onUpdate: (category: Category) => void;
 	categories: Category[];
 	category: Category | null;
-	userId: number;
+	userId: string;
 	allLucideIcons: string[];
 	predefinedIcons: string[];
 }
