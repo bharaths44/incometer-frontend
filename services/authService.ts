@@ -6,6 +6,7 @@ import {
 } from '../types/auth';
 import { API_BASE_URL } from '../lib/constants';
 import { authenticatedFetch } from '@/lib/authFetch';
+import { SecureStorage } from '@/lib/secureStorage';
 
 // Auth service for calling backend API
 export class AuthService {
@@ -153,7 +154,7 @@ export class AuthService {
 
 	// Get current user profile from JWT token (fallback)
 	static getCurrentUserFromToken(): User {
-		const token = localStorage.getItem('token');
+		const token = SecureStorage.getToken();
 		if (!token) {
 			throw new Error('No token found');
 		}
@@ -162,12 +163,40 @@ export class AuthService {
 		return this.decodeUserFromTokenPublic(token);
 	}
 
+	// Refresh access token using refresh token
+	static async refresh(refreshToken: string): Promise<AuthResponse> {
+		const response = await fetch(`${this.BASE_URL}/refresh`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				refreshToken: refreshToken,
+			}),
+		});
+
+		if (!response.ok) {
+			const error = await response.text();
+			throw new Error(error || 'Token refresh failed');
+		}
+
+		const data: { accessToken: string; refreshToken: string } =
+			await response.json();
+
+		// Decode JWT to get user info
+		const user = this.decodeUserFromTokenPublic(data.accessToken);
+
+		return {
+			user,
+			token: data.accessToken,
+			refreshToken: data.refreshToken,
+		};
+	}
+
 	// Sign out
 	static async signOut(): Promise<void> {
-		// Clear local storage
-		localStorage.removeItem('user');
-		localStorage.removeItem('token');
-		localStorage.removeItem('refreshToken');
+		// Clear secure storage
+		SecureStorage.clearAll();
 	}
 
 	// Decode JWT token to extract user info (public version)

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { User, AuthResponse } from '@/types/auth';
 import { AuthService } from '@/services/authService';
+import { SecureStorage } from '@/lib/secureStorage';
 
 export function useAuth() {
 	const [user, setUser] = useState<User | null>(null);
@@ -16,23 +17,15 @@ export function useAuth() {
 
 	const checkAuthStatus = async () => {
 		try {
-			const token = localStorage.getItem('token');
-			const storedUser = localStorage.getItem('user');
+			const token = SecureStorage.getToken();
+			const storedUser = SecureStorage.getUser();
 
 			if (token) {
-				// First try to load user from localStorage
+				// First try to load user from secure storage
 				if (storedUser) {
-					try {
-						const user = JSON.parse(storedUser);
-						setUser(user);
-						setIsAuthenticated(true);
-						return;
-					} catch (parseError) {
-						console.warn(
-							'Failed to parse stored user:',
-							parseError
-						);
-					}
+					setUser(storedUser);
+					setIsAuthenticated(true);
+					return;
 				}
 
 				// Then try to get user from API
@@ -40,7 +33,7 @@ export function useAuth() {
 					const user = await AuthService.getCurrentUser();
 					setUser(user);
 					setIsAuthenticated(true);
-					localStorage.setItem('user', JSON.stringify(user)); // Update stored user
+					SecureStorage.setUser(user); // Update stored user
 				} catch (apiError) {
 					console.warn(
 						'Failed to get user from API, falling back to token:',
@@ -50,15 +43,13 @@ export function useAuth() {
 					const user = AuthService.getCurrentUserFromToken();
 					setUser(user);
 					setIsAuthenticated(true);
-					localStorage.setItem('user', JSON.stringify(user)); // Store for future use
+					SecureStorage.setUser(user); // Store for future use
 				}
 			}
 		} catch (error) {
 			console.error('Error checking auth status:', error);
 			// Clear invalid tokens
-			localStorage.removeItem('token');
-			localStorage.removeItem('refreshToken');
-			localStorage.removeItem('user');
+			SecureStorage.clearAll();
 		} finally {
 			setIsLoading(false);
 		}
@@ -71,10 +62,10 @@ export function useAuth() {
 		const response = await AuthService.signIn({ email, password });
 		setUser(response.user);
 		setIsAuthenticated(true);
-		localStorage.setItem('user', JSON.stringify(response.user));
-		localStorage.setItem('token', response.token);
+		SecureStorage.setUser(response.user);
+		SecureStorage.setToken(response.token);
 		if (response.refreshToken) {
-			localStorage.setItem('refreshToken', response.refreshToken);
+			SecureStorage.setRefreshToken(response.refreshToken);
 		}
 		return response;
 	};
@@ -93,10 +84,10 @@ export function useAuth() {
 		});
 		setUser(response.user);
 		setIsAuthenticated(true);
-		localStorage.setItem('user', JSON.stringify(response.user));
-		localStorage.setItem('token', response.token);
+		SecureStorage.setUser(response.user);
+		SecureStorage.setToken(response.token);
 		if (response.refreshToken) {
-			localStorage.setItem('refreshToken', response.refreshToken);
+			SecureStorage.setRefreshToken(response.refreshToken);
 		}
 		return response;
 	};
@@ -108,10 +99,10 @@ export function useAuth() {
 		const response = await AuthService.signInWithOAuth(provider, code);
 		setUser(response.user);
 		setIsAuthenticated(true);
-		localStorage.setItem('user', JSON.stringify(response.user));
-		localStorage.setItem('token', response.token);
+		SecureStorage.setUser(response.user);
+		SecureStorage.setToken(response.token);
 		if (response.refreshToken) {
-			localStorage.setItem('refreshToken', response.refreshToken);
+			SecureStorage.setRefreshToken(response.refreshToken);
 		}
 		return response;
 	};
@@ -123,13 +114,20 @@ export function useAuth() {
 	};
 
 	const refreshAuth = async (): Promise<AuthResponse> => {
-		const refreshToken = localStorage.getItem('refreshToken');
+		const refreshToken = SecureStorage.getRefreshToken();
 		if (!refreshToken) {
 			throw new Error('No refresh token available');
 		}
 
-		// TODO: Implement token refresh with backend
-		throw new Error('Token refresh not implemented');
+		const response = await AuthService.refresh(refreshToken);
+		setUser(response.user);
+		setIsAuthenticated(true);
+		SecureStorage.setUser(response.user);
+		SecureStorage.setToken(response.token);
+		if (response.refreshToken) {
+			SecureStorage.setRefreshToken(response.refreshToken);
+		}
+		return response;
 	};
 
 	return {

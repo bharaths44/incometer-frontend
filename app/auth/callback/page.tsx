@@ -12,6 +12,7 @@ import {
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, CheckCircle, XCircle } from 'lucide-react';
 import { AuthService } from '@/services/authService';
+import { SecureStorage } from '@/lib/secureStorage';
 
 export default function AuthCallbackPage() {
 	const searchParams = useSearchParams();
@@ -94,10 +95,10 @@ export default function AuthCallbackPage() {
 				if (accessToken) {
 					const user =
 						AuthService.decodeUserFromTokenPublic(accessToken);
-					localStorage.setItem('user', JSON.stringify(user));
-					localStorage.setItem('token', accessToken);
+					SecureStorage.setUser(user);
+					SecureStorage.setToken(accessToken);
 					if (refreshToken) {
-						localStorage.setItem('refreshToken', refreshToken);
+						SecureStorage.setRefreshToken(refreshToken);
 					}
 
 					setStatus('success');
@@ -123,11 +124,11 @@ export default function AuthCallbackPage() {
 				);
 				console.log('OAuth callback successful:', response);
 
-				// Store user data in localStorage
-				localStorage.setItem('user', JSON.stringify(response.user));
-				localStorage.setItem('token', response.token);
+				// Store user data in securestorage
+				SecureStorage.setUser(response.user);
+				SecureStorage.setToken(response.token);
 				if (response.refreshToken) {
-					localStorage.setItem('refreshToken', response.refreshToken);
+					SecureStorage.setRefreshToken(response.refreshToken);
 				}
 
 				setStatus('success');
