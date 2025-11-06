@@ -1,7 +1,6 @@
 import { AuthService } from '@/services/authService';
 import { User, SignUpRequest, SignInRequest } from '@/types/auth';
 
-
 // Mock fetch
 const mockFetch = jest.fn();
 global.fetch = mockFetch;
@@ -329,7 +328,11 @@ describe('AuthService', () => {
 				updatedAt: '2024-01-01T00:00:00Z',
 			};
 
-			(authenticatedFetch as jest.MockedFunction<typeof authenticatedFetch>).mockResolvedValueOnce({
+			(
+				authenticatedFetch as jest.MockedFunction<
+					typeof authenticatedFetch
+				>
+			).mockResolvedValueOnce({
 				ok: true,
 				status: 200,
 				json: async () => mockUserData,
@@ -344,7 +347,11 @@ describe('AuthService', () => {
 		});
 
 		it('should throw error when getting current user fails', async () => {
-			(authenticatedFetch as jest.MockedFunction<typeof authenticatedFetch>).mockResolvedValueOnce({
+			(
+				authenticatedFetch as jest.MockedFunction<
+					typeof authenticatedFetch
+				>
+			).mockResolvedValueOnce({
 				ok: false,
 				status: 401,
 				text: jest.fn().mockResolvedValue('Unauthorized'),

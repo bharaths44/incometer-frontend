@@ -2,7 +2,6 @@ import { authenticatedFetch } from '@/lib/authFetch';
 import { SecureStorage } from '@/lib/secureStorage';
 import { AuthService } from '@/services/authService';
 
-
 // Mock dependencies
 jest.mock('@/lib/secureStorage');
 jest.mock('@/services/authService');

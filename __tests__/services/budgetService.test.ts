@@ -16,8 +16,6 @@ import {
 	BudgetFrequency,
 } from '@/types/budget';
 
-
-
 // Mock the authenticatedFetch function
 jest.mock('@/lib/authFetch', () => ({
 	authenticatedFetch: jest.fn(),
