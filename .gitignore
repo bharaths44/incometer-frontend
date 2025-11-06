@@ -30,3 +30,4 @@ package-lock.json
 .firebaserc
 firebase.json
 tsconfig.tsbuildinfo
+coverage/

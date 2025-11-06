@@ -27,7 +27,7 @@ export const useCreateCategory = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: createCategory,
+		mutationFn: (category: CategoryRequestDTO) => createCategory(category),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: categoryKeys.lists() });
 		},

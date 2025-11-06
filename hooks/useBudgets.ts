@@ -29,7 +29,7 @@ export const useCreateBudget = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: createBudget,
+		mutationFn: (budget: BudgetRequestDTO) => createBudget(budget),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: budgetKeys.lists() });
 			queryClient.invalidateQueries({ queryKey: budgetKeys.targets() });
