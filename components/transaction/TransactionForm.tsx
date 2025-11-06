@@ -16,7 +16,7 @@ interface TransactionFormProps {
 		categoryId: string;
 		paymentMethodId: string;
 		date: string;
-		userId: number;
+		userId: string;
 	};
 	config: TransactionConfig;
 }

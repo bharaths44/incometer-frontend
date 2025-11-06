@@ -33,7 +33,7 @@ type FormData = {
 	categoryId: string;
 	paymentMethodId: string;
 	date: string;
-	userId: number;
+	userId: string;
 };
 
 interface TransactionFormModalProps {

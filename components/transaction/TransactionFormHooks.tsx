@@ -28,7 +28,7 @@ const pascalToKebab = (str: string): string => {
 };
 
 export const useTransactionFormData = (
-	userId: number,
+	userId: string,
 	transactionType: 'expense' | 'income',
 	isOpen: boolean
 ) => {
