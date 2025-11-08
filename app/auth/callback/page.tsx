@@ -13,6 +13,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, CheckCircle, XCircle } from 'lucide-react';
 import { AuthService } from '@/services/authService';
 import { SecureStorage } from '@/lib/secureStorage';
+import { API_BASE_URL } from '@/lib/constants';
 
 export default function AuthCallbackPage() {
 	const searchParams = useSearchParams();
@@ -71,16 +72,73 @@ export default function AuthCallbackPage() {
 					refreshToken: refreshToken ? 'present' : 'missing',
 				});
 
-				// If no parameters at all, this might be a redirect loop
+				// If no parameters at all, check if httpOnly cookie was set
 				if (!code && !error && !accessToken) {
-					console.warn(
-						'No OAuth parameters received - possible redirect loop'
+					console.log(
+						'No URL parameters - checking for httpOnly cookie authentication'
 					);
-					setStatus('error');
-					setMessage(
-						'OAuth redirect loop detected. Check backend OAuth configuration.'
-					);
-					return;
+
+					// Backend may have set httpOnly cookie and redirected without params
+					// Try to fetch user data to verify authentication
+					try {
+						const userResponse = await fetch(
+							`${API_BASE_URL}/users/me`,
+							{
+								credentials: 'include', // Send httpOnly cookies
+							}
+						);
+
+						if (userResponse.ok) {
+							const userData = await userResponse.json();
+							console.log(
+								'Authenticated via httpOnly cookie, user data:',
+								userData
+							);
+
+							// Store user data (token is in httpOnly cookie)
+							SecureStorage.setUser({
+								userId: userData.userId,
+								name: userData.name,
+								email: userData.email,
+								phoneNumber: userData.phoneNumber || '',
+								createdAt:
+									userData.createdAt ||
+									new Date().toISOString(),
+								updatedAt:
+									userData.updatedAt ||
+									new Date().toISOString(),
+							});
+
+							setStatus('success');
+							setMessage(
+								'Authentication successful! Redirecting...'
+							);
+
+							setTimeout(() => {
+								window.location.replace('/dashboard');
+							}, 1000);
+							return;
+						} else {
+							console.warn(
+								'No authentication found (no params, no valid cookie)'
+							);
+							setStatus('error');
+							setMessage(
+								'OAuth redirect loop detected. Check backend OAuth configuration.'
+							);
+							return;
+						}
+					} catch (error) {
+						console.error(
+							'Error checking httpOnly cookie auth:',
+							error
+						);
+						setStatus('error');
+						setMessage(
+							'Authentication failed. Unable to verify credentials.'
+						);
+						return;
+					}
 				}
 
 				if (error) {
