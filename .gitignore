@@ -31,3 +31,4 @@ package-lock.json
 firebase.json
 tsconfig.tsbuildinfo
 coverage/
+.vercel

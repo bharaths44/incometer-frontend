@@ -6,7 +6,8 @@ const nextConfig: import('next').NextConfig = {
 		// Add this for faster dev builds:
 		tsconfigPath: './tsconfig.json',
 	},
-	output: 'export',
+	// Remove static export for Firebase hosting with Next.js support
+	// output: 'export',
 	images: {
 		unoptimized: true,
 	},

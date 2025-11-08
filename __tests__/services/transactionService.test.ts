@@ -6,7 +6,6 @@ import {
 import {
 	TransactionRequestDTO,
 	TransactionResponseDTO,
-	TransactionType,
 } from '@/types/transaction';
 
 // Mock the authenticatedFetch function

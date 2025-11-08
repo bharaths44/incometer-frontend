@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import {
 	Card,
 	CardContent,
@@ -16,6 +16,7 @@ import { SecureStorage } from '@/lib/secureStorage';
 
 export default function AuthCallbackPage() {
 	const searchParams = useSearchParams();
+	const router = useRouter();
 	const [status, setStatus] = useState<'loading' | 'success' | 'error'>(
 		'loading'
 	);
@@ -93,6 +94,7 @@ export default function AuthCallbackPage() {
 
 				// Handle direct token response (if backend redirects with tokens)
 				if (accessToken) {
+					console.log('Storing access token from OAuth redirect');
 					const user =
 						AuthService.decodeUserFromTokenPublic(accessToken);
 					SecureStorage.setUser(user);
@@ -101,12 +103,21 @@ export default function AuthCallbackPage() {
 						SecureStorage.setRefreshToken(refreshToken);
 					}
 
+					console.log('Token stored, user:', user);
+					console.log(
+						'Verification - Token from storage:',
+						SecureStorage.getToken() ? 'present' : 'missing'
+					);
+
 					setStatus('success');
 					setMessage('Authentication successful! Redirecting...');
 
+					// Use a shorter delay and force a full reload to ensure localStorage is persisted
 					setTimeout(() => {
-						window.location.href = '/dashboard';
-					}, 2000);
+						console.log('Redirecting to dashboard');
+						// Force a full page reload to ensure AuthProvider picks up the new tokens
+						window.location.replace('/dashboard');
+					}, 1000);
 					return;
 				}
 
@@ -131,13 +142,21 @@ export default function AuthCallbackPage() {
 					SecureStorage.setRefreshToken(response.refreshToken);
 				}
 
+				console.log('Token stored, user:', response.user);
+				console.log(
+					'Verification - Token from storage:',
+					SecureStorage.getToken() ? 'present' : 'missing'
+				);
+
 				setStatus('success');
 				setMessage('Authentication successful! Redirecting...');
 
-				// Redirect to dashboard after a short delay
+				// Redirect to dashboard after a short delay using window.location.replace for full reload
 				setTimeout(() => {
-					window.location.href = '/dashboard';
-				}, 2000);
+					console.log('Redirecting to dashboard');
+					// Force a full page reload to ensure AuthProvider picks up the new tokens
+					window.location.replace('/dashboard');
+				}, 1000);
 			} catch (err) {
 				setStatus('error');
 				setMessage(
@@ -147,7 +166,7 @@ export default function AuthCallbackPage() {
 		};
 
 		handleCallback();
-	}, [searchParams]);
+	}, [searchParams, router]);
 
 	return (
 		<div className='min-h-screen flex items-center justify-center bg-background px-4'>

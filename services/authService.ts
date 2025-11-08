@@ -19,6 +19,7 @@ export class AuthService {
 			headers: {
 				'Content-Type': 'application/json',
 			},
+			credentials: 'include', // Include cookies in request
 			body: JSON.stringify({
 				name: request.name,
 				email: request.email,
@@ -32,17 +33,28 @@ export class AuthService {
 			throw new Error(error || 'Registration failed');
 		}
 
-		const data: { accessToken: string; refreshToken: string } =
-			await response.json();
+		// Backend should set httpOnly cookie with token
+		// Response may still include user data for immediate use
+		const data = await response.json();
 
-		// Decode JWT to get user info
-		const user = this.decodeUserFromTokenPublic(data.accessToken);
-
-		return {
-			user,
-			token: data.accessToken,
-			refreshToken: data.refreshToken,
-		};
+		// If backend returns token in response (transition period), decode it
+		// Otherwise, fetch user data from /users/me endpoint
+		if (data.accessToken) {
+			const user = this.decodeUserFromTokenPublic(data.accessToken);
+			return {
+				user,
+				token: data.accessToken, // For backward compatibility
+				refreshToken: data.refreshToken,
+			};
+		} else {
+			// New httpOnly cookie approach - fetch user data
+			const user = await this.getCurrentUser();
+			return {
+				user,
+				token: '', // Token is in httpOnly cookie
+				refreshToken: '',
+			};
+		}
 	}
 
 	// Sign in with email and password
@@ -52,6 +64,7 @@ export class AuthService {
 			headers: {
 				'Content-Type': 'application/json',
 			},
+			credentials: 'include', // Include cookies in request
 			body: JSON.stringify({
 				username: request.email, // Spring Security often expects 'username'
 				password: request.password,
@@ -64,17 +77,27 @@ export class AuthService {
 			throw new Error(error || 'Authentication failed');
 		}
 
-		const data: { accessToken: string; refreshToken: string } =
-			await response.json();
+		// Backend should set httpOnly cookie with token
+		const data = await response.json();
 
-		// Decode JWT to get user info
-		const user = this.decodeUserFromTokenPublic(data.accessToken);
-
-		return {
-			user,
-			token: data.accessToken,
-			refreshToken: data.refreshToken,
-		};
+		// If backend returns token in response (transition period), decode it
+		// Otherwise, fetch user data from /users/me endpoint
+		if (data.accessToken) {
+			const user = this.decodeUserFromTokenPublic(data.accessToken);
+			return {
+				user,
+				token: data.accessToken, // For backward compatibility
+				refreshToken: data.refreshToken,
+			};
+		} else {
+			// New httpOnly cookie approach - fetch user data
+			const user = await this.getCurrentUser();
+			return {
+				user,
+				token: '', // Token is in httpOnly cookie
+				refreshToken: '',
+			};
+		}
 	}
 
 	// Sign in with OAuth provider
@@ -210,17 +233,34 @@ export class AuthService {
 				payload.uuid || payload.userId || payload.sub || payload.id;
 
 			if (!userId) {
+				console.error('No userId found in JWT payload:', payload);
 				throw new Error('No userId found in JWT payload');
 			}
 
-			return {
-				userId: userId,
-				name: payload.name,
-				email: payload.email,
+			// Try different possible fields for email
+			const email = payload.email || payload.sub;
+
+			if (!email) {
+				console.error('No email found in JWT payload:', payload);
+				throw new Error('No email found in JWT payload');
+			}
+
+			const user: User = {
+				userId: String(userId), // Ensure it's a string
+				name: payload.name || email.split('@')[0], // Fallback to email prefix if no name
+				email: String(email), // Ensure it's a string
 				phoneNumber: payload.phoneNumber || '',
 				createdAt: payload.createdAt || new Date().toISOString(),
 				updatedAt: payload.updatedAt || new Date().toISOString(),
 			};
+
+			console.log('Decoded user object before returning:', {
+				...user,
+				hasUserId: !!user.userId,
+				hasEmail: !!user.email,
+			}); // Debug logging
+
+			return user;
 		} catch (error) {
 			console.error('Error decoding JWT:', error);
 			throw new Error('Invalid token');

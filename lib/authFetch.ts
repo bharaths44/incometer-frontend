@@ -1,62 +1,41 @@
-// Utility for making authenticated API calls
+// Utility for making authenticated API calls with httpOnly cookies
 import { SecureStorage } from './secureStorage';
-import { AuthService } from '@/services/authService';
 
+/**
+ * Make authenticated API requests using httpOnly cookies
+ * Cookies are automatically sent by the browser
+ * No need to manually attach Authorization headers
+ */
 export const authenticatedFetch = async (
 	url: string,
 	options: RequestInit = {}
 ): Promise<Response> => {
-	const token = SecureStorage.getToken();
 	const headers: Record<string, string> = {
 		'Content-Type': 'application/json',
 		...(options.headers as Record<string, string>),
 	};
 
-	if (token) {
-		headers['Authorization'] = `Bearer ${token}`;
-	}
-
+	// Include credentials (cookies) with the request
+	// This tells the browser to send httpOnly cookies automatically
 	const response = await fetch(url, {
 		...options,
 		headers,
+		credentials: 'include', // CRITICAL: This sends httpOnly cookies
 	});
 
-	// If we get a 401 and have a refresh token, try to refresh
+	// If we get a 401, the httpOnly cookie is invalid/expired
+	// Backend should handle token refresh automatically or return 401
 	if (response.status === 401) {
-		const refreshToken = SecureStorage.getRefreshToken();
-		if (refreshToken) {
-			try {
-				console.log('Access token expired, attempting refresh...');
-				const refreshResponse = await AuthService.refresh(refreshToken);
+		console.warn(
+			'Authentication failed (401). User needs to sign in again.'
+		);
+		// Clear user data (cookies will be cleared by backend logout)
+		SecureStorage.clearAll();
 
-				// Store the new tokens
-				SecureStorage.setToken(refreshResponse.token);
-				if (refreshResponse.refreshToken) {
-					SecureStorage.setRefreshToken(refreshResponse.refreshToken);
-				}
-				SecureStorage.setUser(refreshResponse.user);
-
-				// Retry the original request with the new token
-				const newHeaders = {
-					...headers,
-					Authorization: `Bearer ${refreshResponse.token}`,
-				};
-
-				console.log(
-					'Token refreshed successfully, retrying request...'
-				);
-				return fetch(url, {
-					...options,
-					headers: newHeaders,
-				});
-			} catch (refreshError) {
-				console.error('Token refresh failed:', refreshError);
-				// If refresh fails, clear tokens and throw the original error
-				SecureStorage.clearAll();
-				throw new Error(
-					'Authentication expired. Please sign in again.'
-				);
-			}
+		// Optionally redirect to login page
+		if (typeof window !== 'undefined') {
+			// Uncomment to auto-redirect to login
+			// window.location.href = '/auth/sign-in';
 		}
 	}
 

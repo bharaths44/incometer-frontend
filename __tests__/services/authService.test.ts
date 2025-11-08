@@ -1,5 +1,5 @@
 import { AuthService } from '@/services/authService';
-import { User, SignUpRequest, SignInRequest } from '@/types/auth';
+import { SignUpRequest, SignInRequest } from '@/types/auth';
 
 // Mock fetch
 const mockFetch = jest.fn();

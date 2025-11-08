@@ -1,64 +1,41 @@
 /**
  * Secure Storage Utility
  *
- * WARNING: localStorage is vulnerable to XSS attacks.
- * For production applications, consider using:
- * 1. httpOnly cookies for sensitive tokens (requires backend changes)
- * 2. Secure token storage with encryption
- * 3. Content Security Policy (CSP) headers
+ * Uses httpOnly cookies for JWT tokens (set by backend) and localStorage for user data only.
+ * Tokens are stored in httpOnly cookies which are:
+ * - Not accessible via JavaScript (XSS protection)
+ * - Automatically sent with requests
+ * - Can have Secure and SameSite flags
  */
 
 export class SecureStorage {
-	private static readonly TOKEN_KEY = 'auth_token';
 	private static readonly USER_KEY = 'auth_user';
-	private static readonly REFRESH_TOKEN_KEY = 'auth_refresh_token';
+	// Note: Tokens are now stored in httpOnly cookies by the backend
+	// No localStorage storage for tokens
 
 	/**
-	 * Store authentication token securely
-	 * Note: In production, use httpOnly cookies instead
+	 * Store authentication token - NOT USED with httpOnly cookies
+	 * Token is set by backend as httpOnly cookie
+	 * This method is kept for backward compatibility but does nothing
+	 * @deprecated Use httpOnly cookies set by backend
 	 */
 	static setToken(token: string): void {
-		try {
-			// Basic validation
-			if (!token || typeof token !== 'string') {
-				throw new Error('Invalid token');
-			}
-
-			// Check if token is a valid JWT
-			const parts = token.split('.');
-			if (parts.length !== 3) {
-				throw new Error('Invalid JWT format');
-			}
-
-			localStorage.setItem(this.TOKEN_KEY, token);
-		} catch (error) {
-			console.error('Failed to store token:', error);
-			throw new Error('Failed to store authentication token');
-		}
+		console.warn(
+			'setToken called but tokens are stored in httpOnly cookies by backend'
+		);
+		// No-op: Backend sets httpOnly cookie
 	}
 
 	/**
-	 * Get authentication token
+	 * Get authentication token - NOT AVAILABLE with httpOnly cookies
+	 * Token is in httpOnly cookie and not accessible to JavaScript
+	 * @deprecated Tokens are in httpOnly cookies and not accessible to JavaScript
+	 * @returns null always (token is in httpOnly cookie)
 	 */
 	static getToken(): string | null {
-		try {
-			const token = localStorage.getItem(this.TOKEN_KEY);
-
-			// Basic validation if token exists
-			if (token) {
-				const parts = token.split('.');
-				if (parts.length !== 3) {
-					console.warn('Stored token has invalid JWT format');
-					this.clearToken();
-					return null;
-				}
-			}
-
-			return token;
-		} catch (error) {
-			console.error('Failed to retrieve token:', error);
-			return null;
-		}
+		// Cannot access httpOnly cookies from JavaScript (this is the security feature!)
+		// The browser automatically sends the cookie with requests
+		return null;
 	}
 
 	/**
@@ -66,16 +43,31 @@ export class SecureStorage {
 	 */
 	static setUser(user: any): void {
 		try {
+			console.log('setUser called with:', {
+				user,
+				isObject: typeof user === 'object',
+				hasUserId: !!user?.userId,
+				hasEmail: !!user?.email,
+				userIdType: typeof user?.userId,
+				emailType: typeof user?.email,
+			});
+
 			if (!user || typeof user !== 'object') {
 				throw new Error('Invalid user data');
 			}
 
 			// Validate required user fields
 			if (!user.userId || !user.email) {
+				console.error('User validation failed:', {
+					userId: user.userId,
+					email: user.email,
+					fullUser: user,
+				});
 				throw new Error('User data missing required fields');
 			}
 
 			localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+			console.log('User data stored successfully');
 		} catch (error) {
 			console.error('Failed to store user data:', error);
 			throw new Error('Failed to store user data');
@@ -108,53 +100,53 @@ export class SecureStorage {
 	}
 
 	/**
-	 * Store refresh token
+	 * Store refresh token - NOT USED with httpOnly cookies
+	 * @deprecated Refresh token is stored in httpOnly cookie by backend
 	 */
 	static setRefreshToken(token: string): void {
-		try {
-			if (!token || typeof token !== 'string') {
-				throw new Error('Invalid refresh token');
-			}
-			localStorage.setItem(this.REFRESH_TOKEN_KEY, token);
-		} catch (error) {
-			console.error('Failed to store refresh token:', error);
-		}
+		console.warn(
+			'setRefreshToken called but tokens are stored in httpOnly cookies by backend'
+		);
+		// No-op: Backend sets httpOnly cookie
 	}
 
 	/**
-	 * Get refresh token
+	 * Get refresh token - NOT AVAILABLE with httpOnly cookies
+	 * @deprecated Refresh token is in httpOnly cookie and not accessible to JavaScript
 	 */
 	static getRefreshToken(): string | null {
-		try {
-			return localStorage.getItem(this.REFRESH_TOKEN_KEY);
-		} catch (error) {
-			console.error('Failed to retrieve refresh token:', error);
-			return null;
-		}
+		// Cannot access httpOnly cookies from JavaScript
+		return null;
 	}
 
 	/**
 	 * Clear all authentication data
+	 * For httpOnly cookies, we need to call backend logout endpoint
 	 */
 	static clearAll(): void {
 		try {
-			localStorage.removeItem(this.TOKEN_KEY);
+			// Clear user data from localStorage
 			localStorage.removeItem(this.USER_KEY);
-			localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+
+			// Note: httpOnly cookies must be cleared by the backend
+			// Call the logout endpoint to clear cookies
+			console.log(
+				'User data cleared. Cookies will be cleared by backend logout endpoint.'
+			);
 		} catch (error) {
 			console.error('Failed to clear authentication data:', error);
 		}
 	}
 
 	/**
-	 * Clear token only
+	 * Clear token only - NOT APPLICABLE with httpOnly cookies
+	 * @deprecated Tokens are in httpOnly cookies, cleared by backend
 	 */
 	static clearToken(): void {
-		try {
-			localStorage.removeItem(this.TOKEN_KEY);
-		} catch (error) {
-			console.error('Failed to clear token:', error);
-		}
+		console.warn(
+			'clearToken called but tokens are in httpOnly cookies (cleared by backend)'
+		);
+		// No-op: Backend must clear httpOnly cookies
 	}
 
 	/**
@@ -170,43 +162,29 @@ export class SecureStorage {
 
 	/**
 	 * Check if user is authenticated
+	 * With httpOnly cookies, we check if user data exists
+	 * The actual token validation happens on the backend
 	 */
 	static isAuthenticated(): boolean {
-		const token = this.getToken();
 		const user = this.getUser();
 
-		if (!token || !user) return false;
-
-		try {
-			// Check if token is expired (basic check)
-			const payload = JSON.parse(atob(token.split('.')[1]));
-			const currentTime = Math.floor(Date.now() / 1000);
-
-			if (payload.exp && payload.exp < currentTime) {
-				console.warn('Token has expired');
-				this.clearAll();
-				return false;
-			}
-
-			return true;
-		} catch (error) {
-			console.error('Error checking authentication:', error);
-			this.clearAll();
-			return false;
-		}
+		// If user data exists, we assume the httpOnly cookie is valid
+		// Backend will validate the actual token on each request
+		return !!user;
 	}
 
 	/**
-	 * Get security warnings for current storage method
+	 * Get security information for current storage method
 	 */
-	static getSecurityWarnings(): string[] {
-		const warnings: string[] = [];
+	static getSecurityInfo(): string[] {
+		const info: string[] = [];
 
-		warnings.push('⚠️ localStorage is vulnerable to XSS attacks');
-		warnings.push('🔒 Consider using httpOnly cookies for production');
-		warnings.push('🛡️ Implement Content Security Policy (CSP)');
-		warnings.push('🔐 Use HTTPS in production');
+		info.push('✅ Tokens stored in httpOnly cookies (XSS protected)');
+		info.push('✅ Cookies automatically sent with requests');
+		info.push('✅ User data stored in localStorage (non-sensitive)');
+		info.push('🔐 Ensure HTTPS in production');
+		info.push('🛡️ Backend must set Secure and SameSite flags');
 
-		return warnings;
+		return info;
 	}
 }
