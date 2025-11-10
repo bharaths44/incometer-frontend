@@ -97,7 +97,6 @@ export class TransactionService {
 	}
 
 	async create(dto: TransactionRequestDTO): Promise<TransactionResponseDTO> {
-		console.log(`Creating ${this.config.type}:`, dto);
 		const apiDto = this.mapGenericDtoToApi(dto);
 		const response = await authenticatedFetch(
 			`${this.config.api.baseUrl}`,
@@ -106,10 +105,9 @@ export class TransactionService {
 				body: JSON.stringify(apiDto),
 			}
 		);
-		console.log('Response status:', response.status);
 		if (!response.ok) {
 			const errorText = await response.text();
-			console.log('Error response:', errorText);
+			console.error('Transaction creation failed:', errorText);
 			throw new Error(`Failed to create ${this.config.type}`);
 		}
 		const data = await response.json();

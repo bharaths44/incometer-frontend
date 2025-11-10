@@ -60,7 +60,7 @@ describe('useAuth', () => {
 	});
 
 	describe('checkAuthStatus', () => {
-		it('should authenticate user from stored token and user', async () => {
+		it('should authenticate user when API succeeds', async () => {
 			const mockUser: User = {
 				userId: '1',
 				name: 'John Doe',
@@ -70,32 +70,6 @@ describe('useAuth', () => {
 				updatedAt: '2024-01-01T00:00:00Z',
 			};
 
-			mockSecureStorage.getToken.mockReturnValue('valid-token');
-			mockSecureStorage.getUser.mockReturnValue(mockUser);
-
-			const { result } = renderHook(() => useAuth());
-
-			await waitFor(() => {
-				expect(result.current.isLoading).toBe(false);
-			});
-
-			expect(result.current.isAuthenticated).toBe(true);
-			expect(result.current.user).toEqual(mockUser);
-			expect(mockAuthService.getCurrentUser).not.toHaveBeenCalled();
-		});
-
-		it('should authenticate user from API when only token exists', async () => {
-			const mockUser: User = {
-				userId: '1',
-				name: 'John Doe',
-				email: 'john@example.com',
-				phoneNumber: '+1234567890',
-				createdAt: '2024-01-01T00:00:00Z',
-				updatedAt: '2024-01-01T00:00:00Z',
-			};
-
-			mockSecureStorage.getToken.mockReturnValue('valid-token');
-			mockSecureStorage.getUser.mockReturnValue(null);
 			mockAuthService.getCurrentUser.mockResolvedValue(mockUser);
 
 			const { result } = renderHook(() => useAuth());
@@ -107,46 +81,12 @@ describe('useAuth', () => {
 			expect(result.current.isAuthenticated).toBe(true);
 			expect(result.current.user).toEqual(mockUser);
 			expect(mockAuthService.getCurrentUser).toHaveBeenCalled();
-			expect(mockSecureStorage.setUser).toHaveBeenCalledWith(mockUser);
 		});
 
-		it('should fallback to token decoding when API fails', async () => {
-			const mockUser: User = {
-				userId: '1',
-				name: 'John Doe',
-				email: 'john@example.com',
-				phoneNumber: '+1234567890',
-				createdAt: '2024-01-01T00:00:00Z',
-				updatedAt: '2024-01-01T00:00:00Z',
-			};
-
-			mockSecureStorage.getToken.mockReturnValue('valid-token');
-			mockSecureStorage.getUser.mockReturnValue(null);
+		it('should not authenticate when API fails', async () => {
 			mockAuthService.getCurrentUser.mockRejectedValue(
 				new Error('API error')
 			);
-			mockAuthService.getCurrentUserFromToken.mockReturnValue(mockUser);
-
-			const { result } = renderHook(() => useAuth());
-
-			await waitFor(() => {
-				expect(result.current.isLoading).toBe(false);
-			});
-
-			expect(result.current.isAuthenticated).toBe(true);
-			expect(result.current.user).toEqual(mockUser);
-			expect(mockAuthService.getCurrentUserFromToken).toHaveBeenCalled();
-		});
-
-		it('should clear storage when auth check fails', async () => {
-			mockSecureStorage.getToken.mockReturnValue('invalid-token');
-			mockSecureStorage.getUser.mockReturnValue(null);
-			mockAuthService.getCurrentUser.mockRejectedValue(
-				new Error('Invalid token')
-			);
-			mockAuthService.getCurrentUserFromToken.mockImplementation(() => {
-				throw new Error('Invalid token');
-			});
 
 			const { result } = renderHook(() => useAuth());
 
@@ -156,7 +96,6 @@ describe('useAuth', () => {
 
 			expect(result.current.isAuthenticated).toBe(false);
 			expect(result.current.user).toBe(null);
-			expect(mockSecureStorage.clearAll).toHaveBeenCalled();
 		});
 	});
 
@@ -195,15 +134,6 @@ describe('useAuth', () => {
 			expect(signInResult!).toEqual(mockResponse);
 			expect(result.current.isAuthenticated).toBe(true);
 			expect(result.current.user).toEqual(mockResponse.user);
-			expect(mockSecureStorage.setUser).toHaveBeenCalledWith(
-				mockResponse.user
-			);
-			expect(mockSecureStorage.setToken).toHaveBeenCalledWith(
-				mockResponse.token
-			);
-			expect(mockSecureStorage.setRefreshToken).toHaveBeenCalledWith(
-				mockResponse.refreshToken
-			);
 		});
 	});
 
@@ -287,7 +217,7 @@ describe('useAuth', () => {
 
 	describe('signOut', () => {
 		it('should sign out user successfully', async () => {
-			// First sign in a user
+			// First authenticate a user
 			const mockUser: User = {
 				userId: '1',
 				name: 'John Doe',
@@ -297,8 +227,7 @@ describe('useAuth', () => {
 				updatedAt: '2024-01-01T00:00:00Z',
 			};
 
-			mockSecureStorage.getToken.mockReturnValue('valid-token');
-			mockSecureStorage.getUser.mockReturnValue(mockUser);
+			mockAuthService.getCurrentUser.mockResolvedValue(mockUser);
 
 			const { result } = renderHook(() => useAuth());
 

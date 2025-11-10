@@ -9,14 +9,23 @@ import {
 } from '@/components/ui/sidebar';
 import { SidebarFooterMenu } from '@/components/layout/sidebar-footer-menu';
 import { SidebarContents } from './sidebar-contents';
+import { useAuthContext } from '@/components/auth/AuthProvider';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-	// Placeholder user data - replace with actual user data when authentication is implemented
-	const user = {
-		name: 'John Doe',
-		email: 'john.doe@example.com',
-		avatar: '', // Empty string will use the AvatarFallback
-	};
+	const { user, isLoading } = useAuthContext();
+
+	// Use actual user data from auth context, fallback to placeholder
+	const userData = user
+		? {
+				name: user.name || 'User',
+				email: user.email || '',
+				avatar: '', // Empty string will use the AvatarFallback
+			}
+		: {
+				name: isLoading ? 'Loading...' : 'User',
+				email: '',
+				avatar: '', // Empty string will use the AvatarFallback
+			};
 
 	return (
 		<Sidebar collapsible='icon' {...props}>
@@ -38,7 +47,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<SidebarContents />
 
 			<SidebarFooter>
-				<SidebarFooterMenu user={user} />
+				<SidebarFooterMenu user={userData} />
 			</SidebarFooter>
 
 			<SidebarRail />

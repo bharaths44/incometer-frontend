@@ -105,10 +105,6 @@ export class AuthService {
 		provider: 'github' | 'google',
 		code: string
 	): Promise<AuthResponse> {
-		console.log(`Exchanging OAuth code for tokens with ${provider}`, {
-			code: code.substring(0, 10) + '...',
-		});
-
 		// Call the backend's OAuth callback endpoint
 		const response = await fetch(
 			`${API_BASE_URL}/oauth2/callback/${provider}?code=${encodeURIComponent(code)}`,
@@ -120,8 +116,6 @@ export class AuthService {
 			}
 		);
 
-		console.log('OAuth callback response status:', response.status);
-
 		if (!response.ok) {
 			const errorText = await response.text();
 			console.error('OAuth callback failed:', errorText);
@@ -132,7 +126,6 @@ export class AuthService {
 
 		const data: { accessToken: string; refreshToken: string } =
 			await response.json();
-		console.log('OAuth tokens received successfully');
 
 		// Decode JWT to get user info
 		const user = this.decodeUserFromTokenPublic(data.accessToken);
@@ -146,15 +139,9 @@ export class AuthService {
 
 	// Initiate OAuth flow by redirecting to backend
 	static initiateOAuth(provider: 'github' | 'google'): void {
-		console.log(`Initiating OAuth flow for ${provider}`);
 		// Backend should redirect back to the authorizedRedirectUri configured in application.yml
 		// which is http://localhost:3000/auth/callback
 		const url = `${API_BASE_URL}/oauth2/authorize/${provider}`;
-		console.log('Redirecting to:', url);
-		console.log(
-			'Expected backend to redirect back to:',
-			'http://localhost:3000/auth/callback (configured in application.yml)'
-		);
 		window.location.href = url;
 	}
 
@@ -218,6 +205,19 @@ export class AuthService {
 
 	// Sign out
 	static async signOut(): Promise<void> {
+		try {
+			// Call backend logout endpoint to clear httpOnly cookies
+			await fetch(`${this.BASE_URL}/logout`, {
+				method: 'POST',
+				credentials: 'include', // Include cookies in request
+			});
+		} catch (error) {
+			console.warn(
+				'Backend logout failed, clearing local storage anyway:',
+				error
+			);
+		}
+
 		// Clear secure storage
 		SecureStorage.clearAll();
 	}
@@ -226,7 +226,6 @@ export class AuthService {
 	static decodeUserFromTokenPublic(token: string): User {
 		try {
 			const payload = JSON.parse(atob(token.split('.')[1]));
-			console.log('JWT payload:', payload); // Debug logging
 
 			// Try different possible fields for userId
 			const userId =
@@ -253,12 +252,6 @@ export class AuthService {
 				createdAt: payload.createdAt || new Date().toISOString(),
 				updatedAt: payload.updatedAt || new Date().toISOString(),
 			};
-
-			console.log('Decoded user object before returning:', {
-				...user,
-				hasUserId: !!user.userId,
-				hasEmail: !!user.email,
-			}); // Debug logging
 
 			return user;
 		} catch (error) {

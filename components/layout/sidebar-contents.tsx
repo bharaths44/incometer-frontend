@@ -45,17 +45,18 @@ export function SidebarContents() {
 							return (
 								<SidebarMenuItem
 									key={item.href}
-									className='flex items-center group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:justify-center'
+									className='group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center'
 								>
 									<SidebarMenuButton
 										asChild
 										isActive={isActive}
 										tooltip={item.label}
-										size='lg'
 									>
 										<Link href={item.href}>
-											<Icon className='h-5 w-5' />
-											<span>{item.label}</span>
+											<Icon className='h-4 w-4' />
+											<span className='group-data-[collapsible=icon]:hidden'>
+												{item.label}
+											</span>
 										</Link>
 									</SidebarMenuButton>
 								</SidebarMenuItem>

@@ -77,21 +77,76 @@ export default function AuthCallbackPage() {
 					console.log(
 						'No URL parameters - checking for httpOnly cookie authentication'
 					);
+					console.log('Current URL:', window.location.href);
+					console.log('API_BASE_URL:', API_BASE_URL);
+
+					// Check if frontend and backend are on same domain
+					const frontendOrigin = window.location.origin;
+					const backendOrigin = new URL(API_BASE_URL).origin;
+					const isSameOrigin = frontendOrigin === backendOrigin;
+
+					console.log('Origin check:', {
+						frontend: frontendOrigin,
+						backend: backendOrigin,
+						isSameOrigin,
+					});
+
+					if (!isSameOrigin) {
+						console.warn(
+							'⚠️ CROSS-ORIGIN DETECTED: Frontend and backend are on different domains.'
+						);
+						console.warn(
+							'HttpOnly cookies will not work across origins without proper CORS configuration.'
+						);
+						console.warn(
+							'Backend must set: SameSite=None; Secure; and configure CORS to allow credentials.'
+						);
+						console.warn(
+							'Alternatively, backend should send tokens via URL parameters.'
+						);
+
+						setStatus('error');
+						setMessage(
+							'Authentication callback received no parameters. This may be due to cross-origin cookie restrictions. Please ensure your backend is configured to either: (1) Send tokens via URL parameters, or (2) Set cookies with SameSite=None and Secure attributes with proper CORS configuration.'
+						);
+						return;
+					}
 
 					// Backend may have set httpOnly cookie and redirected without params
 					// Try to fetch user data to verify authentication
 					try {
+						console.log(
+							'Making request to /users/me with credentials...'
+						);
 						const userResponse = await fetch(
 							`${API_BASE_URL}/users/me`,
 							{
 								credentials: 'include', // Send httpOnly cookies
+								headers: {
+									'Content-Type': 'application/json',
+								},
 							}
 						);
+
+						console.log('Response status:', userResponse.status);
+						console.log('Response ok:', userResponse.ok);
+
+						// Log response headers (excluding sensitive ones)
+						const headers: Record<string, string> = {};
+						userResponse.headers.forEach((value, key) => {
+							if (
+								!key.toLowerCase().includes('authorization') &&
+								!key.toLowerCase().includes('cookie')
+							) {
+								headers[key] = value;
+							}
+						});
+						console.log('Response headers:', headers);
 
 						if (userResponse.ok) {
 							const userData = await userResponse.json();
 							console.log(
-								'Authenticated via httpOnly cookie, user data:',
+								'✅ Authenticated via httpOnly cookie, user data:',
 								userData
 							);
 
@@ -119,23 +174,26 @@ export default function AuthCallbackPage() {
 							}, 1000);
 							return;
 						} else {
-							console.warn(
-								'No authentication found (no params, no valid cookie)'
+							const errorText = await userResponse.text();
+							console.error(
+								'❌ Authentication failed:',
+								userResponse.status,
+								errorText
 							);
 							setStatus('error');
 							setMessage(
-								'OAuth redirect loop detected. Check backend OAuth configuration.'
+								`Authentication failed (${userResponse.status}): Cross-origin cookie issue detected. Backend needs to send tokens via URL or configure CORS properly. Error: ${errorText}`
 							);
 							return;
 						}
 					} catch (error) {
 						console.error(
-							'Error checking httpOnly cookie auth:',
+							'❌ Network error checking httpOnly cookie auth:',
 							error
 						);
 						setStatus('error');
 						setMessage(
-							'Authentication failed. Unable to verify credentials.'
+							`Network error: ${error instanceof Error ? error.message : 'Unknown error'}. If cross-origin, backend must send tokens in URL.`
 						);
 						return;
 					}
@@ -253,7 +311,33 @@ export default function AuthCallbackPage() {
 				{status === 'error' && (
 					<CardContent>
 						<Alert variant='destructive'>
-							<AlertDescription>{message}</AlertDescription>
+							<AlertDescription className='space-y-2'>
+								<div>{message}</div>
+								{message.includes('cross-origin') && (
+									<div className='mt-3 p-3 bg-muted/50 rounded-md text-sm'>
+										<p className='font-semibold mb-2'>
+											🔧 Backend Configuration Required:
+										</p>
+										<ol className='list-decimal list-inside space-y-1 text-xs'>
+											<li>
+												Send tokens via URL parameters
+												(redirect to
+												callback?token=...), OR
+											</li>
+											<li>
+												Change cookie SameSite from
+												&quot;Lax&quot; to
+												&quot;None&quot; and configure
+												CORS
+											</li>
+										</ol>
+										<p className='mt-2 text-xs text-muted-foreground'>
+											See OAUTH_CROSS_ORIGIN_ISSUE.md for
+											detailed instructions.
+										</p>
+									</div>
+								)}
+							</AlertDescription>
 						</Alert>
 						<div className='mt-4 text-center'>
 							<a

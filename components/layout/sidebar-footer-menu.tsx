@@ -28,7 +28,7 @@ export function SidebarFooterMenu({
 	const handleLogout = async () => {
 		try {
 			await signOut();
-			router.push('/auth');
+			router.push('/auth/sign-in');
 		} catch (error) {
 			console.error('Logout failed:', error);
 		}
@@ -45,9 +45,14 @@ export function SidebarFooterMenu({
 
 					{/* Logout */}
 					<SidebarMenuItem>
-						<SidebarMenuButton onClick={handleLogout}>
+						<SidebarMenuButton
+							onClick={handleLogout}
+							className='group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-full'
+						>
 							<LogOut className='h-4 w-4' />
-							<span>Logout</span>
+							<span className='group-data-[collapsible=icon]:hidden'>
+								Logout
+							</span>
 						</SidebarMenuButton>
 					</SidebarMenuItem>
 				</SidebarMenu>

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { BudgetResponseDTO, BudgetType } from '@/types/budget';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Plus, Wallet } from 'lucide-react';
 import BudgetCard from '@/components/shared/BudgetCard';
 import BudgetFormModal from '@/components/shared/BudgetFormModal';
 import { useBudgets, useDeleteBudget } from '@/hooks/useBudgets';
@@ -91,6 +91,7 @@ export default function BudgetList() {
 			{budgets.length === 0 ? (
 				<Card>
 					<CardContent className='flex flex-col items-center justify-center py-12'>
+						<Wallet className='h-12 w-12 text-muted-foreground mb-4' />
 						<p className='text-muted-foreground mb-4'>
 							No budgets created yet
 						</p>

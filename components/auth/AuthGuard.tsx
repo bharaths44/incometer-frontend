@@ -15,7 +15,7 @@ const protectedRoutes = [
 	'/settings',
 ];
 
-const authRoutes = ['/auth'];
+const authRoutes = ['/auth/sign-in'];
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
 	const { isAuthenticated, isLoading } = useAuthContext();
@@ -33,18 +33,13 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
 		);
 
 		if (isProtectedRoute && !isAuthenticated) {
-			// Redirect to auth page if trying to access protected route without auth
-			router.push('/auth');
+			// Redirect to sign-in page if trying to access protected route without auth
+			router.push('/auth/sign-in');
 		} else if (isAuthRoute && isAuthenticated) {
 			// Redirect to dashboard if trying to access auth pages while authenticated
 			router.push('/dashboard');
-		} else if (pathname === '/' && isAuthenticated) {
-			// Redirect from root to dashboard if authenticated
-			router.push('/dashboard');
-		} else if (pathname === '/' && !isAuthenticated) {
-			// Redirect from root to auth if not authenticated
-			router.push('/auth');
 		}
+		// Public routes (like '/') are allowed for everyone
 	}, [isAuthenticated, isLoading, pathname, router]);
 
 	// Show loading spinner while checking auth
@@ -81,15 +76,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
 		);
 	}
 
-	// Show loading on root path (needs redirect)
-	if (pathname === '/') {
-		return (
-			<div className='min-h-screen flex items-center justify-center'>
-				<div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary'></div>
-			</div>
-		);
-	}
-
+	// Allow public routes to render for everyone
 	// Allow auth pages to render when not authenticated
 	// Allow protected pages to render when authenticated
 	return <>{children}</>;

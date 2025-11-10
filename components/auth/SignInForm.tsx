@@ -15,7 +15,8 @@ import {
 	CardTitle,
 } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Mail, Lock, Github, Chrome } from 'lucide-react';
+import { Loader2, Mail, Lock } from 'lucide-react';
+import { siGoogle, siGithub } from 'simple-icons';
 import { useAuthContext } from '@/components/auth/AuthProvider';
 import { OAuthProvider } from '@/types/auth';
 import { AuthService } from '@/services/authService';
@@ -33,8 +34,8 @@ interface SignInFormProps {
 }
 
 const oauthProviders: OAuthProvider[] = [
-	{ name: 'github', displayName: 'GitHub', icon: 'github' },
-	{ name: 'google', displayName: 'Google', icon: 'chrome' },
+	{ name: 'github', displayName: 'GitHub', icon: 'siGithub' },
+	{ name: 'google', displayName: 'Google', icon: 'siGoogle' },
 ];
 
 export function SignInForm({ onSuccess, onSwitchToSignUp }: SignInFormProps) {
@@ -90,10 +91,26 @@ export function SignInForm({ onSuccess, onSwitchToSignUp }: SignInFormProps) {
 
 	const getProviderIcon = (iconName: string) => {
 		switch (iconName) {
-			case 'github':
-				return <Github className='h-4 w-4' />;
-			case 'chrome':
-				return <Chrome className='h-4 w-4' />;
+			case 'siGithub':
+				return (
+					<svg
+						className='h-4 w-4'
+						viewBox='0 0 24 24'
+						fill='currentColor'
+					>
+						<path d={siGithub.path} />
+					</svg>
+				);
+			case 'siGoogle':
+				return (
+					<svg
+						className='h-4 w-4'
+						viewBox='0 0 24 24'
+						fill='currentColor'
+					>
+						<path d={siGoogle.path} />
+					</svg>
+				);
 			default:
 				return null;
 		}

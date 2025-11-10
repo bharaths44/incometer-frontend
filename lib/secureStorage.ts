@@ -19,7 +19,7 @@ export class SecureStorage {
 	 * This method is kept for backward compatibility but does nothing
 	 * @deprecated Use httpOnly cookies set by backend
 	 */
-	static setToken(token: string): void {
+	static setToken(_token: string): void {
 		console.warn(
 			'setToken called but tokens are stored in httpOnly cookies by backend'
 		);
@@ -43,15 +43,6 @@ export class SecureStorage {
 	 */
 	static setUser(user: any): void {
 		try {
-			console.log('setUser called with:', {
-				user,
-				isObject: typeof user === 'object',
-				hasUserId: !!user?.userId,
-				hasEmail: !!user?.email,
-				userIdType: typeof user?.userId,
-				emailType: typeof user?.email,
-			});
-
 			if (!user || typeof user !== 'object') {
 				throw new Error('Invalid user data');
 			}
@@ -67,7 +58,6 @@ export class SecureStorage {
 			}
 
 			localStorage.setItem(this.USER_KEY, JSON.stringify(user));
-			console.log('User data stored successfully');
 		} catch (error) {
 			console.error('Failed to store user data:', error);
 			throw new Error('Failed to store user data');
@@ -103,7 +93,7 @@ export class SecureStorage {
 	 * Store refresh token - NOT USED with httpOnly cookies
 	 * @deprecated Refresh token is stored in httpOnly cookie by backend
 	 */
-	static setRefreshToken(token: string): void {
+	static setRefreshToken(_token: string): void {
 		console.warn(
 			'setRefreshToken called but tokens are stored in httpOnly cookies by backend'
 		);

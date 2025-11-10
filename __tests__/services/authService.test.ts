@@ -34,7 +34,7 @@ try {
 		value: mockLocation,
 		writable: true,
 	});
-} catch (error) {
+} catch {
 	// If location is already defined, just modify it
 	if (window.location) {
 		Object.assign(window.location, mockLocation);
