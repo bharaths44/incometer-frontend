@@ -11,24 +11,28 @@ export default function DashboardPage() {
 		<AppLayout>
 			<div className='space-y-6'>
 				{/* Header */}
-				<div className='flex items-center justify-between'>
+				<div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
 					<div>
-						<h1 className='text-3xl font-bold tracking-tight'>
+						<h1 className='text-2xl sm:text-3xl font-bold tracking-tight'>
 							Dashboard
 						</h1>
 						<p className='text-muted-foreground mt-1'>
 							Welcome back! Here&apos;s your financial overview.
 						</p>
 					</div>
-					<div className='flex gap-2'>
-						<Button variant='outline' size='sm'>
+					<div className='flex flex-col sm:flex-row gap-2 w-full sm:w-auto'>
+						<Button
+							variant='outline'
+							size='sm'
+							className='w-full sm:w-auto'
+						>
 							<Plus
 								className='h-4 w-4 mr-2'
 								suppressHydrationWarning
 							/>
 							Add Income
 						</Button>
-						<Button size='sm'>
+						<Button size='sm' className='w-full sm:w-auto'>
 							<Plus
 								className='h-4 w-4 mr-2'
 								suppressHydrationWarning

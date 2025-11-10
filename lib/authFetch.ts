@@ -32,10 +32,9 @@ export const authenticatedFetch = async (
 		// Clear user data (cookies will be cleared by backend logout)
 		SecureStorage.clearAll();
 
-		// Optionally redirect to login page
+		// Redirect to login page
 		if (typeof window !== 'undefined') {
-			// Uncomment to auto-redirect to login
-			// window.location.href = '/auth/sign-in';
+			window.location.href = '/auth/sign-in';
 		}
 	}
 

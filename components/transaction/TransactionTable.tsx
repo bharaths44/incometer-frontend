@@ -11,6 +11,15 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
+import { Card, CardContent } from '@/components/ui/card';
+
+interface TransactionTableProps {
+	transactions: TransactionResponseDTO[];
+	onEdit: (transaction: TransactionResponseDTO) => void;
+	onDelete: (transaction: TransactionResponseDTO) => void;
+	loading: boolean;
+	config: TransactionConfig;
+}
 
 interface TransactionTableProps {
 	transactions: TransactionResponseDTO[];
@@ -49,7 +58,79 @@ export default function TransactionTable({
 
 	return (
 		<div className='space-y-4'>
-			<div className='rounded-md border'>
+			{/* Mobile Card Layout */}
+			<div className='block md:hidden space-y-4'>
+				{paginatedTransactions.map((transaction) => (
+					<Card
+						key={transaction.transactionId}
+						className='border shadow-sm'
+					>
+						<CardContent className='p-4'>
+							<div className='flex items-start justify-between'>
+								<div className='flex items-center gap-3 flex-1 min-w-0'>
+									<div className='w-10 h-10 bg-muted rounded-lg flex items-center justify-center shrink-0'>
+										<Icon
+											name={transaction.category.icon}
+											size={20}
+											className='text-muted-foreground'
+										/>
+									</div>
+									<div className='flex-1 min-w-0'>
+										<h3 className='font-medium text-sm truncate'>
+											{transaction.description}
+										</h3>
+										<p className='text-xs text-muted-foreground'>
+											{transaction.category.name}
+										</p>
+									</div>
+								</div>
+								<div className='flex gap-2 shrink-0'>
+									<Button
+										onClick={() => onEdit(transaction)}
+										variant='ghost'
+										size='icon'
+										className='h-8 w-8'
+									>
+										<Edit2 className='w-4 h-4' />
+									</Button>
+									<Button
+										onClick={() => onDelete(transaction)}
+										variant='ghost'
+										size='icon'
+										className='h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10'
+									>
+										<Trash2 className='w-4 h-4' />
+									</Button>
+								</div>
+							</div>
+							<div className='mt-3 flex items-center justify-between'>
+								<div className='flex flex-col'>
+									<span className='text-lg font-semibold'>
+										₹{transaction.amount.toFixed(2)}
+									</span>
+									<span className='text-xs text-muted-foreground'>
+										{transaction.paymentMethod.displayName}
+									</span>
+								</div>
+								<div className='text-right'>
+									<p className='text-sm text-muted-foreground'>
+										{new Date(
+											transaction.transactionDate
+										).toLocaleDateString('en-US', {
+											year: 'numeric',
+											month: 'short',
+											day: 'numeric',
+										})}
+									</p>
+								</div>
+							</div>
+						</CardContent>
+					</Card>
+				))}
+			</div>
+
+			{/* Desktop Table Layout */}
+			<div className='hidden md:block rounded-md border'>
 				<Table>
 					<TableHeader>
 						<TableRow>
@@ -130,8 +211,8 @@ export default function TransactionTable({
 			</div>
 
 			{totalPages > 1 && (
-				<div className='flex items-center justify-between'>
-					<div className='text-sm text-muted-foreground'>
+				<div className='flex flex-col sm:flex-row items-center justify-between gap-4'>
+					<div className='text-sm text-muted-foreground text-center sm:text-left'>
 						Showing {startIndex + 1} to{' '}
 						{Math.min(
 							startIndex + itemsPerPage,
@@ -148,21 +229,32 @@ export default function TransactionTable({
 						>
 							<ChevronLeft className='w-4 h-4' />
 						</Button>
-						{Array.from(
-							{ length: totalPages },
-							(_, i) => i + 1
-						).map((page) => (
-							<Button
-								key={page}
-								onClick={() => handlePageChange(page)}
-								variant={
-									currentPage === page ? 'default' : 'outline'
-								}
-								size='sm'
-							>
-								{page}
-							</Button>
-						))}
+						<div className='flex items-center gap-1'>
+							{Array.from(
+								{ length: totalPages },
+								(_, i) => i + 1
+							).map((page) => (
+								<Button
+									key={page}
+									onClick={() => handlePageChange(page)}
+									variant={
+										currentPage === page
+											? 'default'
+											: 'outline'
+									}
+									size='sm'
+									className='hidden sm:flex'
+								>
+									{page}
+								</Button>
+							))}
+							{/* Mobile pagination - show current page and total */}
+							<div className='flex sm:hidden items-center gap-2 text-sm text-muted-foreground'>
+								<span>{currentPage}</span>
+								<span>of</span>
+								<span>{totalPages}</span>
+							</div>
+						</div>
 						<Button
 							onClick={() => handlePageChange(currentPage + 1)}
 							disabled={currentPage === totalPages}
