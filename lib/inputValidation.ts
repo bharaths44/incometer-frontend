@@ -8,8 +8,13 @@ export class InputSanitizer {
 	static sanitizeString(input: string): string {
 		if (typeof input !== 'string') return '';
 
-		// Remove HTML tags
-		const withoutHtml = input.replace(/<[^>]*>/g, '');
+		// Remove HTML tags (repeatedly until all are gone)
+		let withoutHtml = input;
+		let prev;
+		do {
+			prev = withoutHtml;
+			withoutHtml = withoutHtml.replace(/<[^>]*>/g, '');
+		} while (withoutHtml !== prev);
 
 		// Trim whitespace and normalize
 		return withoutHtml.trim().replace(/\s+/g, ' ');
