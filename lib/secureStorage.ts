@@ -1,41 +1,36 @@
 /**
  * Secure Storage Utility
  *
- * Uses httpOnly cookies for JWT tokens (set by backend) and localStorage for user data only.
- * Tokens are stored in httpOnly cookies which are:
- * - Not accessible via JavaScript (XSS protection)
- * - Automatically sent with requests
- * - Can have Secure and SameSite flags
+ * Uses in-memory storage for accessToken and httpOnly cookie for refreshToken.
+ * - accessToken: Stored in memory (cleared on page refresh, short-lived)
+ * - refreshToken: Stored in httpOnly cookie by backend (XSS protection, long-lived)
+ * - User data: Stored in localStorage (non-sensitive)
  */
 
 export class SecureStorage {
 	private static readonly USER_KEY = 'auth_user';
-	// Note: Tokens are now stored in httpOnly cookies by the backend
-	// No localStorage storage for tokens
+	// In-memory storage for accessToken (more secure than localStorage)
+	private static accessToken: string | null = null;
 
 	/**
-	 * Store authentication token - NOT USED with httpOnly cookies
-	 * Token is set by backend as httpOnly cookie
-	 * This method is kept for backward compatibility but does nothing
-	 * @deprecated Use httpOnly cookies set by backend
+	 * Store authentication token in memory
+	 * Token is stored in memory (not localStorage) for better security
+	 * Will be cleared on page refresh (user needs to use refreshToken)
 	 */
-	static setToken(_token: string): void {
-		console.warn(
-			'setToken called but tokens are stored in httpOnly cookies by backend'
-		);
-		// No-op: Backend sets httpOnly cookie
+	static setToken(token: string): void {
+		if (!token || typeof token !== 'string') {
+			console.error('Invalid token provided to setToken');
+			return;
+		}
+		this.accessToken = token;
 	}
 
 	/**
-	 * Get authentication token - NOT AVAILABLE with httpOnly cookies
-	 * Token is in httpOnly cookie and not accessible to JavaScript
-	 * @deprecated Tokens are in httpOnly cookies and not accessible to JavaScript
-	 * @returns null always (token is in httpOnly cookie)
+	 * Get authentication token from memory
+	 * @returns accessToken if available, null otherwise
 	 */
 	static getToken(): string | null {
-		// Cannot access httpOnly cookies from JavaScript (this is the security feature!)
-		// The browser automatically sends the cookie with requests
-		return null;
+		return this.accessToken;
 	}
 
 	/**
@@ -111,17 +106,19 @@ export class SecureStorage {
 
 	/**
 	 * Clear all authentication data
-	 * For httpOnly cookies, we need to call backend logout endpoint
+	 * Clears in-memory accessToken and localStorage user data
+	 * For httpOnly refreshToken cookie, backend logout endpoint must be called
 	 */
 	static clearAll(): void {
 		try {
+			// Clear in-memory accessToken
+			this.accessToken = null;
+
 			// Clear user data from localStorage
 			localStorage.removeItem(this.USER_KEY);
 
-			// Note: httpOnly cookies must be cleared by the backend
-			// Call the logout endpoint to clear cookies
 			console.log(
-				'User data cleared. Cookies will be cleared by backend logout endpoint.'
+				'User data and accessToken cleared. RefreshToken cookie will be cleared by backend logout endpoint.'
 			);
 		} catch (error) {
 			console.error('Failed to clear authentication data:', error);
@@ -129,14 +126,10 @@ export class SecureStorage {
 	}
 
 	/**
-	 * Clear token only - NOT APPLICABLE with httpOnly cookies
-	 * @deprecated Tokens are in httpOnly cookies, cleared by backend
+	 * Clear token only (in-memory accessToken)
 	 */
 	static clearToken(): void {
-		console.warn(
-			'clearToken called but tokens are in httpOnly cookies (cleared by backend)'
-		);
-		// No-op: Backend must clear httpOnly cookies
+		this.accessToken = null;
 	}
 
 	/**

@@ -1,26 +1,31 @@
-// Utility for making authenticated API calls with httpOnly cookies
+// Utility for making authenticated API calls with accessToken and httpOnly cookies
 import { SecureStorage } from './secureStorage';
 
 /**
- * Make authenticated API requests using httpOnly cookies
- * Cookies are automatically sent by the browser
- * No need to manually attach Authorization headers
+ * Make authenticated API requests using accessToken in Authorization header
+ * and refreshToken in httpOnly cookie for token refresh
  */
 export const authenticatedFetch = async (
 	url: string,
 	options: RequestInit = {}
 ): Promise<Response> => {
+	const accessToken = SecureStorage.getToken();
+
 	const headers: Record<string, string> = {
 		'Content-Type': 'application/json',
 		...(options.headers as Record<string, string>),
 	};
 
-	// Include credentials (cookies) with the request
-	// This tells the browser to send httpOnly cookies automatically
+	// Add Authorization header if accessToken exists
+	if (accessToken) {
+		headers['Authorization'] = `Bearer ${accessToken}`;
+	}
+
+	// Include credentials (cookies) with the request for refreshToken
 	const response = await fetch(url, {
 		...options,
 		headers,
-		credentials: 'include', // CRITICAL: This sends httpOnly cookies
+		credentials: 'include', // CRITICAL: This sends httpOnly refreshToken cookie
 	});
 
 	// If we get a 401, the httpOnly cookie is invalid/expired

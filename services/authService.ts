@@ -33,21 +33,23 @@ export class AuthService {
 			throw new Error(error || 'Registration failed');
 		}
 
-		// Backend should set httpOnly cookie with token
-		// Response may still include user data for immediate use
+		// Backend should set httpOnly cookie with refreshToken
+		// Response includes accessToken for immediate use
 		const data = await response.json();
 
-		// If backend returns token in response (transition period), decode it
-		// Otherwise, fetch user data from /users/me endpoint
+		// Backend returns accessToken in response body
 		if (data.accessToken) {
+			// Store accessToken in memory for Authorization header
+			SecureStorage.setToken(data.accessToken);
+
 			const user = this.decodeUserFromTokenPublic(data.accessToken);
 			return {
 				user,
-				token: data.accessToken, // For backward compatibility
+				token: data.accessToken,
 				refreshToken: data.refreshToken,
 			};
 		} else {
-			// New httpOnly cookie approach - fetch user data
+			// Fallback: fetch user data from /users/me endpoint
 			const user = await this.getCurrentUser();
 			return {
 				user,
@@ -77,20 +79,22 @@ export class AuthService {
 			throw new Error(error || 'Authentication failed');
 		}
 
-		// Backend should set httpOnly cookie with token
+		// Backend should set httpOnly cookie with refreshToken
 		const data = await response.json();
 
-		// If backend returns token in response (transition period), decode it
-		// Otherwise, fetch user data from /users/me endpoint
+		// Backend returns accessToken in response body
 		if (data.accessToken) {
+			// Store accessToken in memory for Authorization header
+			SecureStorage.setToken(data.accessToken);
+
 			const user = this.decodeUserFromTokenPublic(data.accessToken);
 			return {
 				user,
-				token: data.accessToken, // For backward compatibility
+				token: data.accessToken,
 				refreshToken: data.refreshToken,
 			};
 		} else {
-			// New httpOnly cookie approach - fetch user data
+			// Fallback: fetch user data from /users/me endpoint
 			const user = await this.getCurrentUser();
 			return {
 				user,
@@ -126,6 +130,9 @@ export class AuthService {
 
 		const data: { accessToken: string; refreshToken: string } =
 			await response.json();
+
+		// Store accessToken in memory for Authorization header
+		SecureStorage.setToken(data.accessToken);
 
 		// Decode JWT to get user info
 		const user = this.decodeUserFromTokenPublic(data.accessToken);
@@ -192,6 +199,9 @@ export class AuthService {
 
 		const data: { accessToken: string; refreshToken: string } =
 			await response.json();
+
+		// Store new accessToken in memory
+		SecureStorage.setToken(data.accessToken);
 
 		// Decode JWT to get user info
 		const user = this.decodeUserFromTokenPublic(data.accessToken);
