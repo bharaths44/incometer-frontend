@@ -16,17 +16,17 @@ import {
 } from '@/services/transactionService';
 import { useAuthContext } from '@/components/auth/AuthProvider';
 import {
+	eachDayOfInterval,
+	eachMonthOfInterval,
+	endOfDay,
+	endOfMonth,
+	endOfYear,
 	format,
 	parseISO,
-	startOfMonth,
-	endOfMonth,
-	eachMonthOfInterval,
-	subMonths,
-	startOfYear,
-	endOfYear,
 	startOfDay,
-	endOfDay,
-	eachDayOfInterval,
+	startOfMonth,
+	startOfYear,
+	subMonths,
 } from 'date-fns';
 
 export default function AnalyticsPage() {
@@ -75,6 +75,7 @@ export default function AnalyticsPage() {
 			}
 			return service.getAll(userId);
 		},
+		staleTime: 30000, // Cache for 30 seconds
 	});
 
 	const { data: income = [], isLoading: incomeLoading } = useQuery({
@@ -90,6 +91,7 @@ export default function AnalyticsPage() {
 			}
 			return service.getAll(userId);
 		},
+		staleTime: 30000, // Cache for 30 seconds
 	});
 
 	// Calculate expense summary from filtered transactions
@@ -140,7 +142,9 @@ export default function AnalyticsPage() {
 	}, [expenses, income]);
 
 	// Calculate category breakdown from filtered transactions
-	const calculatedCategoryData = React.useMemo(() => {
+
+	// Use calculated data instead of API calls
+	const categoryData = React.useMemo(() => {
 		const categoryTotals: { [key: string]: number } = {};
 		let totalExpense = 0;
 
@@ -160,9 +164,6 @@ export default function AnalyticsPage() {
 			})
 		);
 	}, [expenses]);
-
-	// Use calculated data instead of API calls
-	const categoryData = calculatedCategoryData;
 	const expenseSummary = calculatedExpenseSummary;
 	const { error: budgetError } = useBudgetAnalytics(userId);
 
@@ -268,9 +269,7 @@ export default function AnalyticsPage() {
 
 	const isLoading = budgetsLoading || expensesLoading || incomeLoading;
 
-	const hasError = budgetError;
-
-	if (hasError) {
+	if (budgetError) {
 		return (
 			<AppLayout>
 				<div className='space-y-6'>

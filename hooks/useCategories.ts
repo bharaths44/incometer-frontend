@@ -4,8 +4,8 @@ import {
 	deleteCategory,
 	getAllCategories,
 	updateCategory,
-} from '../services/categoryService';
-import { CategoryRequestDTO } from '../types/category';
+} from '@/services/categoryService';
+import { CategoryRequestDTO } from '@/types/category';
 
 // Query keys
 export const categoryKeys = {
@@ -20,6 +20,7 @@ export const useCategories = (userId: string) => {
 		queryKey: categoryKeys.list(userId),
 		queryFn: () => getAllCategories(userId),
 		enabled: !!userId,
+		staleTime: 30000, // Cache for 30 seconds
 	});
 };
 

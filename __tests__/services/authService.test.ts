@@ -13,10 +13,11 @@ jest.mock('@/lib/authFetch', () => ({
 // Import the mocked function
 import { authenticatedFetch } from '@/lib/authFetch';
 
-// Mock SecureStorage
+// Mock SecureStorage - pure cookie approach only stores user data
 jest.mock('@/lib/secureStorage', () => ({
 	SecureStorage: {
-		getToken: jest.fn(),
+		getUser: jest.fn(),
+		setUser: jest.fn(),
 		clearAll: jest.fn(),
 	},
 }));
@@ -57,63 +58,56 @@ describe('AuthService', () => {
 				password: 'password123',
 			};
 
-			const mockResponse = {
-				accessToken: 'mock.jwt.token',
-				refreshToken: 'mock.refresh.token',
-			};
-
-			// Mock JWT decode
-			const mockDecode = jest.spyOn(
-				AuthService,
-				'decodeUserFromTokenPublic'
-			);
-			mockDecode.mockReturnValue({
+			const mockUserResponse = {
 				userId: '123',
 				name: 'John Doe',
 				email: 'john@example.com',
 				phoneNumber: '+1234567890',
 				createdAt: '2024-01-01T00:00:00Z',
 				updatedAt: '2024-01-01T00:00:00Z',
-			});
+			};
 
+			// Mock register endpoint (returns user data, sets cookies)
 			mockFetch.mockResolvedValueOnce({
 				ok: true,
 				status: 201,
-				json: async () => mockResponse,
+				json: async () => mockUserResponse,
+			});
+
+			// Mock /users/me endpoint
+			(authenticatedFetch as jest.Mock).mockResolvedValueOnce({
+				ok: true,
+				json: async () => mockUserResponse,
 			});
 
 			const result = await AuthService.signUp(signUpRequest);
 
 			expect(mockFetch).toHaveBeenCalledWith(
-				'http://localhost:8080/api/v1/auth/register',
-				{
+				expect.stringContaining('/api/v1/auth/register'),
+				expect.objectContaining({
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
 					},
+					credentials: 'include',
 					body: JSON.stringify({
 						name: 'John Doe',
 						email: 'john@example.com',
 						phoneNumber: '+1234567890',
 						password: 'password123',
 					}),
-				}
+				})
+			);
+
+			expect(mockSecureStorage.setUser).toHaveBeenCalledWith(
+				mockUserResponse
 			);
 
 			expect(result).toEqual({
-				user: {
-					userId: '123',
-					name: 'John Doe',
-					email: 'john@example.com',
-					phoneNumber: '+1234567890',
-					createdAt: '2024-01-01T00:00:00Z',
-					updatedAt: '2024-01-01T00:00:00Z',
-				},
-				token: 'mock.jwt.token',
-				refreshToken: 'mock.refresh.token',
+				user: mockUserResponse,
+				token: '',
+				refreshToken: '',
 			});
-
-			mockDecode.mockRestore();
 		});
 
 		it('should throw error when sign up fails', async () => {
@@ -143,60 +137,54 @@ describe('AuthService', () => {
 				password: 'password123',
 			};
 
-			const mockResponse = {
-				accessToken: 'mock.jwt.token',
-				refreshToken: 'mock.refresh.token',
-			};
-
-			const mockDecode = jest.spyOn(
-				AuthService,
-				'decodeUserFromTokenPublic'
-			);
-			mockDecode.mockReturnValue({
+			const mockUserResponse = {
 				userId: '123',
 				name: 'John Doe',
 				email: 'john@example.com',
 				phoneNumber: '+1234567890',
 				createdAt: '2024-01-01T00:00:00Z',
 				updatedAt: '2024-01-01T00:00:00Z',
-			});
+			};
 
+			// Mock authenticate endpoint (returns user data, sets cookies)
 			mockFetch.mockResolvedValueOnce({
 				ok: true,
 				status: 200,
-				json: async () => mockResponse,
+				json: async () => mockUserResponse,
+			});
+
+			// Mock /users/me endpoint
+			(authenticatedFetch as jest.Mock).mockResolvedValueOnce({
+				ok: true,
+				json: async () => mockUserResponse,
 			});
 
 			const result = await AuthService.signIn(signInRequest);
 
 			expect(mockFetch).toHaveBeenCalledWith(
-				'http://localhost:8080/api/v1/auth/authenticate',
-				{
+				expect.stringContaining('/api/v1/auth/authenticate'),
+				expect.objectContaining({
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
 					},
+					credentials: 'include',
 					body: JSON.stringify({
 						username: 'john@example.com',
 						password: 'password123',
 					}),
-				}
+				})
+			);
+
+			expect(mockSecureStorage.setUser).toHaveBeenCalledWith(
+				mockUserResponse
 			);
 
 			expect(result).toEqual({
-				user: {
-					userId: '123',
-					name: 'John Doe',
-					email: 'john@example.com',
-					phoneNumber: '+1234567890',
-					createdAt: '2024-01-01T00:00:00Z',
-					updatedAt: '2024-01-01T00:00:00Z',
-				},
-				token: 'mock.jwt.token',
-				refreshToken: 'mock.refresh.token',
+				user: mockUserResponse,
+				token: '',
+				refreshToken: '',
 			});
-
-			mockDecode.mockRestore();
 		});
 
 		it('should throw error when sign in fails', async () => {
@@ -219,101 +207,76 @@ describe('AuthService', () => {
 
 	describe('signInWithOAuth', () => {
 		it('should sign in with OAuth successfully', async () => {
-			const mockResponse = {
-				accessToken: 'mock.oauth.token',
-				refreshToken: 'mock.oauth.refresh',
-			};
-
-			const mockDecode = jest.spyOn(
-				AuthService,
-				'decodeUserFromTokenPublic'
-			);
-			mockDecode.mockReturnValue({
+			const mockUserResponse = {
 				userId: '456',
 				name: 'Jane Doe',
 				email: 'jane@github.com',
 				phoneNumber: '',
 				createdAt: '2024-01-01T00:00:00Z',
 				updatedAt: '2024-01-01T00:00:00Z',
-			});
+			};
 
+			// Mock OAuth callback endpoint
 			mockFetch.mockResolvedValueOnce({
 				ok: true,
 				status: 200,
-				json: async () => mockResponse,
+				json: async () => mockUserResponse,
+			});
+
+			// Mock /users/me endpoint
+			(authenticatedFetch as jest.Mock).mockResolvedValueOnce({
+				ok: true,
+				json: async () => mockUserResponse,
 			});
 
 			const result = await AuthService.signInWithOAuth(
 				'github',
-				'oauth-code-123'
+				'auth-code-123'
 			);
 
 			expect(mockFetch).toHaveBeenCalledWith(
-				'http://localhost:8080/api/oauth2/callback/github?code=oauth-code-123',
-				{
+				expect.stringContaining('/oauth2/callback/github'),
+				expect.objectContaining({
 					method: 'GET',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-				}
+				})
+			);
+
+			expect(mockSecureStorage.setUser).toHaveBeenCalledWith(
+				mockUserResponse
 			);
 
 			expect(result).toEqual({
-				user: {
-					userId: '456',
-					name: 'Jane Doe',
-					email: 'jane@github.com',
-					phoneNumber: '',
-					createdAt: '2024-01-01T00:00:00Z',
-					updatedAt: '2024-01-01T00:00:00Z',
-				},
-				token: 'mock.oauth.token',
-				refreshToken: 'mock.oauth.refresh',
+				user: mockUserResponse,
+				token: '',
+				refreshToken: '',
 			});
-
-			mockDecode.mockRestore();
 		});
 
 		it('should throw error when OAuth fails', async () => {
 			mockFetch.mockResolvedValueOnce({
 				ok: false,
 				status: 400,
-				text: async () => 'Invalid OAuth code',
+				text: async () => 'OAuth authentication failed',
 			});
 
 			await expect(
-				AuthService.signInWithOAuth('google', 'invalid-code')
-			).rejects.toThrow('Invalid OAuth code');
+				AuthService.signInWithOAuth('github', 'invalid-code')
+			).rejects.toThrow('OAuth authentication failed');
 		});
 	});
 
-	describe('initiateOAuth', () => {
-		it.skip('should redirect to OAuth provider', () => {
-			const mockLocation = { href: '' };
-			Object.defineProperty(window, 'location', {
-				value: mockLocation,
-				writable: true,
-			});
-
+	describe.skip('initiateOAuth', () => {
+		// OAuth redirect tests skipped - window.location mocking is complex in Jest
+		// OAuth flow is tested via integration tests
+		it('should redirect to OAuth provider', () => {
 			AuthService.initiateOAuth('github');
-
-			expect(mockLocation.href).toBe(
-				'http://localhost:8080/api/oauth2/authorize/github'
-			);
 		});
 
-		it.skip('should redirect to Google OAuth', () => {
-			const mockLocation = { href: '' };
-			Object.defineProperty(window, 'location', {
-				value: mockLocation,
-				writable: true,
-			});
-
+		it('should redirect to Google OAuth', () => {
 			AuthService.initiateOAuth('google');
-
-			expect(mockLocation.href).toBe(
-				'http://localhost:8080/api/oauth2/authorize/google'
-			);
 		});
 	});
 
@@ -328,34 +291,31 @@ describe('AuthService', () => {
 				updatedAt: '2024-01-01T00:00:00Z',
 			};
 
-			(
-				authenticatedFetch as jest.MockedFunction<
-					typeof authenticatedFetch
-				>
-			).mockResolvedValueOnce({
+			(authenticatedFetch as jest.Mock).mockResolvedValueOnce({
 				ok: true,
-				status: 200,
 				json: async () => mockUserData,
-			} as Response);
+			});
 
 			const result = await AuthService.getCurrentUser();
 
 			expect(authenticatedFetch).toHaveBeenCalledWith(
-				'http://localhost:8080/api/users/me'
+				expect.stringContaining('/users/me')
 			);
-			expect(result).toEqual(mockUserData);
+
+			expect(result).toEqual({
+				userId: '123',
+				name: 'John Doe',
+				email: 'john@example.com',
+				phoneNumber: '+1234567890',
+				createdAt: '2024-01-01T00:00:00Z',
+				updatedAt: '2024-01-01T00:00:00Z',
+			});
 		});
 
-		it('should throw error when getting current user fails', async () => {
-			(
-				authenticatedFetch as jest.MockedFunction<
-					typeof authenticatedFetch
-				>
-			).mockResolvedValueOnce({
+		it('should throw error when request fails', async () => {
+			(authenticatedFetch as jest.Mock).mockResolvedValueOnce({
 				ok: false,
-				status: 401,
-				text: jest.fn().mockResolvedValue('Unauthorized'),
-			} as any);
+			});
 
 			await expect(AuthService.getCurrentUser()).rejects.toThrow(
 				'Failed to get current user'
@@ -363,191 +323,31 @@ describe('AuthService', () => {
 		});
 	});
 
-	describe('getCurrentUserFromToken', () => {
-		it('should get user from token successfully', () => {
-			mockSecureStorage.getToken.mockReturnValue('mock.jwt.token');
-
-			const mockDecode = jest.spyOn(
-				AuthService,
-				'decodeUserFromTokenPublic'
-			);
-			mockDecode.mockReturnValue({
-				userId: '123',
-				name: 'John Doe',
-				email: 'john@example.com',
-				phoneNumber: '+1234567890',
-				createdAt: '2024-01-01T00:00:00Z',
-				updatedAt: '2024-01-01T00:00:00Z',
-			});
-
-			const result = AuthService.getCurrentUserFromToken();
-
-			expect(mockSecureStorage.getToken).toHaveBeenCalled();
-			expect(result).toEqual({
-				userId: '123',
-				name: 'John Doe',
-				email: 'john@example.com',
-				phoneNumber: '+1234567890',
-				createdAt: '2024-01-01T00:00:00Z',
-				updatedAt: '2024-01-01T00:00:00Z',
-			});
-
-			mockDecode.mockRestore();
-		});
-
-		it('should throw error when no token found', () => {
-			mockSecureStorage.getToken.mockReturnValue(null);
-
-			expect(() => AuthService.getCurrentUserFromToken()).toThrow(
-				'No token found'
-			);
-		});
-	});
-
-	describe('refresh', () => {
-		it('should refresh token successfully', async () => {
-			const mockResponse = {
-				accessToken: 'new.jwt.token',
-				refreshToken: 'new.refresh.token',
-			};
-
-			const mockDecode = jest.spyOn(
-				AuthService,
-				'decodeUserFromTokenPublic'
-			);
-			mockDecode.mockReturnValue({
-				userId: '123',
-				name: 'John Doe',
-				email: 'john@example.com',
-				phoneNumber: '+1234567890',
-				createdAt: '2024-01-01T00:00:00Z',
-				updatedAt: '2024-01-01T00:00:00Z',
-			});
-
+	describe('signOut', () => {
+		it('should call logout endpoint and clear storage', async () => {
 			mockFetch.mockResolvedValueOnce({
 				ok: true,
-				status: 200,
-				json: async () => mockResponse,
 			});
 
-			const result = await AuthService.refresh('old-refresh-token');
+			await AuthService.signOut();
 
 			expect(mockFetch).toHaveBeenCalledWith(
-				'http://localhost:8080/api/v1/auth/refresh',
-				{
+				expect.stringContaining('/api/v1/auth/logout'),
+				expect.objectContaining({
 					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({
-						refreshToken: 'old-refresh-token',
-					}),
-				}
+					credentials: 'include',
+				})
 			);
-
-			expect(result).toEqual({
-				user: {
-					userId: '123',
-					name: 'John Doe',
-					email: 'john@example.com',
-					phoneNumber: '+1234567890',
-					createdAt: '2024-01-01T00:00:00Z',
-					updatedAt: '2024-01-01T00:00:00Z',
-				},
-				token: 'new.jwt.token',
-				refreshToken: 'new.refresh.token',
-			});
-
-			mockDecode.mockRestore();
-		});
-
-		it('should throw error when refresh fails', async () => {
-			mockFetch.mockResolvedValueOnce({
-				ok: false,
-				status: 401,
-				text: async () => 'Invalid refresh token',
-			});
-
-			await expect(AuthService.refresh('invalid-token')).rejects.toThrow(
-				'Invalid refresh token'
-			);
-		});
-	});
-
-	describe('signOut', () => {
-		it('should clear secure storage', async () => {
-			await AuthService.signOut();
 
 			expect(mockSecureStorage.clearAll).toHaveBeenCalled();
 		});
-	});
 
-	describe('decodeUserFromTokenPublic', () => {
-		it('should decode valid JWT token', () => {
-			// Create a mock JWT payload
-			const payload = {
-				uuid: '123',
-				name: 'John Doe',
-				email: 'john@example.com',
-				phoneNumber: '+1234567890',
-				createdAt: '2024-01-01T00:00:00Z',
-				updatedAt: '2024-01-01T00:00:00Z',
-			};
+		it('should clear storage even if logout endpoint fails', async () => {
+			mockFetch.mockRejectedValueOnce(new Error('Network error'));
 
-			// Create a mock JWT (header.payload.signature)
-			const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
-			const payloadB64 = btoa(JSON.stringify(payload));
-			const signature = 'mock-signature';
-			const token = `${header}.${payloadB64}.${signature}`;
+			await AuthService.signOut();
 
-			const result = AuthService.decodeUserFromTokenPublic(token);
-
-			expect(result).toEqual({
-				userId: '123',
-				name: 'John Doe',
-				email: 'john@example.com',
-				phoneNumber: '+1234567890',
-				createdAt: '2024-01-01T00:00:00Z',
-				updatedAt: '2024-01-01T00:00:00Z',
-			});
-		});
-
-		it('should handle different userId field names', () => {
-			const payload = {
-				sub: '456', // Using 'sub' instead of 'uuid'
-				name: 'Jane Doe',
-				email: 'jane@example.com',
-			};
-
-			const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
-			const payloadB64 = btoa(JSON.stringify(payload));
-			const token = `${header}.${payloadB64}.signature`;
-
-			const result = AuthService.decodeUserFromTokenPublic(token);
-
-			expect(result.userId).toBe('456');
-		});
-
-		it('should throw error for invalid token', () => {
-			expect(() =>
-				AuthService.decodeUserFromTokenPublic('invalid.token')
-			).toThrow('Invalid token');
-		});
-
-		it('should throw error when no userId in payload', () => {
-			const payload = {
-				name: 'John Doe',
-				email: 'john@example.com',
-				// No userId field
-			};
-
-			const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
-			const payloadB64 = btoa(JSON.stringify(payload));
-			const token = `${header}.${payloadB64}.signature`;
-
-			expect(() => AuthService.decodeUserFromTokenPublic(token)).toThrow(
-				'Invalid token'
-			);
+			expect(mockSecureStorage.clearAll).toHaveBeenCalled();
 		});
 	});
 });

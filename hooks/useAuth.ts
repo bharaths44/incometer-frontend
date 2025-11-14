@@ -1,14 +1,31 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { User, AuthResponse } from '@/types/auth';
 import { AuthService } from '@/services/authService';
 import { SecureStorage } from '@/lib/secureStorage';
 
 export function useAuth() {
-	const [user, setUser] = useState<User | null>(null);
+	const [user, setUser] = useState<User | null>(() => {
+		// Initialize user from localStorage on mount (SSR-safe)
+		if (typeof window !== 'undefined') {
+			const storedUser = SecureStorage.getUser();
+			return storedUser || null;
+		}
+		return null;
+	});
 	const [isLoading, setIsLoading] = useState(true);
-	const [isAuthenticated, setIsAuthenticated] = useState(false);
+	const [isAuthenticated, setIsAuthenticated] = useState(() => {
+		// Initialize auth state from storage to prevent flash of unauthenticated state
+		if (typeof window !== 'undefined') {
+			const storedUser = SecureStorage.getUser();
+			return !!storedUser;
+		}
+		return false;
+	});
+
+	// Prevent concurrent auth checks
+	const authCheckInProgress = useRef(false);
 
 	useEffect(() => {
 		// Check if user is already authenticated on mount
@@ -16,16 +33,32 @@ export function useAuth() {
 	}, []);
 
 	const checkAuthStatus = async () => {
+		// If auth check is already in progress, skip this call
+		if (authCheckInProgress.current) {
+			console.log(
+				'Auth check already in progress, skipping duplicate call'
+			);
+			return;
+		}
+
+		authCheckInProgress.current = true;
+
 		try {
+			// Backend reads token from httpOnly cookie automatically
+			// and auto-refreshes if needed using refreshToken cookie
 			const currentUser = await AuthService.getCurrentUser();
+			SecureStorage.setUser(currentUser);
 			setUser(currentUser);
 			setIsAuthenticated(true);
-		} catch {
-			// If API call fails, user is not authenticated
+		} catch (error: any) {
+			// Auth check failed - cookies invalid or expired
+			console.log('Auth check failed:', error);
+			SecureStorage.clearAll();
 			setUser(null);
 			setIsAuthenticated(false);
 		} finally {
 			setIsLoading(false);
+			authCheckInProgress.current = false;
 		}
 	};
 
@@ -34,9 +67,9 @@ export function useAuth() {
 		password: string
 	): Promise<AuthResponse> => {
 		const response = await AuthService.signIn({ email, password });
+		SecureStorage.setUser(response.user);
 		setUser(response.user);
 		setIsAuthenticated(true);
-		// Tokens are now stored in httpOnly cookies, not localStorage
 		return response;
 	};
 
@@ -52,9 +85,9 @@ export function useAuth() {
 			phoneNumber,
 			password,
 		});
+		SecureStorage.setUser(response.user);
 		setUser(response.user);
 		setIsAuthenticated(true);
-		// Tokens are now stored in httpOnly cookies, not localStorage
 		return response;
 	};
 
@@ -63,9 +96,9 @@ export function useAuth() {
 		code: string
 	): Promise<AuthResponse> => {
 		const response = await AuthService.signInWithOAuth(provider, code);
+		SecureStorage.setUser(response.user);
 		setUser(response.user);
 		setIsAuthenticated(true);
-		// Tokens are now stored in httpOnly cookies, not localStorage
 		return response;
 	};
 
@@ -73,19 +106,6 @@ export function useAuth() {
 		await AuthService.signOut();
 		setUser(null);
 		setIsAuthenticated(false);
-	};
-
-	const refreshAuth = async (): Promise<AuthResponse> => {
-		const refreshToken = SecureStorage.getRefreshToken();
-		if (!refreshToken) {
-			throw new Error('No refresh token available');
-		}
-
-		const response = await AuthService.refresh(refreshToken);
-		setUser(response.user);
-		setIsAuthenticated(true);
-		// Tokens are now stored in httpOnly cookies, not localStorage
-		return response;
 	};
 
 	return {
@@ -96,6 +116,5 @@ export function useAuth() {
 		signUp,
 		signInWithOAuth,
 		signOut,
-		refreshAuth,
 	};
 }

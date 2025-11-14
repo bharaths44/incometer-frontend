@@ -4,8 +4,8 @@ import {
 	deleteBudget,
 	getBudgetsByUser,
 	updateBudget,
-} from '../services/budgetService';
-import { BudgetRequestDTO } from '../types/budget';
+} from '@/services/budgetService';
+import { BudgetRequestDTO } from '@/types/budget';
 
 // Query keys
 export const budgetKeys = {
@@ -22,6 +22,7 @@ export const useBudgets = (userId: string) => {
 		queryKey: budgetKeys.list(userId),
 		queryFn: () => getBudgetsByUser(userId),
 		enabled: !!userId,
+		staleTime: 30000, // Cache for 30 seconds
 	});
 };
 

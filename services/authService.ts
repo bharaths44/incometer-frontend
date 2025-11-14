@@ -1,10 +1,5 @@
-import {
-	SignUpRequest,
-	SignInRequest,
-	AuthResponse,
-	User,
-} from '../types/auth';
-import { API_BASE_URL } from '../lib/constants';
+import { AuthResponse, SignInRequest, SignUpRequest, User } from '@/types/auth';
+import { API_BASE_URL } from '@/lib/constants';
 import { authenticatedFetch } from '@/lib/authFetch';
 import { SecureStorage } from '@/lib/secureStorage';
 
@@ -33,30 +28,18 @@ export class AuthService {
 			throw new Error(error || 'Registration failed');
 		}
 
-		// Backend should set httpOnly cookie with refreshToken
-		// Response includes accessToken for immediate use
-		const data = await response.json();
+		// Backend sets httpOnly cookies for both tokens
+		// Response only contains user data (no tokens)
+		await response.json();
+		// Fetch user profile to get complete data
+		const user = await this.getCurrentUser();
+		SecureStorage.setUser(user);
 
-		// Backend returns accessToken in response body
-		if (data.accessToken) {
-			// Store accessToken in memory for Authorization header
-			SecureStorage.setToken(data.accessToken);
-
-			const user = this.decodeUserFromTokenPublic(data.accessToken);
-			return {
-				user,
-				token: data.accessToken,
-				refreshToken: data.refreshToken,
-			};
-		} else {
-			// Fallback: fetch user data from /users/me endpoint
-			const user = await this.getCurrentUser();
-			return {
-				user,
-				token: '', // Token is in httpOnly cookie
-				refreshToken: '',
-			};
-		}
+		return {
+			user,
+			token: '', // Token is in httpOnly cookie
+			refreshToken: '', // Token is in httpOnly cookie
+		};
 	}
 
 	// Sign in with email and password
@@ -79,29 +62,18 @@ export class AuthService {
 			throw new Error(error || 'Authentication failed');
 		}
 
-		// Backend should set httpOnly cookie with refreshToken
-		const data = await response.json();
+		// Backend sets httpOnly cookies for both tokens
+		// Response only contains user data (no tokens)
+		await response.json();
+		// Fetch user profile to get complete data
+		const user = await this.getCurrentUser();
+		SecureStorage.setUser(user);
 
-		// Backend returns accessToken in response body
-		if (data.accessToken) {
-			// Store accessToken in memory for Authorization header
-			SecureStorage.setToken(data.accessToken);
-
-			const user = this.decodeUserFromTokenPublic(data.accessToken);
-			return {
-				user,
-				token: data.accessToken,
-				refreshToken: data.refreshToken,
-			};
-		} else {
-			// Fallback: fetch user data from /users/me endpoint
-			const user = await this.getCurrentUser();
-			return {
-				user,
-				token: '', // Token is in httpOnly cookie
-				refreshToken: '',
-			};
-		}
+		return {
+			user,
+			token: '', // Token is in httpOnly cookie
+			refreshToken: '', // Token is in httpOnly cookie
+		};
 	}
 
 	// Sign in with OAuth provider
@@ -127,20 +99,15 @@ export class AuthService {
 				errorText || `${provider} OAuth authentication failed`
 			);
 		}
-
-		const data: { accessToken: string; refreshToken: string } =
-			await response.json();
-
-		// Store accessToken in memory for Authorization header
-		SecureStorage.setToken(data.accessToken);
-
-		// Decode JWT to get user info
-		const user = this.decodeUserFromTokenPublic(data.accessToken);
+		await response.json();
+		// Fetch user profile to get complete data
+		const user = await this.getCurrentUser();
+		SecureStorage.setUser(user);
 
 		return {
 			user,
-			token: data.accessToken,
-			refreshToken: data.refreshToken,
+			token: '', // Token is in httpOnly cookie
+			refreshToken: '', // Token is in httpOnly cookie
 		};
 	}
 
@@ -148,8 +115,7 @@ export class AuthService {
 	static initiateOAuth(provider: 'github' | 'google'): void {
 		// Backend should redirect back to the authorizedRedirectUri configured in application.yml
 		// which is http://localhost:3000/auth/callback
-		const url = `${API_BASE_URL}/oauth2/authorize/${provider}`;
-		window.location.href = url;
+		window.location.href = `${API_BASE_URL}/oauth2/authorize/${provider}`;
 	}
 
 	// Get current user profile from backend API
@@ -169,49 +135,8 @@ export class AuthService {
 		};
 	}
 
-	// Get current user profile from JWT token (fallback)
-	static getCurrentUserFromToken(): User {
-		const token = SecureStorage.getToken();
-		if (!token) {
-			throw new Error('No token found');
-		}
-
-		// Decode user from token
-		return this.decodeUserFromTokenPublic(token);
-	}
-
-	// Refresh access token using refresh token
-	static async refresh(refreshToken: string): Promise<AuthResponse> {
-		const response = await fetch(`${this.BASE_URL}/refresh`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				refreshToken: refreshToken,
-			}),
-		});
-
-		if (!response.ok) {
-			const error = await response.text();
-			throw new Error(error || 'Token refresh failed');
-		}
-
-		const data: { accessToken: string; refreshToken: string } =
-			await response.json();
-
-		// Store new accessToken in memory
-		SecureStorage.setToken(data.accessToken);
-
-		// Decode JWT to get user info
-		const user = this.decodeUserFromTokenPublic(data.accessToken);
-
-		return {
-			user,
-			token: data.accessToken,
-			refreshToken: data.refreshToken,
-		};
-	}
+	// Note: Token refresh is handled automatically by backend JWT filter
+	// No need for explicit refresh endpoint in pure cookie approach
 
 	// Sign out
 	static async signOut(): Promise<void> {
@@ -230,43 +155,5 @@ export class AuthService {
 
 		// Clear secure storage
 		SecureStorage.clearAll();
-	}
-
-	// Decode JWT token to extract user info (public version)
-	static decodeUserFromTokenPublic(token: string): User {
-		try {
-			const payload = JSON.parse(atob(token.split('.')[1]));
-
-			// Try different possible fields for userId
-			const userId =
-				payload.uuid || payload.userId || payload.sub || payload.id;
-
-			if (!userId) {
-				console.error('No userId found in JWT payload:', payload);
-				throw new Error('No userId found in JWT payload');
-			}
-
-			// Try different possible fields for email
-			const email = payload.email || payload.sub;
-
-			if (!email) {
-				console.error('No email found in JWT payload:', payload);
-				throw new Error('No email found in JWT payload');
-			}
-
-			const user: User = {
-				userId: String(userId), // Ensure it's a string
-				name: payload.name || email.split('@')[0], // Fallback to email prefix if no name
-				email: String(email), // Ensure it's a string
-				phoneNumber: payload.phoneNumber || '',
-				createdAt: payload.createdAt || new Date().toISOString(),
-				updatedAt: payload.updatedAt || new Date().toISOString(),
-			};
-
-			return user;
-		} catch (error) {
-			console.error('Error decoding JWT:', error);
-			throw new Error('Invalid token');
-		}
 	}
 }

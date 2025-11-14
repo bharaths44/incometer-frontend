@@ -4,8 +4,8 @@ import {
 	deletePaymentMethod,
 	getAllPaymentMethods,
 	updatePaymentMethod,
-} from '../services/paymentMethodService';
-import { PaymentMethodRequestDTO } from '../types/paymentMethod';
+} from '@/services/paymentMethodService';
+import { PaymentMethodRequestDTO } from '@/types/paymentMethod';
 
 // Query keys
 export const paymentMethodKeys = {
@@ -20,6 +20,7 @@ export const usePaymentMethods = (userId: string) => {
 		queryKey: paymentMethodKeys.list(userId),
 		queryFn: () => getAllPaymentMethods(userId),
 		enabled: !!userId,
+		staleTime: 30000, // Cache for 30 seconds
 	});
 };
 

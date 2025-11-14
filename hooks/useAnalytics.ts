@@ -3,7 +3,7 @@ import {
 	fetchBudgetAnalytics,
 	fetchCategoryBreakdown,
 	fetchExpenseSummary,
-} from '../services/analyticsService';
+} from '@/services/analyticsService';
 
 // Query keys
 export const analyticsKeys = {
@@ -30,6 +30,7 @@ export const useCategoryBreakdown = (
 		queryKey: analyticsKeys.categoryBreakdown(userId, dateRange),
 		queryFn: () => fetchCategoryBreakdown(userId, dateRange),
 		enabled: !!userId,
+		staleTime: 30000, // Cache for 30 seconds
 	});
 };
 
@@ -41,6 +42,7 @@ export const useExpenseSummary = (
 		queryKey: analyticsKeys.expenseSummary(userId, dateRange),
 		queryFn: () => fetchExpenseSummary(userId, dateRange),
 		enabled: !!userId,
+		staleTime: 30000, // Cache for 30 seconds
 	});
 };
 
@@ -49,5 +51,6 @@ export const useBudgetAnalytics = (userId: string) => {
 		queryKey: analyticsKeys.budgetAnalytics(userId),
 		queryFn: () => fetchBudgetAnalytics(userId),
 		enabled: !!userId,
+		staleTime: 30000, // Cache for 30 seconds
 	});
 };
