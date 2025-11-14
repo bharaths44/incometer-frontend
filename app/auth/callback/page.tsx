@@ -155,7 +155,6 @@ export default function AuthCallbackPage() {
 								userId: userData.userId,
 								name: userData.name,
 								email: userData.email,
-								phoneNumber: userData.phoneNumber || '',
 								createdAt:
 									userData.createdAt ||
 									new Date().toISOString(),

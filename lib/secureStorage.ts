@@ -31,8 +31,16 @@ export class SecureStorage {
 			throw new Error('User data missing required fields');
 		}
 
+		// Only allow non-sensitive fields to be stored
+		const sanitizedUser = {
+			userId: user.userId,
+			name: user.name,
+			email: user.email,
+			createdAt: user.createdAt,
+			updatedAt: user.updatedAt,
+		};
 		try {
-			localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+			localStorage.setItem(this.USER_KEY, JSON.stringify(sanitizedUser));
 		} catch (error) {
 			console.error('Failed to store user data:', error);
 			throw new Error('Failed to store user data');
